@@ -12,7 +12,8 @@ Round-2 contract (PREREG Addendum 4):
 import json
 
 from .anchor import render_case, sha256_text
-from .judge import UnauditedError, generate, extract_json, validate_verdict, get_pin
+from .judge import (UnauditedError, agy_generate, generate, extract_json,
+                    validate_verdict, get_pin)
 from .prompt import MECHANISM_CLASSES, render_prompt
 from .receipts import make_receipt, write_receipt
 
@@ -39,12 +40,13 @@ def expected_judgments(cases: dict, arms: tuple = ("primary", "fast", "informed"
 
 
 def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
-               transport=None, approved_models=None, arm_transport=None) -> dict:
+               transport=None, approved_models=None, generate_fn=None) -> dict:
     """One judgment. Returns {"verdict": dict} or {"verdict": None, "unaudited": reason}."""
     anchor_block = render_case(case)
     prompt = render_prompt(anchor_block)
+    gen = generate_fn or generate
     try:
-        raw = generate(model, prompt, base_url, timeout_s, transport=transport)
+        raw = gen(model, prompt, base_url, timeout_s, transport=transport)
         verdict = validate_verdict(extract_json(raw), MECHANISM_CLASSES)
         return {"verdict": verdict, "unaudited": None, "raw": raw,
                 "anchor_text": anchor_block, "prompt_text": prompt,
@@ -74,9 +76,10 @@ def run_exam(cases_dir, out_dir, base_url="http://127.0.0.1:11434",
         for arm in arms:
             spec = ARMS[arm]
             runs = spec["s_runs"] if case.get("tier") == "S" else spec["runs"]
+            gen_fn = agy_generate if spec.get("transport") == "agy" else None
             for run in range(1, runs + 1):
                 res = judge_case(case, spec["model"], base_url, timeout_s,
-                                 transport=transport)
+                                 transport=transport, generate_fn=gen_fn)
                 pin = pins.get(arm, {"model": spec["model"],
                                      "manifest_digest": None, "note": "cloud arm, digest n/a"})
                 receipt = make_receipt(

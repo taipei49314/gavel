@@ -113,6 +113,33 @@ def generate(model: str, prompt: str, base_url: str, timeout_s: float, transport
     return text
 
 
+def agy_generate(model: str, prompt: str, base_url: str = "", timeout_s: float = 600,
+                 transport=None) -> str:
+    """Cloud-arm transport: one Antigravity CLI (agy) headless call.
+
+    Cloud verdicts are recorded, never gating (PREREG Addendum 4): no local
+    digest exists, so the approved-models manifest matches on model id.
+    """
+    import os
+    import subprocess
+
+    exe = os.environ.get("GAVEL_AGY",
+                         str(os.path.expandvars(r"%LOCALAPPDATA%\agy\bin\agy.exe")))
+    try:
+        proc = subprocess.run([exe, "-p", prompt, "--model", model],
+                              capture_output=True, text=True,
+                              timeout=timeout_s)
+    except subprocess.TimeoutExpired as exc:
+        raise UnauditedError(f"agy timeout after {timeout_s}s") from exc
+    except OSError as exc:
+        raise UnauditedError(f"agy unreachable: {exc}") from exc
+    if proc.returncode != 0:
+        raise UnauditedError(f"agy exit {proc.returncode}: {proc.stderr[:200]}")
+    if not proc.stdout.strip():
+        raise UnauditedError("empty agy response")
+    return proc.stdout
+
+
 _JSON_FENCE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL)
 
 
