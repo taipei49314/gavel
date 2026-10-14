@@ -28,6 +28,8 @@ gavel 對家族工具（checkwash／ledgerwash／pinwash）的殘餘風險面做
 
 ## 狀態
 
-本地孵育中（未公開、無遠端）。spec 0；v0.1.0 進行中。
+已上架（github.com/taipei49314/gavel，main）。spec 0；裁判已通過 round-1 資格考（results/round-1/REPORT.md）；
+M4 外部攻擊輪 wave-1 已入帳（attack/round-1/REPORT.md，1 個新逃脫面 E1 已披露為 known-limitation）。
+v0.1.0 tag 尚未發行：候選條件＝round-2 重考（prompt v4＋考卷 v2）PASS。
 License：Apache-2.0。人類決策記錄見 [docs/DECISIONS.md](docs/DECISIONS.md)。
 設計細節見 [SPEC.md](SPEC.md)；round-0 考題與及格線見 [PREREG.md](PREREG.md)。
