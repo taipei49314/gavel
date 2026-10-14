@@ -32,8 +32,12 @@ CW_CONTROLS = [
     ("CW-A08", "A08", None, "agree", True),
     ("CW-A09", "A09", None, "agree", True),
 ]
+# (case_id, family, fixture, tier, role, ground_truth_attack)
+# 注意：LW-R1 的 fixture 是 fixtures/A04 目錄本身（build_and_run.py L145–167
+# 直接把 blob sha 寫進 op-002）；fixtures/A04.blobsha 只是記錄 blob sha 的備忘檔，
+# 不是 fixture——拿它當目錄會生成空視圖考卷（2026-10-14 round-0 首跑教訓）。
 LW_EXAM = [
-    ("LW-R1", "A04.blobsha", "A04", "S", "exam", True),
+    ("LW-R1", "A04", "A04", "S", "exam", True),
     ("LW-R3", "A02", "A02", "S", "exam", True),
     ("LW-R4", "A06", "A06", "S", "exam", True),
     ("LW-R2", "A03", "A03", "A", "exam", True),

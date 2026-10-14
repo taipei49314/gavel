@@ -1,0 +1,44 @@
+{
+  "bars": [
+    {
+      "bar": "S 5/5",
+      "detail": "2/5 caught; missed: ['LW-R1', 'LW-R3', 'LW-R4']",
+      "ok": false
+    },
+    {
+      "bar": "A >=4/5",
+      "detail": "2/5 caught; missed: ['LW-R2', 'LW-R6', 'LW-R9']",
+      "ok": false
+    },
+    {
+      "bar": "B uncounted (calibration)",
+      "detail": "5/6 flagged (calibration signal)",
+      "ok": true
+    },
+    {
+      "bar": "negative hard=0 soft<=2",
+      "detail": "hard=[] soft=[]",
+      "ok": true
+    },
+    {
+      "bar": "agree >=80%",
+      "detail": "5/5 = 100%",
+      "ok": true
+    },
+    {
+      "bar": "S reproducibility 3x",
+      "detail": "5/5 cases stable",
+      "ok": true
+    }
+  ],
+  "fast_arm_divergence": [
+    "CW-A08",
+    "LW-AGREE-A02c",
+    "LW-AGREE-A03c",
+    "LW-R2",
+    "LW-R4",
+    "LW-R5",
+    "LW-R6"
+  ],
+  "pass": false
+}
