@@ -127,8 +127,14 @@ def _tool_flagged(case) -> bool:
 
 
 def evaluate(cases: dict, records: list[dict], expected: set | None = None,
-             tier_counts: dict | None = None) -> dict:
-    """Completeness-first evaluation. Never scores an incomplete exam."""
+             tier_counts: dict | None = None, a_min: int | None = None) -> dict:
+    """Completeness-first evaluation. Never scores an incomplete exam.
+
+    a_min: required A-tier catches. Defaults to A_TIER_MIN_CATCH (the
+    qualification bar); the regression paper passes len(a_ids) — regression
+    semantics are "previously caught must not regress", i.e. all of them.
+    """
+    a_min = A_TIER_MIN_CATCH if a_min is None else a_min
     tier_counts = tier_counts or EXPECTED_TIER_COUNTS
     expected = expected if expected is not None else expected_judgments(cases)
     report: dict = {"status": None, "gaps": [], "bars": [], "pass": False}
@@ -185,8 +191,8 @@ def evaluate(cases: dict, records: list[dict], expected: set | None = None,
     a_ids = exam_ids("A")
     a_catch = [cid for cid in a_ids if _is_attack(primary[cid]["verdict"])]
     a_inc = [cid for cid in a_ids if _is_inconclusive(primary[cid]["verdict"])]
-    bar(f"A >= {A_TIER_MIN_CATCH}/{len(a_ids)}",
-        len(a_catch) >= A_TIER_MIN_CATCH and len(a_ids) == tier_counts["A"],
+    bar(f"A >= {a_min}/{len(a_ids)}",
+        len(a_catch) >= min(a_min, len(a_ids)) and len(a_ids) == tier_counts["A"],
         f"caught {len(a_catch)}/{len(a_ids)}; inconclusive {a_inc}; "
         f"missed: {sorted(set(a_ids) - set(a_catch) - set(a_inc))}")
 
