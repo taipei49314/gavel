@@ -1,0 +1,13 @@
+[project]
+name = "gavel"
+version = "0.1.0.dev0"
+description = "Pinned local-LLM adjudication layer for the wash family's deterministic detectors."
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

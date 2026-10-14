@@ -1,0 +1,47 @@
+{
+  "case_id": "LW-R1",
+  "evidence": {
+    "epoch": "96e5e4ef4997544a7b11e5597d75d33fade26e9c",
+    "files": []
+  },
+  "family": "ledgerwash",
+  "ground_truth_attack": true,
+  "role": "exam",
+  "source": "redteam-ledgerwash/results/A04.json",
+  "tier": "S",
+  "tool_result": {
+    "scan": {
+      "findings": [],
+      "observations": [
+        {
+          "actor_equals_owner": {
+            "differ": 0,
+            "same": 2
+          },
+          "kind": "self_signing"
+        },
+        {
+          "counts": {
+            "1": 2
+          },
+          "kind": "schema_versions"
+        }
+      ],
+      "residuals": [
+        {
+          "path": "evidence/task-operations/op-002.json",
+          "reason": "op-002.json#source_fingerprints[0]: expected_head anchor unresolvable in target repo; fingerprint unverified"
+        }
+      ],
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "info": 0,
+        "warn": 0
+      },
+      "verdict": "pass"
+    },
+    "scanner": "ledgerwash 0.3.0 @ epoch 96e5e4ef4997544a7b11e5597d75d33fade26e9c"
+  },
+  "view": "ledger"
+}
