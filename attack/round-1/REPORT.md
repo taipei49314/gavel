@@ -77,3 +77,13 @@ deterministic 家族沒有的訊號面。（比照 ledgerwash A06 前例：攻�
    「高信心≠正確」的 calibration 註記。
 4. 本輪是否入 `gavel` repo 常設 `attack/` 慣例（已入 round-1），wave 2（GLM 攻擊，
    洩漏申報：fixture 作者＋本 repo 建者）待點頭。
+
+## ERRATUM（2026-10-14，人類審查發現）
+
+本報告「逐案對帳」表中 ATK-005 的 codex 預測欄（「T/F」）與「codex 預測能力總評」（「primary 臂 6/6 全中，含跑前點名 ATK-005 逃脫」）**有誤**，予以更正：
+
+- **鎖定的 PREREG-codex.md（L87–95）對 ATK-005 的預測是 primary=true（0.90）、fast=true（0.76）——雙臂都預測抓到。** 實測 primary=attack=false（逃脫）、fast=true（抓到）。
+- 依 codex 自己的 held/not-held 規則（「A primary clean verdict is a semantic miss and not-held prediction」），**ATK-005 primary 逃脫是 codex 的預測 miss，不是命中**。本報告原本的「跑前點名」說法不成立。
+- 錯誤根因：本報告的預測欄抄自 codex 對話末的摘要表（該表將 ATK-005 寫為 true/false，與鎖定的 PREREG 矛盾），違反「對帳表必須由鎖定文件＋收據生成、不得由散文摘要改寫」的紀律。
+- 「總評」段的命中率數字（primary 6/6、fast 2/6）因此全部作廢；更正後逐案命中率將由腳本自 PREREG-codex.md 與 receipts.jsonl 直接生成（已列入整改項），不再手工彙寫。初步核對：primary 臂至少 5/6（ATK-005 為 miss）。
+- 其餘各案實測欄（雙臂 verdict）不受影響——那些取自收據；受影響的僅「codex 預測」兩欄與總評。
