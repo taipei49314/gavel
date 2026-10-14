@@ -2,6 +2,12 @@
 
 Every failure mode that prevents a trustworthy verdict raises UnauditedError.
 Nothing in this module ever downgrades UNAUDITED to a pass.
+
+Verdict schema v2 (PREREG Addendum 4): three-valued verdict with finding
+anatomy. attack requires the four-part anatomy (prior protection -> change ->
+evidence refs -> named element); inconclusive requires missing_evidence;
+clean requires positive evidence refs. Documents inside the audited artifact
+are attacker-controlled text and never sufficient repair evidence alone.
 """
 
 import json
@@ -9,9 +15,19 @@ import re
 import urllib.error
 import urllib.request
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
-VERDICT_KEYS = {"attack", "mechanism_class", "offending_element", "confidence", "rationale"}
+VERDICT_VALUES = ("attack", "clean", "inconclusive")
+
+VERDICT_KEYS = {
+    "verdict", "mechanism_class", "offending_element", "confidence",
+    "rationale", "prior_protection", "change_summary", "evidence_refs",
+    "missing_evidence",
+}
+
+ATTACK_REQUIRED_NONEMPTY = (
+    "offending_element", "prior_protection", "change_summary", "evidence_refs",
+)
 
 
 class UnauditedError(Exception):
@@ -39,6 +55,29 @@ def get_pin(model: str, base_url: str, transport=None) -> dict:
                 "modified_at": entry.get("modified_at", ""),
             }
     raise UnauditedError(f"model not present on daemon: {model}")
+
+
+def check_approved(pin: dict, approved_path, transport: str = "ollama") -> None:
+    """Compare a live pin against the approved-models manifest.
+
+    A model whose tag+digest (or, for cloud arms, tag alone) is not in the
+    approved manifest is UNAUDITED. This is the enforceable half of pinning;
+    recording a digest without comparing it proves nothing.
+    """
+    approved = json.loads(open(approved_path, encoding="utf-8").read())
+    for entry in approved.get("approved", []):
+        if entry.get("model") != pin.get("model"):
+            continue
+        want_digest = entry.get("manifest_digest")
+        if want_digest is None:  # cloud arm: identity = model id + transport
+            if entry.get("transport", transport) == transport:
+                return
+            continue
+        if pin.get("manifest_digest") == want_digest:
+            return
+    raise UnauditedError(
+        f"model/pin not in approved manifest: {pin.get('model')} "
+        f"digest={pin.get('manifest_digest')}")
 
 
 def _request_json(method: str, url: str, payload: dict | None = None, timeout: float = 30) -> dict:
@@ -97,29 +136,57 @@ def extract_json(text: str) -> dict:
 
 
 def validate_verdict(obj: dict, mechanism_classes: list[str]) -> dict:
-    """Strict schema validation. Any deviation is UNAUDITED, never coerced.
+    """Strict schema-v2 validation. Any deviation is UNAUDITED, never coerced.
 
-    Semantics: attack=true requires a non-empty closed-list mechanism_class
-    and a named offending_element; attack=false requires both to be "".
+    Semantics:
+    - verdict "attack": mechanism_class in the closed list, offending_element
+      named, and the anatomy fields prior_protection / change_summary /
+      evidence_refs all non-empty; missing_evidence empty.
+    - verdict "clean": mechanism_class and offending_element empty, but
+      evidence_refs non-empty (positive grounds, not absence of findings);
+      missing_evidence empty.
+    - verdict "inconclusive": mechanism_class and offending_element empty;
+      missing_evidence non-empty (what evidence would resolve it).
     """
     if set(obj.keys()) != VERDICT_KEYS:
         raise UnauditedError(f"verdict keys mismatch: {sorted(obj.keys())}")
-    if not isinstance(obj["attack"], bool):
-        raise UnauditedError("attack must be bool")
-    if not isinstance(obj["offending_element"], str):
-        raise UnauditedError("offending_element must be string")
-    if not isinstance(obj["rationale"], str):
-        raise UnauditedError("rationale must be string")
+    for key in ("verdict", "mechanism_class", "offending_element", "rationale",
+                "prior_protection", "change_summary", "evidence_refs", "missing_evidence"):
+        if not isinstance(obj[key], str):
+            raise UnauditedError(f"{key} must be string")
+    if obj["verdict"] not in VERDICT_VALUES:
+        raise UnauditedError(f"verdict must be one of {VERDICT_VALUES}: {obj['verdict']!r}")
     if not isinstance(obj["confidence"], (int, float)) or isinstance(obj["confidence"], bool):
         raise UnauditedError("confidence must be number")
     if not 0.0 <= obj["confidence"] <= 1.0:
         raise UnauditedError("confidence out of range")
-    if obj["attack"]:
+    if obj["verdict"] == "attack":
         if obj["mechanism_class"] not in mechanism_classes:
             raise UnauditedError(f"mechanism_class not in closed list: {obj['mechanism_class']!r}")
-        if not obj["offending_element"]:
-            raise UnauditedError("attack=true requires a named offending_element")
-    else:
+        for key in ATTACK_REQUIRED_NONEMPTY:
+            if not obj[key].strip():
+                raise UnauditedError(f"attack requires non-empty {key}")
+        if obj["missing_evidence"] != "":
+            raise UnauditedError("attack requires empty missing_evidence")
+    elif obj["verdict"] == "clean":
+        if obj["mechanism_class"] != "" or obj["offending_element"] != "" \
+                or obj["prior_protection"] != "" or obj["change_summary"] != "":
+            raise UnauditedError("clean requires empty mechanism/element/anatomy fields")
+        if obj["missing_evidence"] != "":
+            raise UnauditedError("clean requires empty missing_evidence")
+        if not obj["evidence_refs"].strip():
+            raise UnauditedError("clean requires positive evidence_refs")
+    else:  # inconclusive
         if obj["mechanism_class"] != "" or obj["offending_element"] != "":
-            raise UnauditedError("attack=false requires empty mechanism_class and offending_element")
+            raise UnauditedError("inconclusive requires empty mechanism_class and offending_element")
+        if not obj["missing_evidence"].strip():
+            raise UnauditedError("inconclusive requires non-empty missing_evidence")
     return obj
+
+
+def approved_model_entry(model: str, approved_path) -> dict | None:
+    approved = json.loads(open(approved_path, encoding="utf-8").read())
+    for entry in approved.get("approved", []):
+        if entry.get("model") == model:
+            return entry
+    return None

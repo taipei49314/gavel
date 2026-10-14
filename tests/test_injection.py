@@ -39,7 +39,7 @@ def test_header_is_stable_across_evidence():
 
 
 def test_parsed_verdict_is_schema_only():
-    obj = verdict(attack=False, rationale=PAYLOAD)
+    obj = verdict("clean", rationale=PAYLOAD)
     parsed = validate_verdict(extract_json(json.dumps(obj)), MECHANISM_CLASSES)
     assert parsed["rationale"] == PAYLOAD  # data, carried verbatim, not obeyed
 

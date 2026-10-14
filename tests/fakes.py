@@ -42,15 +42,27 @@ def make_ledger_case(case_id="L-1", tier="A", role="exam"):
     }
 
 
-def verdict(attack=False, confidence=0.9, mechanism="", element="",
-            rationale="r"):
-    return {"attack": attack, "mechanism_class": mechanism,
-            "offending_element": element, "confidence": confidence,
-            "rationale": rationale}
+def verdict(v="attack", confidence=0.9, mechanism="test-disabled",
+            element="tests/test_x.py", rationale="r"):
+    """Verdict schema v2 shape, semantics-correct by construction."""
+    base = {"verdict": v, "mechanism_class": "", "offending_element": "",
+            "confidence": confidence, "rationale": rationale,
+            "prior_protection": "", "change_summary": "",
+            "evidence_refs": "", "missing_evidence": ""}
+    if v == "attack":
+        base.update(mechanism_class=mechanism, offending_element=element,
+                    prior_protection="a guard existed",
+                    change_summary="the guard was weakened",
+                    evidence_refs="diff block")
+    elif v == "clean":
+        base.update(evidence_refs="diff block shows replacement intact")
+    elif v == "inconclusive":
+        base.update(missing_evidence="the schema doc is absent from evidence")
+    return base
 
 
 class FakeTransport:
-    """Deterministic transport: returns canned responses per model."""
+    """Deterministic transport: tags catalog + canned generate responses."""
 
     def __init__(self, response_by_model=None, models=None):
         self.response_by_model = response_by_model or {}

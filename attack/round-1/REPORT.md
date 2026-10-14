@@ -87,3 +87,7 @@ deterministic 家族沒有的訊號面。（比照 ledgerwash A06 前例：攻�
 - 錯誤根因：本報告的預測欄抄自 codex 對話末的摘要表（該表將 ATK-005 寫為 true/false，與鎖定的 PREREG 矛盾），違反「對帳表必須由鎖定文件＋收據生成、不得由散文摘要改寫」的紀律。
 - 「總評」段的命中率數字（primary 6/6、fast 2/6）因此全部作廢；更正後逐案命中率將由腳本自 PREREG-codex.md 與 receipts.jsonl 直接生成（已列入整改項），不再手工彙寫。初步核對：primary 臂至少 5/6（ATK-005 為 miss）。
 - 其餘各案實測欄（雙臂 verdict）不受影響——那些取自收據；受影響的僅「codex 預測」兩欄與總評。
+
+### ERRATUM 補充（同日）：對帳表已由腳本重生成
+
+`attack/round-1/reconciliation.md` 由 `tools/tally_attack.py` 自鎖定 PREREG-codex.md＋receipts.jsonl 直接生成。腳本版數字：primary 預測命中 **8/10**（miss＝ATK-005 逃脫＋ATK-010 卷面缺陷異常）、fast **6/10**；**減弱探針零整體放行**（gate released 僅 ATK-007/008/009 三案誠實/無效卷）。本報告內文手工表格凡與生成表矛盾處，以生成表為準。

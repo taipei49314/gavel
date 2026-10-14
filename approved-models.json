@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "approved": [
+    {
+      "model": "qwen3.5:35b-a3b",
+      "manifest_digest": "3460ffeede5453ead027dbd2f821b12ad0aa3de54630971993babdb2165221f7",
+      "role": "gating",
+      "transport": "ollama",
+      "approved_by": "human in conversation, 2026-10-14 (round-0/1 pins carried forward)",
+      "approved_at": "2026-10-14T15:00:00Z"
+    },
+    {
+      "model": "qwen3.5:9b",
+      "manifest_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+      "role": "recorded",
+      "transport": "ollama",
+      "approved_by": "human in conversation, 2026-10-14 (round-0/1 pins carried forward)",
+      "approved_at": "2026-10-14T15:00:00Z"
+    },
+    {
+      "model": "gemini-4-argon-high",
+      "manifest_digest": null,
+      "role": "recorded-informed",
+      "transport": "agy",
+      "note": "cloud arm; no local digest exists — identity is model id + transport + cli version recorded in receipt execution",
+      "approved_by": "human in conversation, 2026-10-14 (instruction: 找antigravity cli , 找到gemini4 argon , 列入重考)",
+      "approved_at": "2026-10-14T15:00:00Z"
+    }
+  ]
+}
