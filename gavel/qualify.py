@@ -18,9 +18,12 @@ from .prompt import MECHANISM_CLASSES, render_prompt
 from .receipts import make_receipt, write_receipt
 
 ARMS = {
-    "primary": {"model": "qwen3.5:35b-a3b", "role": "gating", "runs": 1, "s_runs": 3},
-    "fast": {"model": "qwen3.5:9b", "role": "recorded", "runs": 1, "s_runs": 1},
-    "informed": {"model": "gemini-4-argon-high", "role": "recorded", "runs": 1, "s_runs": 1},
+    "primary": {"model": "qwen3.5:35b-a3b", "role": "gating", "runs": 1, "s_runs": 3,
+                "transport": "ollama"},
+    "fast": {"model": "qwen3.5:9b", "role": "recorded", "runs": 1, "s_runs": 1,
+             "transport": "ollama"},
+    "informed": {"model": "gemini-4-argon-high", "role": "recorded", "runs": 1,
+                 "s_runs": 1, "transport": "agy"},
 }
 SOFT_CONFIDENCE_THRESHOLD = 0.6
 AGREE_MIN_RATE = 0.8
