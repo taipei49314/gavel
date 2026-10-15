@@ -21,6 +21,11 @@ Exam-validity fixes (takeover audit 2026-10-15):
 - CR-17: extract_json is strict: the whole output must be one JSON object, or
   exactly one fenced block that is the whole output. extract_json_v2 keeps
   the round-2 extractor for verifying v2 receipts only.
+- CR-02/CR-15/F4: the approved-models manifest defaults to the file at the
+  root of the repository that holds this package (never the working
+  directory); a missing, unreadable or malformed manifest is UNAUDITED; an
+  entry with a null digest approves only an explicitly declared cloud
+  transport. The caller (qualify.judge_case) checks it on every judgment.
 """
 
 import http.client
@@ -28,6 +33,7 @@ import json
 import re
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 SCHEMA_VERSION = 2
 
@@ -44,6 +50,10 @@ ATTACK_REQUIRED_NONEMPTY = (
 )
 
 OLLAMA = "ollama"
+# Transports with no local model digest. An approved-models entry with a
+# null digest is valid only for one of these, named explicitly (CR-15).
+CLOUD_TRANSPORTS = frozenset({"agy"})
+APPROVED_MODELS_FILENAME = "approved-models.json"
 DEFAULT_NUM_CTX = 16384
 DEFAULT_OPTIONS = {"temperature": 0, "num_ctx": DEFAULT_NUM_CTX}
 OPTION_KEYS = ("temperature", "num_ctx", "seed")
@@ -124,27 +134,85 @@ def get_runtime_version(base_url: str, transport=None) -> str:
     return version
 
 
-def check_approved(pin: dict, approved_path, transport: str = "ollama") -> None:
+def live_pin(model: str, base_url: str, transport_name: str = OLLAMA,
+             transport=None) -> dict:
+    """The pin of a model as it is right now.
+
+    Ollama: read from the daemon (get_pin). Cloud transports have no local
+    digest; their pin is the model id plus the transport name.
+    """
+    if transport_name == OLLAMA:
+        return get_pin(model, base_url, transport=transport)
+    if transport_name in CLOUD_TRANSPORTS:
+        return {"model": model, "manifest_digest": None, "transport": transport_name}
+    raise UnauditedError(f"unknown transport: {transport_name!r}")
+
+
+def default_approved_path() -> Path:
+    """approved-models.json at the root of the repository holding this package.
+
+    Resolved from this file's location, never from the working directory
+    (CR-02). A copy of the package without that file fails closed.
+    """
+    return Path(__file__).resolve().parent.parent / APPROVED_MODELS_FILENAME
+
+
+def load_approved(approved_path=None) -> dict:
+    """Read the approved-models manifest; None means default_approved_path().
+
+    A missing, unreadable, non-JSON or malformed manifest is UNAUDITED.
+    Reasons name the file, not its directory, because they go into receipts.
+    """
+    path = Path(approved_path) if approved_path is not None else default_approved_path()
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, ValueError) as exc:
+        raise UnauditedError(f"approved-models manifest unreadable ({path.name}): "
+                             f"{type(exc).__name__}") from exc
+    try:
+        data = json.loads(text)
+    except ValueError as exc:
+        raise UnauditedError(f"approved-models manifest is not valid JSON ({path.name})") from exc
+    if not isinstance(data, dict) or not isinstance(data.get("approved"), list):
+        raise UnauditedError(f"approved-models manifest malformed ({path.name}): "
+                             f"no 'approved' list")
+    return data
+
+
+def check_approved(pin: dict, approved_path=None, transport: str = OLLAMA) -> None:
     """Compare a live pin against the approved-models manifest.
 
     A model whose tag+digest (or, for cloud arms, tag alone) is not in the
     approved manifest is UNAUDITED. This is the enforceable half of pinning;
     recording a digest without comparing it proves nothing.
+
+    approved_path None means default_approved_path() (repo root, not CWD).
+    An entry with a digest approves only that exact digest, for its declared
+    transport (an entry without a transport field is a local Ollama entry).
+    An entry with a null or missing digest approves only a pin without a
+    digest, and only when the entry names a cloud transport explicitly and
+    that transport is the one in use (CR-15).
     """
-    approved = json.loads(open(approved_path, encoding="utf-8").read())
-    for entry in approved.get("approved", []):
-        if entry.get("model") != pin.get("model"):
+    approved = load_approved(approved_path)
+    model = pin.get("model")
+    digest = pin.get("manifest_digest")
+    for entry in approved["approved"]:
+        if not isinstance(entry, dict) or entry.get("model") != model:
             continue
+        entry_transport = entry.get("transport")
         want_digest = entry.get("manifest_digest")
         if want_digest is None:  # cloud arm: identity = model id + transport
-            if entry.get("transport", transport) == transport:
+            if entry_transport in CLOUD_TRANSPORTS and entry_transport == transport \
+                    and digest is None:
                 return
             continue
-        if pin.get("manifest_digest") == want_digest:
+        if (entry_transport or OLLAMA) != transport:
+            continue
+        if isinstance(want_digest, str) and want_digest and digest == want_digest:
             return
     raise UnauditedError(
-        f"model/pin not in approved manifest: {pin.get('model')} "
-        f"digest={pin.get('manifest_digest')}")
+        f"model/pin not in approved manifest: {model} "
+        f"digest={digest} transport={transport}")
 
 
 def _request_json(method: str, url: str, payload: dict | None = None, timeout: float = 30) -> dict:
@@ -391,9 +459,9 @@ def validate_verdict(obj: dict, mechanism_classes: list[str]) -> dict:
     return obj
 
 
-def approved_model_entry(model: str, approved_path) -> dict | None:
-    approved = json.loads(open(approved_path, encoding="utf-8").read())
-    for entry in approved.get("approved", []):
-        if entry.get("model") == model:
+def approved_model_entry(model: str, approved_path=None) -> dict | None:
+    approved = load_approved(approved_path)
+    for entry in approved["approved"]:
+        if isinstance(entry, dict) and entry.get("model") == model:
             return entry
     return None

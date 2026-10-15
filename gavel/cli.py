@@ -17,7 +17,9 @@ from .receipts import make_receipt, verify_file, write_receipt
 
 DEFAULT_BASE_URL = os.environ.get("GAVEL_OLLAMA", "http://127.0.0.1:11434")
 DEFAULT_TIMEOUT = float(os.environ.get("GAVEL_TIMEOUT", "600"))
-DEFAULT_APPROVED = os.environ.get("GAVEL_APPROVED_MODELS", "approved-models.json")
+# None means gavel.judge.default_approved_path(): the repo-root file, never
+# the working directory (CR-02).
+DEFAULT_APPROVED = os.environ.get("GAVEL_APPROVED_MODELS") or None
 
 
 def _pin_for(arm: str, base_url: str) -> dict:
@@ -50,20 +52,17 @@ def cmd_scan(args) -> int:
     exit_code = 0
     for arm in args.arms:
         spec = ARMS[arm]
-        try:
-            pin = _pin_for(arm, args.base_url)
-            check_approved(pin, args.approved_models,
-                           transport=spec.get("transport", "ollama"))
-            res = judge_case(case, spec["model"], args.base_url, args.timeout)
-        except UnauditedError as exc:
-            res = {"verdict": None, "unaudited": exc.reason, "raw": None,
-                   "anchor_text": render_case(case), "prompt_text": render_prompt(render_case(case)),
-                   "anchor_sha256": sha256_text(render_case(case)),
-                   "prompt_sha256": sha256_text(render_prompt(render_case(case)))}
-            pin = {"model": spec["model"], "manifest_digest": None}
+        # judge_case reads the live pin and checks approved-models itself
+        # (one judgment path for exam and scan, CR-02); the pin it read is
+        # recorded even when it is not approved (CR-14).
+        res = judge_case(case, spec["model"], args.base_url, args.timeout,
+                         approved_models=args.approved_models,
+                         transport_name=spec.get("transport", "ollama"))
+        pin = res["pin"]
         receipt = make_receipt(
             case["case_id"], arm, pin, res["prompt_sha256"], res["anchor_sha256"],
-            res["raw"], res["verdict"], res["unaudited"],
+            res["raw"] if res["verdict"] is not None else None,
+            res["verdict"], res["unaudited"],
             prompt_text=res["prompt_text"], anchor_text=res["anchor_text"],
             execution={"schema_version": 2, "temperature": 0,
                        "base_url": args.base_url, "timeout_s": args.timeout})

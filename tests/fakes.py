@@ -1,6 +1,7 @@
 """Shared case builders and fakes for the gavel test suite."""
 
 import json
+from pathlib import Path
 
 
 def make_diff_case(case_id="T-1", tier="S", role="exam", attack_truth=True,
@@ -147,3 +148,21 @@ def raising(exc):
     def do(method, url, payload=None, timeout=30):
         raise exc
     return do
+
+
+def approved_manifest(entries=None) -> dict:
+    """An approved-models manifest matching FakeTransport's digests."""
+    return {"schema_version": 1, "approved": entries if entries is not None else [
+        {"model": "qwen3.5:35b-a3b", "manifest_digest": "sha256:35b",
+         "role": "gating", "transport": "ollama"},
+        {"model": "qwen3.5:9b", "manifest_digest": "sha256:9b",
+         "role": "recorded", "transport": "ollama"},
+        {"model": "gemini-4-argon-high", "manifest_digest": None,
+         "role": "recorded-informed", "transport": "agy"},
+    ]}
+
+
+def write_approved(directory, entries=None) -> Path:
+    path = Path(directory) / "approved-models.json"
+    path.write_text(json.dumps(approved_manifest(entries)), encoding="utf-8")
+    return path

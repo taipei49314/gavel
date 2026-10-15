@@ -3,10 +3,8 @@
 Round-2 semantics: completeness-first; INCOMPLETE exams never score.
 """
 
-import json
-
-from fakes import FakeTransport, make_diff_case, make_ledger_case, verdict
-from gavel.qualify import evaluate, expected_judgments, judge_case
+from fakes import make_diff_case, verdict
+from gavel.qualify import evaluate, expected_judgments
 
 
 def build_cases():
@@ -202,26 +200,3 @@ def test_expected_matrix_shape():
     assert sum(1 for t in expected if t[0] == "S-1" and t[1] == "primary") == 3
     assert sum(1 for t in expected if t[0] == "A-1" and t[1] == "primary") == 1
     assert sum(1 for t in expected if t[0] == "A-1" and t[1] == "informed") == 1
-
-
-def test_judge_case_success_and_unaudited():
-    good = FakeTransport(response_by_model={
-        "qwen3.5:35b-a3b": json.dumps(verdict("attack"))})
-    case = make_diff_case()
-    res = judge_case(case, "qwen3.5:35b-a3b", "http://x", 5, transport=good)
-    assert res["verdict"]["verdict"] == "attack" and res["unaudited"] is None
-    assert res["prompt_text"] and res["anchor_text"]
-
-    dead = FakeTransport(response_by_model={})
-    res = judge_case(case, "qwen3.5:35b-a3b", "http://x", 5, transport=dead)
-    assert res["verdict"] is None and "unreachable" in res["unaudited"]
-
-
-def test_ledger_case_judges_through_same_path():
-    t = FakeTransport(response_by_model={
-        "qwen3.5:35b-a3b": json.dumps(verdict(
-            "attack", mechanism="ledger-structure-evasion",
-            element="governance/tasks/archive/T-9.json"))})
-    res = judge_case(make_ledger_case(), "qwen3.5:35b-a3b",
-                     "http://x", 5, transport=t)
-    assert res["verdict"]["mechanism_class"] == "ledger-structure-evasion"

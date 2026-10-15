@@ -11,10 +11,12 @@ Round-2 contract (PREREG Addendum 4):
 
 import json
 
-from .anchor import render_case, sha256_text
-from .judge import (TRANSPORT_ERRORS, UnauditedError, agy_generate, generate,
-                    extract_json, validate_verdict, get_pin)
-from .prompt import MECHANISM_CLASSES, render_prompt
+from .anchor import ANCHOR_VERSION, render_case, sha256_text
+from .judge import (OLLAMA, SCHEMA_VERSION, TRANSPORT_ERRORS, UnauditedError,
+                    agy_generate, check_approved, extract_json, generate,
+                    get_pin, get_runtime_version, live_pin, resolve_options,
+                    validate_verdict)
+from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
 from .receipts import make_receipt, write_receipt
 
 ARMS = {
@@ -42,26 +44,109 @@ def expected_judgments(cases: dict, arms: tuple = ("primary", "fast", "informed"
     return expected
 
 
+def _generator_for(transport_name: str, generate_fn=None):
+    if generate_fn is not None:
+        return generate_fn
+    if transport_name == OLLAMA:
+        return generate
+    if transport_name == "agy":
+        return agy_generate
+    return None
+
+
+def _mark_unaudited(result: dict, reason: str, exc: UnauditedError | None = None) -> None:
+    result["verdict"] = None
+    result["unaudited"] = reason
+    if exc is not None:
+        if result["raw"] is None and exc.raw is not None:
+            result["raw"] = exc.raw  # CR-07: keep whatever the model returned
+        if exc.generation:
+            result["generation"] = dict(exc.generation)
+
+
 def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
-               transport=None, approved_models=None, generate_fn=None) -> dict:
-    """One judgment. Returns {"verdict": dict} or {"verdict": None, "unaudited": reason}."""
+               transport=None, approved_models=None, generate_fn=None, *,
+               transport_name: str = OLLAMA, options: dict | None = None,
+               pinned_runtime: dict | None = None) -> dict:
+    """One judgment: the single judgment path for exam and scan.
+
+    Never raises for a judgment failure. Returns a dict with "verdict"
+    (schema-v2 dict, or None) and "unaudited" (reason, or None), plus every
+    fact a receipt records: raw output (kept on UNAUDITED, CR-07), prompt and
+    anchor texts, hashes and versions, transport name and version, the pin
+    read before and after the call, options and generation facts, and
+    execution settings.
+
+    Order (CR-02/F4): live pin -> approved-models check (approved_models
+    None means the repo-root approved-models.json) -> Ollama version (and the
+    manifest's pinned version, if any) -> generate -> for Ollama, the digest
+    and version are read again and must be unchanged -> strict parse ->
+    schema validation. transport is the HTTP callable for Ollama (tests
+    inject a fake); transport_name selects the transport ("ollama" or a
+    cloud transport such as "agy").
+    """
     anchor_block = render_case(case)
     prompt = render_prompt(anchor_block)
-    gen = generate_fn or generate
+    is_local = transport_name == OLLAMA
+    result = {
+        "verdict": None,
+        "unaudited": None,
+        "raw": None,
+        "anchor_text": anchor_block,
+        "prompt_text": prompt,
+        "anchor_sha256": sha256_text(anchor_block),
+        "prompt_sha256": sha256_text(prompt),
+        "prompt_version": PROMPT_VERSION,
+        "anchor_version": ANCHOR_VERSION,
+        "schema_version": SCHEMA_VERSION,
+        "transport": {"name": transport_name, "version": None},
+        "pin": {"model": model, "manifest_digest": None},
+        "pin_after": None,
+        "options": {},
+        "generation": {},
+        "execution": ({"base_url": base_url, "timeout_s": timeout_s} if is_local
+                      else {"timeout_s": timeout_s}),
+    }
     try:
-        raw = gen(model, prompt, base_url, timeout_s, transport=transport)["raw"]
-        verdict = validate_verdict(extract_json(raw), MECHANISM_CLASSES)
-        return {"verdict": verdict, "unaudited": None, "raw": raw,
-                "anchor_text": anchor_block, "prompt_text": prompt,
-                "anchor_sha256": sha256_text(anchor_block),
-                "prompt_sha256": sha256_text(prompt)}
-    except (UnauditedError, *TRANSPORT_ERRORS) as exc:
-        reason = exc.reason if isinstance(exc, UnauditedError) \
-            else f"transport error: {type(exc).__name__}: {exc}"
-        return {"verdict": None, "unaudited": reason, "raw": None,
-                "anchor_text": anchor_block, "prompt_text": prompt,
-                "anchor_sha256": sha256_text(anchor_block),
-                "prompt_sha256": sha256_text(prompt)}
+        gen = _generator_for(transport_name, generate_fn)
+        if gen is None:
+            raise UnauditedError(f"unknown transport: {transport_name!r}")
+        pin = live_pin(model, base_url, transport_name, transport=transport)
+        result["pin"] = pin
+        check_approved(pin, approved_models, transport=transport_name)
+        version = None
+        if is_local:
+            result["options"] = resolve_options(options)
+            version = get_runtime_version(base_url, transport=transport)
+            result["transport"]["version"] = version
+            pinned = (pinned_runtime or {}).get("ollama_version")
+            if pinned is not None and version != pinned:
+                raise UnauditedError(f"ollama version {version} is not the pinned {pinned}")
+        out = gen(model, prompt, base_url, timeout_s, transport=transport,
+                  options=result["options"] if is_local else None)
+        if not isinstance(out, dict) or not isinstance(out.get("raw"), str):
+            raise UnauditedError("transport returned no text")
+        result["raw"] = out["raw"]
+        result["generation"] = dict(out.get("generation") or {})
+        if out.get("transport_version") is not None:
+            result["transport"]["version"] = out["transport_version"]
+        if is_local:
+            after = get_pin(model, base_url, transport=transport)
+            result["pin_after"] = after
+            if after.get("manifest_digest") != pin.get("manifest_digest"):
+                raise UnauditedError(
+                    f"model digest changed during judgment: {pin.get('manifest_digest')} "
+                    f"-> {after.get('manifest_digest')}")
+            version_after = get_runtime_version(base_url, transport=transport)
+            if version_after != version:
+                raise UnauditedError(
+                    f"ollama version changed during judgment: {version} -> {version_after}")
+        result["verdict"] = validate_verdict(extract_json(result["raw"]), MECHANISM_CLASSES)
+    except UnauditedError as exc:
+        _mark_unaudited(result, exc.reason, exc)
+    except TRANSPORT_ERRORS as exc:  # CR-14 safety net for a transport not covered above
+        _mark_unaudited(result, f"transport error: {type(exc).__name__}: {exc}")
+    return result
 
 
 def run_exam(cases_dir, out_dir, base_url="http://127.0.0.1:11434",
@@ -74,23 +159,20 @@ def run_exam(cases_dir, out_dir, base_url="http://127.0.0.1:11434",
     out_dir.mkdir(parents=True, exist_ok=True)
     receipts_path = out_dir / "receipts.jsonl"
     records = []
-    pins = {arm: get_pin(ARMS[arm]["model"], base_url, transport=transport)
-            for arm in arms if ARMS[arm].get("transport", "ollama") == "ollama"}
     for case_path in sorted(cases_dir.glob("*.json")):
         case = json_load(case_path)
         for arm in arms:
             spec = ARMS[arm]
             runs = spec["s_runs"] if case.get("tier") == "S" else spec["runs"]
-            gen_fn = agy_generate if spec.get("transport") == "agy" else None
             for run in range(1, runs + 1):
                 res = judge_case(case, spec["model"], base_url, timeout_s,
-                                 transport=transport, generate_fn=gen_fn)
-                pin = pins.get(arm, {"model": spec["model"],
-                                     "manifest_digest": None, "note": "cloud arm, digest n/a"})
+                                 transport=transport, approved_models=approved_models,
+                                 transport_name=spec.get("transport", OLLAMA))
                 receipt = make_receipt(
-                    case["case_id"], arm, pin, res["prompt_sha256"],
-                    res["anchor_sha256"], res["raw"], res["verdict"],
-                    res["unaudited"],
+                    case["case_id"], arm, res["pin"], res["prompt_sha256"],
+                    res["anchor_sha256"],
+                    res["raw"] if res["verdict"] is not None else None,
+                    res["verdict"], res["unaudited"],
                     prompt_text=res["prompt_text"], anchor_text=res["anchor_text"],
                     execution={"schema_version": receipt_schema_version(),
                                "temperature": 0, "base_url": base_url,
