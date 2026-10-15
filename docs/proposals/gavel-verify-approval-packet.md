@@ -4,6 +4,12 @@ Status: draft prepared 2026-10-15 on branch `fix/exam-validity`. Nothing here is
 approved. The workload has not run anywhere:
 `NOT_RUN：工作機規則（POLICY work-machine-local），gavel-verify runs only on the EC pool, after Nelson approves this entry`.
 
+**[Note 2026-10-15]** This packet predates Nelson's standing authorization of
+2026-10-15T09:49:47Z (EC POLICY `gavel-pju-execution`; see AGENTS.md and
+docs/DECISIONS.md), which for gavel on LAPTOP-01AGNPJU supersedes D2(A)'s
+venue part. This packet describes the EC pool route only; the workload script
+still refuses to run on the work machines and is not the PJU route.
+
 This packet follows the format of the ledgerwash `v03-verify` approval
 (EC `evidence/requests/5a6a51ab-8686-46a1-b85c-7dc3902442af/ledgerwash-pool-approval.md`).
 It asks for one L2 decision: approval of one workload declaration entry.

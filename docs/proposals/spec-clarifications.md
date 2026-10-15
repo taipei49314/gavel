@@ -19,9 +19,10 @@
 - Venue: this file was written under D2(A) (EC pool only). Later on
   2026-10-15 Nelson authorized gavel to run on LAPTOP-01AGNPJU (EC POLICY
   `gavel-pju-execution`, docs/DECISIONS.md), which supersedes the venue part
-  of D2(A) for gavel. §1 below is revised for it (2026-10-15, branch
-  `docs/pju-venue`); the other mentions of the pool in this file (the J4 note
-  above, §4, §6 and spec-1 candidate 3) date from before it.
+  of D2(A) for gavel on LAPTOP-01AGNPJU. §1 below is revised for it
+  (2026-10-15, branch `docs/pju-venue`); the other mentions of the pool in
+  this file (the J4 note above, §4, §6 and spec-1 candidate 3) date from
+  before it.
 
 ## §1 Judge identity: correction
 
@@ -40,9 +41,9 @@ Facts:
   `gavel-pju-execution` (T-542): gavel's tests, verification and judge runs
   through the committed harness, with the host's existing Ollama and the
   approved digests, until he revokes it. That supersedes the venue part of
-  D2(A) for gavel. Results from there are labelled "human-authorized local
-  PJU, NOT EC pool"; the round-0, round-1, M4 wave-1 and round-2 results stay
-  「未驗收」.
+  D2(A) for gavel on LAPTOP-01AGNPJU. Results from there are labelled
+  "human-authorized local PJU, NOT EC pool"; the round-0, round-1, M4 wave-1
+  and round-2 results stay 「未驗收」.
 - The digest gavel pins and checks is the Ollama manifest digest that
   `/api/tags` reports (approved-models.json `manifest_digest`), not a model
   file (GGUF) sha256.

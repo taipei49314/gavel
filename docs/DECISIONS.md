@@ -214,6 +214,8 @@ Notes:
 
 Nelson's later messages in the same takeover session, quoted verbatim with their UTC times.
 
+Times are when each message reached the session; the 09:47:21Z message was queued at 09:46:50Z and the 09:49:47Z message at 09:49:42Z, each delivered when Nelson interrupted a pending step; the repeat send is dated by its queue time.
+
 **2026-10-15T09:47:21Z** 「等等我確認一下 你現在工作的機台是哪一台?」: Wait, let me check: which machine are you working on now? The assistant answered that it was on LAPTOP-01AGNPJU.
 
 **2026-10-15T09:48:06Z** 「那如果是pju可以繼續執行了 我要離開的是518」: Then, if it is PJU, it can carry on; the one I am leaving is 518. 「518」 is LAPTOP-16NUA5I8: the computer Nelson was leaving was LAPTOP-16NUA5I8, not LAPTOP-01AGNPJU.
@@ -248,6 +250,7 @@ What it does not cover:
 - retroactive acceptance of earlier work-machine exam results.
 
 Effect on earlier decisions:
-- For gavel, it supersedes the venue part of D2(A) (execution only through EC pool workloads, the judge only on a pool host Nelson names), and with it the proposal to remove the LAPTOP-01AGNPJU pin from SPEC §1 (`docs/proposals/spec-clarifications.md`).
-- D1(a) is unchanged. Round-2 stays closed as INCOMPLETE, and the round-0, round-1, M4 wave-1 and round-2 exam results stay 未驗收. No judge is qualified. D1(a)'s words "a round-3 run on the EC pool" named the venue D2(A) had set; v0.1.0 stays frozen until round-3 passes, and its release then needs Nelson's separate authorization (D5(a)).
+- For gavel on LAPTOP-01AGNPJU, it supersedes the venue part of D2(A) (execution only through EC pool workloads, the judge only on a pool host Nelson names), and with it the proposal to remove the LAPTOP-01AGNPJU pin from SPEC §1 (`docs/proposals/spec-clarifications.md`); on any other host D2(A)'s EC pool route still applies.
+- D1(a) is unchanged. Round-2 stays closed as INCOMPLETE, and the round-0, round-1, M4 wave-1 and round-2 exam results stay 未驗收. No judge is qualified. D1(a) keeps v0.1.0 frozen "until a round-3 run on the EC pool passes"; Nelson has not said whether a round-3 pass on LAPTOP-01AGNPJU meets that condition. That is his decision, as are the qualification verdict and the acceptance of results (EC POLICY `gavel-pju-execution`), and any release needs his separate authorization (D5(a)).
 - The 09:41:31Z acceptance above still covers the T-540 session results only.
+- This answers the round-3 venue item in the 09:41:31Z notes above (「round3 用pju」 at 09:48:43Z, with the standing authorization of 09:49:47Z). Approval of the round-3 design and lock, and the new sealed paper from a model family gavel has never used, are still open.

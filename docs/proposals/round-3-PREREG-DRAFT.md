@@ -3,7 +3,9 @@
 - Status: **DRAFT**, written 2026-10-15 by the takeover agent on branch
   `fix/exam-validity`, and revised the same day on branch `docs/pju-venue`
   for the venue Nelson set: LAPTOP-01AGNPJU under EC POLICY
-  `gavel-pju-execution` (docs/DECISIONS.md, 2026-10-15T09:49:47Z). Nothing in
+  `gavel-pju-execution` (docs/DECISIONS.md: 「round3 用pju」 at
+  2026-10-15T09:48:43Z, authorized by
+  「這個專案授權使用pju跑 因為所有資源都在pju」 at 09:49:47Z). Nothing in
   this file is locked, approved or in force. Every `<TO-LOCK>` value is
   decided at the lock.
 - Lock procedure: Nelson approves the final text and the lock in his own words
@@ -12,12 +14,13 @@
   next addendum and pushed before any round-3 judgment (section 8). PREREG.md
   stays append-only.
 - Round-2 is not changed by anything here. Its status of record is INCOMPLETE
-  on both papers (decision D1(a), adopted by Nelson on 2026-10-15), and the
-  round-0, round-1, M4 wave-1 and round-2 results produced on the work machine
-  LAPTOP-01AGNPJU stay 「未驗收」; the standing authorization does not accept
-  them retroactively. v0.1.0 stays frozen until round-3 passes
-  (Addendum 3: 「重考；PASS 前不發」), and its release then needs Nelson's
-  separate authorization (D5(a)).
+  on both papers (decision D1(a), adopted by Nelson on 2026-10-15), and every
+  result produced on the work machine LAPTOP-01AGNPJU except the T-540
+  session results Nelson accepted at 09:41:31Z stays 「未驗收」; the standing
+  authorization does not accept them retroactively. v0.1.0 stays frozen
+  (Addendum 3: 「重考；PASS 前不發」; D1(a): until a round-3 run on the EC pool
+  passes); whether a round-3 pass on LAPTOP-01AGNPJU unfreezes it is Nelson's
+  decision, and any release needs his separate authorization (D5(a)).
 
 ## 0. Disclosure: this design is motivated by round-2's problems
 
@@ -30,7 +33,7 @@ below answers a problem found in round-2 by the 2026-10-15 takeover audit
 | Four re-attempts (CW-A07 fast; SP-004 fast; SP-007 fast twice) that no addendum provided for, plus two calls that left no receipt; evaluation took the last record per cell (CR-01, R2-01, R2-03) | Harness-only attempt rule fixed before the run (section 4) |
 | The re-attempts ran after Ollama had upgraded itself from 0.35.0 to 0.40.4 (03:37-03:38 +0800 on 2026-10-15) | Runtime pinned to 0.40.4 in every manifest and receipt; a judgment on any other version is UNAUDITED; freezing the host's automatic updates needs Nelson's separate OK (sections 1 and 2) |
 | The expected judgment matrix was derived from the run itself (CR-10) | Locked manifests with case sha256s; evaluate reads the matrix from the manifest only (section 5) |
-| The sealed answer key was public on GitHub from 2026-10-14T15:35:56Z, before the sealed run, and the informed arm ran an agent CLI in the repository's working directory (F3, CR-09) | Salted hash-only commitment; key off-repo, out of the gavel checkout and out of any directory a judge arm can read until reveal; informed arm excluded (sections 3, 5 and 6) |
+| The sealed answer key was public on GitHub from 2026-10-14T15:35:56Z, before the sealed run, and the informed arm ran an agent CLI in the repository's working directory (F3, CR-09) | Salted hash-only commitment; key off-repo and off the exam host LAPTOP-01AGNPJU until reveal; informed arm excluded (sections 3, 5 and 6) |
 | Evidence text could close its own anchor block (ATK-009) (CR-04) | Anchor v2 (section 1) |
 | The approved-models gate was not called on the exam path (CR-02, F4) | Checked on every judgment, before and after the call (section 1) |
 | Receipts were not unique and did not bind run, time or host; raw output was dropped on UNAUDITED (R2-12, CR-06, CR-07, GOV-12) | Receipt v3, hash-chained, with host and runtime (section 1) |
@@ -48,7 +51,7 @@ below answers a problem found in round-2 by the 2026-10-15 takeover audit
 | Receipts | v3: receipt_id over the whole body, hash chain, host, Ollama version, pin before and after, the approved-models file that approved the pin (name and sha256), options, generation counts, raw output kept on UNAUDITED. `gavel evaluate` and `gavel score-sealed` re-render each receipt's locked case file and refuse a receipt whose anchor does not match it |
 | Primary arm | `qwen3.5:35b-a3b`, manifest digest `3460ffeede5453ead027dbd2f821b12ad0aa3de54630971993babdb2165221f7` |
 | Fast arm | `qwen3.5:9b`, manifest digest `6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7` |
-| Runtime | Ollama `0.40.4`, the version on LAPTOP-01AGNPJU (observed 2026-10-15 in the T-540 session, `/api/version`), pinned in every manifest (`runtime.ollama_version`). `gavel exam` refuses a paper at preflight when the daemon reports another version, and a judgment on any other version, or one whose version changes during the call, is UNAUDITED. This Ollama has updated itself once: from 0.35.0 to 0.40.4 at 2026-10-14T19:38:00Z (03:38 +0800 on 2026-10-15), between round-2's main run and its re-attempts. Freezing it for the round, so that it cannot update itself, is an Ollama configuration change and needs Nelson's separate OK (EC POLICY `gavel-pju-execution`); without a freeze, an update during the round leaves the remaining judgments UNAUDITED. Round-2's main run used 0.35.0; round-3 does not go back to it, since installing another version also needs Nelson's separate OK |
+| Runtime | Ollama `0.40.4`, the version on LAPTOP-01AGNPJU (observed 2026-10-15 in the T-540 session, `/api/version`), pinned in every manifest (`runtime.ollama_version`). `gavel exam` refuses a paper at preflight when the daemon reports another version, and a judgment on any other version, or one whose version changes during the call, is UNAUDITED. This Ollama updates itself: its app logs on the host (`%LOCALAPPDATA%\Ollama\app*.log`, which go back to 2026-09-30) record two automatic upgrades, from 0.34.4 to 0.35.0 at 19:53-19:54 +0800 on 2026-10-01, and from 0.35.0 to 0.40.4 at 03:37-03:38 +0800 on 2026-10-15 (0.40.4 started at 03:38:00 +0800, 2026-10-14T19:38:00Z, as in `results/round-2/provenance/README.md`), the second between round-2's main run and its re-attempts. Freezing it for the round, so that it cannot update itself, is an Ollama configuration change and needs Nelson's separate OK (EC POLICY `gavel-pju-execution`); without a freeze, an update during the round leaves the remaining judgments UNAUDITED. Round-2's main run used 0.35.0; going back to it would mean installing another Ollama version, which needs Nelson's separate OK; this draft does not propose it |
 | Options | `temperature 0`, `num_ctx 16384`; `seed` `<TO-LOCK: unset or a fixed value>`. A prompt that fills the context, a length stop, a reported truncation or a response without a positive `prompt_eval_count` is UNAUDITED. The guard trusts the daemon's count; whether the pinned runtime counts a prompt short when it reuses cached tokens is measured by the pre-lock smoke run and settled at the lock (section 2) |
 | Approval check | approved-models.json at the repository root, checked on every judgment; the model digest and the Ollama version are read before and after each call and must not change. The file's name and sha256 are recorded in results.json and in every receipt the check passed, and they must be the lock commit's file (section 2) |
 | Harness | gavel at the lock commit `<TO-LOCK: SHA>` |
@@ -185,16 +188,18 @@ INCOMPLETE, and an INCOMPLETE paper is never scored (Addendum 4:
   paper); Gemini (the informed arm); Claude (this takeover, the harness fixes
   and this draft). Nelson
   names the family and launches the authoring session on a host he chooses,
-  with the brief kept outside the repository.
+  with the brief kept outside the repository. Writing the sealed paper with
+  an agent CLI or model on LAPTOP-01AGNPJU is outside EC POLICY
+  `gavel-pju-execution` and needs Nelson's separate OK.
 - The author never sees gavel's prompt, harness, cases or results.
 - Proposed size `<TO-LOCK>`: 12 to 20 cases, at least 5 contrastive pairs and
   at least 2 controls, both views (diff and ledger), expected verdicts attack
   or clean only.
 - Case files are committed at the lock with their sha256 in the manifest. The
   answer key stays off-repo, with Nelson, until reveal: never in the
-  repository, never in the gavel checkout on LAPTOP-01AGNPJU, never in any
-  arm's working directory, and never in any directory a judge arm can read,
-  before reveal.
+  repository, never on LAPTOP-01AGNPJU (the exam host, including the gavel
+  checkout), never in any arm's working directory, and never in any directory
+  a judge arm can read, before reveal.
 - Commitment (salted, so that a short key cannot be found by trying every
   combination): `COMMITMENT.md` publishes each case file's sha256 and
   `C = sha256(b"gavel-round-3-sealed-key-v1\n" + salt + b"\n" + key.json)`,
@@ -236,7 +241,8 @@ The verdict and any v0.1.0 release are Nelson's.
   the lock commit in a virtual environment built from `uv.lock`; its outputs
   reach the repository by PR (pushes need Nelson's OK, AGENTS.md rule 9).
 - Paths and sha256 at the lock commit: `gavel/qualify.py` `<TO-LOCK>`,
-  `gavel/sealed.py` `<TO-LOCK>`, `gavel/cli.py` `<TO-LOCK>`.
+  `gavel/sealed.py` `<TO-LOCK>`, `gavel/cli.py` `<TO-LOCK>`, and the runner
+  script proposed in section 2, `<runner script path>` `<TO-LOCK>`.
 
 ## 8. Time anchors
 
@@ -244,8 +250,9 @@ The verdict and any v0.1.0 release are Nelson's.
    approved-models.json and the harness) is pushed to GitHub before any
    round-3 judgment. GitHub's server-side push event time is the lock anchor;
    the host clock is not.
-2. Nelson approves the lock (the lock text, the manifests, COMMITMENT.md and
-   the harness commit) before the first round-3 judgment.
+2. Nelson approves the lock (the lock text, the manifests, COMMITMENT.md, the
+   harness commit and the runner script's sha256) before the first round-3
+   judgment.
 3. Each paper runs on LAPTOP-01AGNPJU after the lock anchor. Its receipts
    carry that host's clock, which is not a server-side time; how a paper's
    start and end are anchored to server-side times is `<TO-LOCK>` (proposal:
@@ -266,15 +273,15 @@ The verdict and any v0.1.0 release are Nelson's.
 
 ## 10. Decisions left for the lock (Nelson)
 
-The venue is no longer open: Nelson set it on 2026-10-15 (LAPTOP-01AGNPJU,
-EC POLICY `gavel-pju-execution`).
+The venue is no longer open: Nelson set it on 2026-10-15 with 「round3 用pju」
+at 09:48:43Z (LAPTOP-01AGNPJU, EC POLICY `gavel-pju-execution`).
 
 1. Whether to freeze Ollama 0.40.4 on LAPTOP-01AGNPJU for the round (stop its
    automatic updates). This is an Ollama configuration change and needs his
    separate OK; without it, an update during the round leaves the remaining
    judgments UNAUDITED.
-2. The runtime pin (0.40.4, read again from the daemon at the lock) and the
-   seed option.
+2. The runtime pin (0.40.4, as recorded by the committed harness in the
+   receipts of the pre-lock smoke run) and the seed option.
 3. The gating arm, and completeness option (A) or (B).
 4. The sealed author's model family; N's size.
 5. The K and N bars.
@@ -284,5 +291,6 @@ EC POLICY `gavel-pju-execution`).
 7. How the `gavel-exam` checks and the one-run-per-paper record are enforced
    on LAPTOP-01AGNPJU (section 2 and section 4), and how each paper's run is
    anchored in time (section 8).
-8. Approval of the lock text, the manifests, COMMITMENT.md and the harness
-   commit.
+8. Approval of the lock text, the manifests, COMMITMENT.md, the harness
+   commit and the runner script's path and sha256 (in place of the
+   `gavel-exam` entry sha256).
