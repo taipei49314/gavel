@@ -162,3 +162,50 @@ Nelson's messages in the takeover session (Claude Code on LAPTOP-01AGNPJU), quot
 3. **D3(a) EC tasks.** EC rows T-537, T-538 and T-539 were retired as CANCELLED on 2026-10-15 (EC commits ed2064ee0, 784e29103 and b3b5f73f5; evidence `evidence/requests/29499990-6719-4a7a-8b2e-0599b98b5246/gavel-disposition-20261015.md` in the private EC repository). gavel follow-up lives in taipei49314/gavel.
 4. **D4(a) Agent rules.** The work-machine rule was added to the ZCode client's user rule file and refreshed in the other agent CLIs' rule files.
 5. **D5(a) Publication.** Changes are published in batches. Each push and PR needs Nelson's named OK; merges stay with Nelson, or with an agent for a PR he names; tags and releases are authorized separately. Batch 1, this status correction, was approved with this decision.
+
+## 2026-10-15 (afternoon and evening)
+
+Nelson's later messages in the same takeover session, quoted verbatim with their UTC times.
+
+**2026-10-15T06:45:26Z**, one message answering five open items:
+
+```
+1.可以代合
+2.我zcode那邊不會再用了 當作不存在就好
+3.推
+4.用pju 我知道不行 但這次授權
+5.不啟用
+```
+
+1. The agent may merge PR #1. It was merged as `9d5d96d`.
+2. The ZCode client will not be used again; treat it as nonexistent.
+3. Publish batch 2. This is PR #2.
+4. Run on LAPTOP-01AGNPJU. The message acknowledges the work-machine rule and gives a one-time authorization. For that one session only, it replaces the pool-host route of D2(A).
+5. Do not enable the ZCode guard hook.
+
+**2026-10-15T06:55:07Z** Scope of item 4. Asked how far "this time" reaches, Nelson chose 「驗證 batch 2＋裁判冒煙 (Recommended)」:
+- a locked virtual environment;
+- the full test suite at PR #2's exact head;
+- `gavel verify --content` on the committed receipts;
+- round-2 table regeneration;
+- a judge smoke on the three smoke cases only.
+
+Excluded: exam papers, round-3, the informed arm, agy and codex.
+
+How it was recorded and run:
+- It was recorded in the private EC repository before any run, as the one-time POLICY row `gavel-pju-verify-once-20261015` (task T-540, EC commit `2d8f51534`).
+- The session ran from 06:58:44Z to 07:10:29Z at `4927436d`:
+  - 445 tests, with 0 failures, 0 errors and 0 skips;
+  - `verify --content` OK on all six committed receipts files (287 receipts);
+  - round-2 regeneration byte-identical at two hash seeds; as locked, both papers are INCOMPLETE, which matches D1(a); as reported, the committed `report.json` files are reproduced;
+  - judge smoke on Ollama 0.40.4 with both manifest digests verified: 12/12 judgments valid, the three primary runs identical for every case, no truncation.
+- The results are labelled "human-authorized local PJU, NOT EC pool". The grant was consumed (`05b32cf66`) and T-540 closed (`170a8976b`). Raw evidence is in the EC task.
+
+**2026-10-15T09:41:31Z** 「可以合 結果接受 round3 我會在另一台電腦準備」: Merge PR #2. The results are accepted. Nelson will prepare round-3 on another computer.
+
+Notes:
+- The acceptance covers the T-540 session results above, nothing else. Under D1(a), the round-0, round-1, M4 wave-1 and round-2 exam results stay 未驗收, and no judge is qualified. v0.1.0 stays frozen.
+- Round-3 still needs Nelson to:
+  - approve its design and lock (`docs/proposals/round-3-PREREG-DRAFT.md`);
+  - name its venue, with a new authorization if that is a work machine;
+  - commission a new sealed paper from a model family gavel has never used.
