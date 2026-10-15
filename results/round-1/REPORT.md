@@ -62,3 +62,10 @@ ledger-structure-evasion（R7/R9、AGREE-A03c）、other（AGREE-A02c）。
 - 未變更任何考卷／及格線／釘版（round-1 唯一變數＝prompt 一條規則，見 Addendum 3）。
 - 未處理 fast 臂剩餘 2 案分歧（CW-A08、LW-R9——9b 較弱符合 PREREG 預期，僅入帳）。
 - B 級 6/6 全 flag 的 calibration 語意（越界偵測 vs by-design 噪音）留待 M4 後併入 spec 檢討。
+
+## Acceptance status (2026-10-15)
+
+- The 58 receipts in `receipts.jsonl` (2026-10-14T11:09:25Z–13:01:16Z) were produced on work machine LAPTOP-01AGNPJU: the recorded pins (`3460ffee…`, `6488c96f…`) match the Ollama manifests on that host, the Ollama server log on that host matches the receipt times, and `SPEC.md` line 18 pins the judge to that host.
+- EC POLICY work-machine-local, active since 2026-09-30, says: 「2026-09-22 之後在工作機產生的結果是「未驗收」，要當依據須在 pool 重做，或由人類明文接受。」 These results have not been redone on the pool, so they are 未驗收.
+- Nelson's disposition of 2026-10-15 (D1(a), `docs/DECISIONS.md`) keeps them unaccepted.
+- The headline 「OVERALL: PASS——裁判取得資格。」 and the 「資格聲明」 section above are not a qualification of record. No judge is qualified, and v0.1.0 stays frozen until a round-3 run on the EC pool passes.
