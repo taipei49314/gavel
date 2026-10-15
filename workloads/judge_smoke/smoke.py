@@ -1,11 +1,11 @@
 """DRAFT, NOT FOR APPROVAL: judge-smoke helper (runs inside the judge-smoke job only).
 
 Judges the synthetic smoke cases (smoke/SMOKE-*.json; PREREG procedure 1: never
-exam material) with the primary arm only, RUNS times each, through
-gavel.qualify.judge_case, the single judgment path of exam and scan (live pin,
-approved-models check, pinned Ollama version, strict parsing, truncation
-guards). Every judgment is written as a v3 receipt; there are no re-attempts,
-because the smoke run measures how often a judgment fails.
+exam material) with one local arm (--arm, primary by default), RUNS times
+each, through gavel.qualify.judge_case, the single judgment path of exam and
+scan (live pin, approved-models check, pinned Ollama version, strict parsing,
+truncation guards). Every judgment is written as a v3 receipt; there are no
+re-attempts, because the smoke run measures how often a judgment fails.
 
 Writes under --out: receipts.jsonl, smoke.json (per-judgment seconds, token
 counts, done_reason, memory placement from /api/ps, UNAUDITED reasons) and
@@ -19,6 +19,12 @@ with run 1, and any run whose count differs is flagged and fails the smoke.
 Every prompt also shares the instruction header, so even run 1 of a later
 case may be counted after a cached prefix; the headroom figure is only as
 good as the counts, and the lock must settle how the pinned runtime counts.
+
+--cold-first settles it on the host: before run 1 of each case the arm's
+model is unloaded (keep_alive 0) and loaded again with the same options, so
+run 1 starts from an empty prompt cache while runs 2..n repeat a prompt the
+runner has just cached. A count that does not depend on the cache is the same
+in every run; the reload's seconds are recorded apart from the judgment's.
 """
 
 from __future__ import annotations
@@ -51,6 +57,35 @@ def ps(base_url: str):
         return None
 
 
+def post(base_url: str, path: str, payload: dict, timeout: float) -> dict:
+    request = urllib.request.Request(f"{base_url}{path}",
+                                     data=json.dumps(payload).encode("utf-8"),
+                                     headers={"Content-Type": "application/json"},
+                                     method="POST")
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def reload_cold(base_url: str, model: str, timeout: float) -> float:
+    """Unload model, wait until /api/ps no longer lists it, then load it again
+    with the judgment options (another num_ctx would make the daemon reload it
+    on the next call). Returns the seconds the load took."""
+    post(base_url, "/api/generate", {"model": model, "keep_alive": 0}, timeout)
+    deadline = time.monotonic() + 120
+    while True:
+        listed = ps(base_url)
+        if listed is None:
+            raise RuntimeError("/api/ps unavailable while waiting for the unload")
+        if not any(m["name"] == model for m in listed):
+            break
+        if time.monotonic() > deadline:
+            raise RuntimeError(f"{model} still loaded 120 s after the unload request")
+        time.sleep(1)
+    started = time.monotonic()
+    post(base_url, "/api/generate", {"model": model, "options": DEFAULT_OPTIONS}, timeout)
+    return round(time.monotonic() - started, 3)
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", required=True)
@@ -58,24 +93,31 @@ def main(argv=None) -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--timeout", type=float, default=1800.0)
+    parser.add_argument("--arm", default="primary",
+                        choices=[name for name, spec in ARMS.items()
+                                 if spec["transport"] == "ollama"])
+    parser.add_argument("--cold-first", action="store_true")
     args = parser.parse_args(argv)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=False)
-    model = ARMS["primary"]["model"]
+    model = ARMS[args.arm]["model"]
     log = ReceiptLog(out / "receipts.jsonl")
     judgments = []
     for path in sorted((ROOT / "smoke").glob("SMOKE-*.json")):
         case = strict_loads(path.read_bytes().decode("utf-8"))
         for run in range(1, args.runs + 1):
+            cold = args.cold_first and run == 1
+            load_seconds = reload_cold(args.base_url, model, args.timeout) if cold else None
             started = time.monotonic()
             result = judge_case(case, model, args.base_url, args.timeout,
                                 pinned_runtime={"ollama_version": args.ollama_version})
             seconds = round(time.monotonic() - started, 3)
-            receipt = log.append(build_receipt(case_id=case["case_id"], arm="primary", run=run,
+            receipt = log.append(build_receipt(case_id=case["case_id"], arm=args.arm, run=run,
                                                attempt=1, judgment=result))
             generation = result.get("generation") or {}
             judgments.append({
                 "case_id": case["case_id"], "run": run, "seconds": seconds,
+                "cold": cold, "load_seconds": load_seconds,
                 "receipt_id": receipt["receipt_id"], "unaudited": result["unaudited"],
                 "verdict": result["verdict"], "raw_sha256": (
                     None if result["raw"] is None else
@@ -108,6 +150,7 @@ def main(argv=None) -> int:
     headroom = [j["num_ctx"] - j["prompt_eval_count"] for j in judgments
                 if isinstance(j["num_ctx"], int) and isinstance(j["prompt_eval_count"], int)]
     summary = {
+        "arm": args.arm, "cold_first": args.cold_first,
         "model": model, "options": DEFAULT_OPTIONS, "judgments": len(judgments),
         "valid": len(valid), "unaudited": [j for j in judgments if j["unaudited"]],
         "seconds": {"min": min(j["seconds"] for j in judgments),
