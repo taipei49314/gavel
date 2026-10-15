@@ -39,13 +39,13 @@ below answers a problem found in round-2 by the 2026-10-15 takeover audit
 |---|---|
 | Prompt | v4, unchanged (`PROMPT_VERSION = 4`); instruction header sha256 `<TO-LOCK: from gavel-verify out/round2/seed-1/versions.json>` |
 | Verdict schema | v2 (attack, clean, inconclusive; four-part anatomy for attack), closed list of 11 mechanism classes, strict JSON parsing (CR-17) |
-| Anchor | v2 (`ANCHOR_VERSION = 2`): `<<<GAVEL` inside evidence is written as `<<<GAVEL!`; END markers repeat the block id and sha256. This changes the judge's input relative to round-2, which is why it needs a new round (PREREG procedure 3: 「揭曉後禁調 prompt／threshold；要改＝round 1、新 PREREG」) |
-| Receipts | v3: receipt_id over the whole body, hash chain, host, Ollama version, pin before and after, options, generation counts, raw output kept on UNAUDITED |
+| Anchor | v2 (`ANCHOR_VERSION = 2`): `<<<GAVEL` inside evidence, in any ASCII letter case, gets a `!` appended (`<<<GAVEL!`, `<<<gavel!`); END markers repeat the block id and sha256. The parser accepts only what the renderer writes. Limit: Unicode look-alikes of the marker (fullwidth or Cyrillic characters, zero-width characters) are not escaped, so the guarantee that a block closes only at its own END marker holds for the parser and receipt verification, not for what the model may take for a marker. This changes the judge's input relative to round-2, which is why it needs a new round (PREREG procedure 3: 「揭曉後禁調 prompt／threshold；要改＝round 1、新 PREREG」) |
+| Receipts | v3: receipt_id over the whole body, hash chain, host, Ollama version, pin before and after, the approved-models file that approved the pin (name and sha256), options, generation counts, raw output kept on UNAUDITED. `gavel evaluate` and `gavel score-sealed` re-render each receipt's locked case file and refuse a receipt whose anchor does not match it |
 | Primary arm | `qwen3.5:35b-a3b`, manifest digest `3460ffeede5453ead027dbd2f821b12ad0aa3de54630971993babdb2165221f7` |
 | Fast arm | `qwen3.5:9b`, manifest digest `6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7` |
 | Runtime | Ollama `<TO-PIN>` (portable Windows zip, sha256 `<TO-PIN>`), pinned in every manifest (`runtime.ollama_version`); a judgment on any other version is UNAUDITED. Round-2's main run used 0.35.0; whether it is still obtainable is open |
-| Options | `temperature 0`, `num_ctx 16384`; `seed` `<TO-LOCK: unset or a fixed value>`. A prompt that fills the context, a length stop or a reported truncation is UNAUDITED |
-| Approval check | approved-models.json at the repository root, checked on every judgment; the model digest and the Ollama version are read before and after each call and must not change |
+| Options | `temperature 0`, `num_ctx 16384`; `seed` `<TO-LOCK: unset or a fixed value>`. A prompt that fills the context, a length stop, a reported truncation or a response without a positive `prompt_eval_count` is UNAUDITED. The guard trusts the daemon's count; whether the pinned runtime counts a prompt short when it reuses cached tokens is measured by judge-smoke and settled at the lock (section 2) |
+| Approval check | approved-models.json at the repository root, checked on every judgment; the model digest and the Ollama version are read before and after each call and must not change. The file's name and sha256 are recorded in results.json and in every receipt the check passed, and the `gavel-exam` job requires them to be the committed file's |
 | Harness | gavel at the lock commit `<TO-LOCK: SHA>` |
 
 If the registry no longer serves either approved digest, or judge-smoke shows
@@ -65,7 +65,12 @@ needs Nelson's decision and requalification under its own lock.
 - Precondition for the lock: judge-smoke has passed on that host with the
   pinned runtime. Its timings fix the per-judgment timeout and show whether
   each paper fits in one 700-minute job. A paper that does not fit is split
-  into smaller manifests at the lock; a paper is never resumed.
+  into smaller manifests at the lock; a paper is never resumed. judge-smoke
+  also records `prompt_eval_count` over three runs of each case and fails if
+  a later run reports a different count than run 1 (a cached prompt counted
+  short would blind the truncation guard); if it does, the lock needs a
+  remedy (for example a check that does not rely on the daemon's count)
+  before any paper runs.
 
 ## 3. Arms
 
@@ -98,11 +103,15 @@ needs Nelson's decision and requalification under its own lock.
 - Every attempt is receipted in one hash-chained v3 receipts file per paper;
   results.json records the chain head and count, and `gavel verify --content
   --results` checks them. Every re-attempted cell is listed in the report.
-- No operator re-runs. Each paper is dispatched once. If a dispatch ends before
-  its first receipt (the preflight refused, or the host was unavailable),
-  nothing was judged and the same paper may be dispatched again. Once any
-  receipt exists, that chain is the paper's only record: a paper that ends
-  without resolving every cell is INCOMPLETE and is not run again in round-3.
+- No operator re-runs. Each paper is dispatched once; the dispatch record
+  (EC ledger row and private receipt ref) enforces that. `gavel exam` only
+  refuses an output directory that already holds a run, and creates
+  results.json first as a "started" marker, so a run that stops part-way is
+  visible. If a dispatch ends before its first receipt (the preflight
+  refused, or the host was unavailable), nothing was judged and the same
+  paper may be dispatched again. Once any receipt exists, that chain is the
+  paper's only record: a paper that ends without resolving every cell is
+  INCOMPLETE and is not run again in round-3.
 - The runtime stays fixed for the round; a version or digest change during a
   judgment makes it UNAUDITED.
 
@@ -222,5 +231,7 @@ The verdict and any v0.1.0 release are Nelson's.
 3. The gating arm, and completeness option (A) or (B).
 4. The sealed author's model family; N's size.
 5. The K and N bars.
-6. The per-judgment timeout and any paper split, from judge-smoke timings.
+6. The per-judgment timeout and any paper split, from judge-smoke timings;
+   and, from the same run, whether the pinned runtime's `prompt_eval_count`
+   can be trusted by the truncation guard.
 7. Approval of the lock text, the manifests and the `gavel-exam` entry hash.

@@ -31,6 +31,7 @@ import re
 from pathlib import Path
 
 from . import __version__
+from .judge import strict_loads
 from .qualify import evaluate, resolve_attempts, runs_for
 
 KEY_VERDICTS = ("attack", "clean")
@@ -138,8 +139,9 @@ def _finish_key(cases: dict, pairs: dict) -> dict:
 
 
 def load_answer_key(path) -> dict:
-    """Load an answer key file (.json, otherwise the SEALED-PREREG.md format).
-    Adds "file" (the name) and "sha256" (of the bytes)."""
+    """Load an answer key file (.json, read with judge.strict_loads; otherwise
+    the SEALED-PREREG.md format). Adds "file" (the name) and "sha256" (of the
+    bytes)."""
     path = Path(path)
     try:
         raw = path.read_bytes()
@@ -148,11 +150,12 @@ def load_answer_key(path) -> dict:
         raise AnswerKeyError(f"answer key unreadable: {path.name}: {type(exc).__name__}") from exc
     if path.suffix.lower() == ".json":
         try:
-            key = parse_answer_key_json(json.loads(text))
+            key = parse_answer_key_json(strict_loads(text))
         except ValueError as exc:
             if isinstance(exc, AnswerKeyError):
                 raise
-            raise AnswerKeyError(f"answer key is not valid JSON: {path.name}") from exc
+            raise AnswerKeyError(f"answer key is not valid JSON (duplicate keys and "
+                                 f"NaN/Infinity are refused): {path.name}: {exc}") from exc
     else:
         key = parse_answer_key_markdown(text)
     key["file"] = path.name

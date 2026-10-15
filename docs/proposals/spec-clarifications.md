@@ -50,9 +50,10 @@ Proposed §1 text, in substance:
 > LAPTOP-01AGNPJU pin is removed.
 
 Implemented on this branch: receipt v3 records host, transport and Ollama
-version, the pin before and after each call, options and generation counts;
-judge_case checks approved models on every judgment and refuses a changed
-digest or version.
+version, the pin before and after each call, options and generation counts,
+and the name and sha256 of the approved-models file that approved the pin
+(also in results.json); judge_case checks approved models on every judgment
+and refuses a changed digest or version.
 
 ## §4 Receipts and replay: correction
 
@@ -64,6 +65,9 @@ to reproduce a receipt. `gavel verify` checks receipts offline without a
 model: structure, the v3 hash chain and receipt ids, with `--content` the
 embedded prompt and anchor texts and a re-parse of the raw output, and with
 `--results` or `--expect-head` / `--expect-count` a cut or extended tail.
+`gavel evaluate` and `gavel score-sealed` also re-render each receipt's
+locked case file and require the receipt's anchor to match it, so a receipt
+that judged other evidence is refused. None of this re-runs the model.
 PREREG Addendum 4 already called replay 「獨立功能，另令執行」.
 
 Proposed note: replay is **not implemented**. `gavel verify` is offline
@@ -77,19 +81,34 @@ and 「任何 UNAUDITED 永不映射 exit 0。」
 
 At d0cb1dc, `scan` returned 0 for verdict inconclusive and for an arm
 disagreement of clean against inconclusive (CR-05). Spec 0 gives 0 only to a
-clean result on which both local arms agree, so this branch maps:
+clean result on which both local arms agree, and §6 says the informed arm's
+result 「只入帳、不覆寫本地 verdict」, so this branch maps:
 
 | exit | scan result |
 |---|---|
-| 0 | primary and fast both ran and returned valid clean verdicts (so they agree), and every opt-in arm that ran did too |
-| 1 | any attack, any inconclusive, or arms that disagree |
-| 2 | any arm without a valid verdict, a required arm not selected, or input that cannot be judged; UNAUDITED wins over findings |
+| 0 | primary and fast both ran and returned valid clean verdicts (so they agree) |
+| 1 | primary or fast returned attack or inconclusive, or the two disagree |
+| 2 | any arm without a valid verdict (an opt-in arm included, see below), a required arm not selected, or input that cannot be judged; UNAUDITED wins over findings |
+
+A valid verdict of an opt-in arm (informed) never changes the code: it is
+printed, receipted and listed in the reasons as `recorded only:
+informed=<verdict>`. `tools/tally_attack.py` follows the same rule for
+"gate released".
 
 This needs no spec change; SPEC.md can carry it as a clarifying note. The
 UNAUDITED conditions listed in §5 are also made concrete on this branch:
-daemon and transport errors (CR-14), a full context, a length stop or a
-reported truncation (CR-16), a model digest or Ollama version that changes
-during a judgment, and a missing or malformed approved-models.json.
+daemon and transport errors (CR-14), a full context, a length stop, a
+reported truncation or a response without a positive prompt_eval_count
+(CR-16), a model digest or Ollama version that changes during a judgment, a
+missing or malformed approved-models.json, and input JSON with duplicate keys
+or NaN/Infinity.
+
+One reading is left for Nelson. §5 says 「任何 UNAUDITED 永不映射 exit 0」 and
+§6 says the informed arm's result 「只入帳、不覆寫本地 verdict」. For an opt-in
+arm that ends UNAUDITED while primary and fast agree on clean, the two lines
+point to different codes: 2 under §5, 0 under §6. This branch takes the
+fail-closed reading and exits 2, and lists the question as spec-1 candidate 6
+below.
 
 The new commands have their own codes: `exam` and `evaluate` give 0 PASS,
 1 FAIL, 2 not scored (INVALID_PAPER, INVALID_RECORDS, INCOMPLETE or refused)
@@ -108,9 +127,17 @@ approved-models.json records the instruction as
 「找antigravity cli , 找到gemini4 argon , 列入重考」.
 
 Conformance on this branch: `scan` and `pin` default to primary and fast; the
-informed arm runs only when selected, goes to the agy transport, and can only
-make a scan result stricter, never 0. Exam papers list their arms in the
-locked manifest, and the gating arm must be local.
+informed arm runs only when selected and goes to the agy transport. Its valid
+verdict is recorded only and does not change the scan exit code
+(「結果只入帳、不覆寫本地 verdict」); its UNAUDITED exits 2 (the §5 reading
+above). Exam papers list their arms in the locked manifest, and the gating
+arm must be local.
+
+An earlier commit on this branch (2ee6e88) let the informed arm make a scan
+result stricter (an informed attack, inconclusive or disagreement gave 1).
+That was a change to §6, not conformance with it. The commit "fix/exam-validity:
+apply static review fixes" replaces it with the rule above, on this branch,
+before any of it is published.
 
 Proposed correction note: the informed arm named in §6 is stale; whichever
 cloud arm is used is the one listed in approved-models.json for that round,
@@ -137,3 +164,12 @@ informed arm until a sandboxed transport is verified on the pool
 5. **Identity and sandboxing of a cloud arm**, if one is reinstated: model id,
    transport executable hash and a sandbox requirement before it may judge
    any exam paper.
+6. **An opt-in arm that ends UNAUDITED in scan.** §5
+   「任何 UNAUDITED 永不映射 exit 0」 and §6
+   「結果只入帳、不覆寫本地 verdict」 give different codes when primary and fast
+   agree on clean. This branch exits 2 (fail-closed). Options: keep 2; or
+   read §6 as covering the opt-in arm's UNAUDITED too, so the scan exits 0
+   and the UNAUDITED opt-in result is only recorded.
+7. **Whether an opt-in arm may ever make scan stricter** (an informed attack
+   giving exit 1). Spec 0 does not allow it (§6 above); it would need a
+   spec-1 change named by Nelson.

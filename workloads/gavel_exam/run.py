@@ -15,9 +15,11 @@ Round-3 rules this draft enforces (docs/proposals/round-3-PREREG-DRAFT.md):
 - every arm of the manifest uses the local transport "ollama": the informed
   (agy) arm is excluded, because it is not sandboxed;
 - the manifest pins the Ollama version this job runs, and fixes the options;
+- the committed approved-models.json gated the exam: results.json and every
+  receipt that passed the approval check record its sha256;
 - one dispatch per paper: a paper whose exam wrote any receipt is never run
-  again (the EC ledger row and the private receipt ref are the record).
-  run_paper also refuses an output directory that already holds a run.
+  again (the EC ledger row and the private receipt ref are the record;
+  run_paper only refuses an output directory that already holds a run).
 
 The job succeeds only when the paper is PASS (scored by bars) or COMPLETE
 (external scoring, e.g. a sealed paper scored after reveal) and the receipts
@@ -64,6 +66,30 @@ def check_manifest(path: Path) -> dict:
     return manifest
 
 
+def approved_models_problems(exam_dir: Path, committed_sha256: str) -> list[str]:
+    """The committed approved-models.json must be the file that gated the
+    exam: results.json and every receipt that passed the check name it by
+    sha256 (receipts without a record are judgments the check refused)."""
+    problems = []
+    try:
+        results = json.loads((exam_dir / "results.json").read_text(encoding="utf-8"))
+        recorded = (results.get("approved_models") or {}).get("sha256")
+        if recorded != committed_sha256:
+            problems.append(f"results.json records approved-models sha256 {recorded}, not the "
+                            f"committed {committed_sha256}")
+        with open(exam_dir / "receipts.jsonl", encoding="utf-8") as fh:
+            for lineno, line in enumerate(fh, 1):
+                if not line.strip():
+                    continue
+                approved = json.loads(line).get("approved_models")
+                if approved is not None and approved.get("sha256") != committed_sha256:
+                    problems.append(f"receipts.jsonl:{lineno} was approved by another "
+                                    f"approved-models file ({approved.get('sha256')})")
+    except (OSError, ValueError, AttributeError) as exc:
+        problems.append(f"approved-models record unreadable: {type(exc).__name__}: {exc}")
+    return problems
+
+
 def main() -> int:
     try:
         paths = jc.gate(WORKLOAD)
@@ -105,7 +131,10 @@ def main() -> int:
         record["exam_meaning"] = EXAM_EXIT.get(exam.returncode, "unexpected")
         if exam.returncode not in (0, 3):
             problems.append(f"exam ended {record['exam_meaning']} (exit {exam.returncode})")
+        committed_approved = jc.sha256_file(jc.ROOT / "approved-models.json")
+        record["approved_models_sha256"] = committed_approved
         if (exam_dir / "results.json").is_file():
+            problems.extend(approved_models_problems(exam_dir, committed_approved))
             verify = subprocess.run(
                 [sys.executable, "-X", "utf8", "-B", "-m", "gavel", "verify",
                  str(exam_dir / "receipts.jsonl"), "--content",

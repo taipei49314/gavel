@@ -77,6 +77,14 @@ On one pool host, at one exact commit, with no model:
    byte-identical outputs. The table contents are reported, not gated.
 6. Checks again that the source SHA and the clean checkout are unchanged.
 
+Steps 1-5 share a 25-minute budget inside the 30-minute entry timeout: each
+step's own timeout is cut to the time left, and a step that would start
+after the budget is spent is skipped and recorded as a problem (the run then
+fails), so `result.json` and `SUMMARY.md` are always written before EC ends
+the job. The two step-6 git checks get one more minute of their own. This is
+script behaviour; the entry, and so its sha256 above, is unchanged
+(recomputed after the change: `904bc040…f55a`).
+
 It writes `out/result.json` (source SHA, host, runtime, uv.lock sha256,
 requirements, every command with exit code, duration and output hashes, JUnit
 counts, receipts files and their sha256, round-2 output hashes), `out/suite.xml`,

@@ -5,8 +5,10 @@ pinned Ollama from the cache on a private loopback port and judge the three
 synthetic smoke cases (smoke/SMOKE-*.json, never exam material) with the
 primary arm only, three times each (smoke.py). It measures what the round-3
 lock needs to know about the host: seconds per judgment, determinism over
-three runs at temperature 0, context headroom and truncation, how often a
-judgment is UNAUDITED, and where the model was loaded (/api/ps size_vram).
+three runs at temperature 0, context headroom and truncation, whether
+prompt_eval_count stays the same over repeated runs (a cached prompt
+counted short would blind the truncation guard), how often a judgment is
+UNAUDITED, and where the model was loaded (/api/ps size_vram).
 
 No exam case, no re-attempt, no informed arm. Refuses unless NAMED_HOST and
 the Ollama pins in workloads/judge_common.py are filled in, and never runs on a
@@ -65,7 +67,8 @@ def main() -> int:
             (out / "smoke.stderr").write_bytes(done.stderr)
         if code != 0:
             problems.append(f"smoke.py exit {code}: an UNAUDITED judgment, a nondeterministic "
-                            f"verdict or a truncated output (see smoke/smoke.json)")
+                            f"verdict, a truncated output or a prompt_eval_count that differs "
+                            f"between runs of a case (see smoke/smoke.json)")
     except Exception as exc:  # recorded, then the job fails
         problems.append(f"{type(exc).__name__}: {exc}")
     record["seconds"] = round(time.monotonic() - started, 1)
@@ -87,6 +90,9 @@ def main() -> int:
              f"- Truncation: {json.dumps(smoke.get('truncation', {}).get('min_context_headroom_tokens'))} "
              f"tokens minimum context headroom; length stops: "
              f"{len(smoke.get('truncation', {}).get('done_reason_length', []))}",
+             f"- prompt_eval_count differing from run 1 (KV-cache reuse would hide tokens "
+             f"from the truncation guard): "
+             f"{json.dumps(smoke.get('truncation', {}).get('prompt_eval_count_differs'), sort_keys=True)}",
              "- Smoke cases only; no exam case was judged.", ""]
     lines += [f"- problem: {p}" for p in problems]
     (out / "SUMMARY.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")

@@ -9,20 +9,31 @@ Anchor v2 (takeover audit 2026-10-15, CR-04). In v1 the block content was
 inserted raw, so evidence containing the delimiter text could close its own
 block early and place text outside any block (observed in ATK-009, whose
 diff holds a literal end marker). v2 closes that path:
-- Every occurrence of "<<<GAVEL" inside block content is written as
-  "<<<GAVEL!" (escape_content). The escape is visible and reversible
+- Every occurrence of "<<<GAVEL" inside block content, in any ASCII letter
+  case ("<<<gavel", "<<<Gavel", ...), gets a "!" appended: "<<<GAVEL!",
+  "<<<gavel!" (escape_content). The escape is visible and reversible
   (unescape_content), and escaped content can never contain "<<<GAVEL:",
-  the prefix every real marker starts with.
+  the prefix every real marker starts with, nor a letter-case variant of
+  it.
 - The END marker repeats the block's id and the sha256 of its content, so a
-  block is closed only by its own marker. Evidence cannot carry a matching
-  END marker, because the hash would have to cover the marker itself.
+  block is closed only by its own marker. For parse_anchor (and so for
+  receipt verification), evidence cannot carry a matching END marker,
+  because the hash would have to cover the marker itself.
 - Block ids are percent-encoded (encode_block_id): a file path cannot carry
   a quote, a newline or ">>>" into a marker. Duplicate block ids are an
   error.
 - The sha256 stamps are of the original (unescaped) content, as in v1.
 - parse_anchor() reads a v2 anchor back into (id, content) blocks and checks
-  every stamp, every END marker and the escaping; receipt content
-  verification uses it.
+  the header (exactly "gavel anchor v2", no leading zero), every stamp,
+  every END marker and the escaping; receipt content verification uses it.
+
+What the escaping does not cover (the model-level limit): the guarantees
+above hold for parse_anchor, which matches markers byte for byte. The model
+reads text, not bytes. Unicode look-alikes of the marker (for example
+U+FF1C FULLWIDTH LESS-THAN SIGN, Cyrillic letters that look like Latin ones,
+or zero-width characters inside the word) are not escaped and can look like
+a real marker to the model. The instruction header tells the model to treat
+block content as data; that is an instruction, not a guarantee.
 
 render_case_v1 keeps the v1 renderer unchanged, only to reproduce the anchor
 texts that round-0..2 receipts were written with. It is never used to judge.
@@ -39,13 +50,15 @@ ANCHOR_VERSION = 2
 VIEWS = ("diff", "ledger")
 
 MARKER_PREFIX = "<<<GAVEL:"
-_TOKEN = "<<<GAVEL"
-_ESCAPED_TOKEN = "<<<GAVEL!"
+# The escaped token, in any ASCII letter case (re.ASCII: no Unicode case
+# folding, so exactly the 32 letter-case spellings of "gavel" match).
+_TOKEN_RE = re.compile(r"<<<gavel", re.IGNORECASE | re.ASCII)
+_ESCAPED_RE = re.compile(r"<<<gavel!", re.IGNORECASE | re.ASCII)
 # Characters a block id keeps as-is; everything else is percent-encoded.
 _ID_SAFE = "/:._-~"
-ESCAPE_LEGEND = ('escaping: inside a block, "<<<GAVEL!" stands for the literal text '
-                 '"<<<GAVEL"; a block ends only at the END marker that repeats its id '
-                 'and sha256')
+ESCAPE_LEGEND = ('escaping: inside a block, "<<<GAVEL!" (in any letter case) stands for '
+                 'the literal text "<<<GAVEL" in that letter case; a block ends only at '
+                 'the END marker that repeats its id and sha256')
 
 
 def sha256_text(text: str) -> str:
@@ -53,18 +66,20 @@ def sha256_text(text: str) -> str:
 
 
 def escape_content(content: str) -> str:
-    """Write every "<<<GAVEL" as "<<<GAVEL!" (reversible; see unescape_content).
+    """Append "!" to every "<<<GAVEL", in any ASCII letter case (reversible;
+    see unescape_content).
 
-    The token cannot overlap itself, so the occurrences in the result are
-    exactly the original ones, each now followed by "!"; the result never
-    contains "<<<GAVEL:".
+    The token cannot overlap itself and "!" is not part of it, so the
+    occurrences in the result are exactly the original ones, each now
+    followed by "!"; the result never contains "<<<GAVEL:" or a letter-case
+    variant of it.
     """
-    return content.replace(_TOKEN, _ESCAPED_TOKEN)
+    return _TOKEN_RE.sub(lambda match: match.group(0) + "!", content)
 
 
 def unescape_content(escaped: str) -> str:
     """Inverse of escape_content for any text escape_content produced."""
-    return escaped.replace(_ESCAPED_TOKEN, _TOKEN)
+    return _ESCAPED_RE.sub(lambda match: match.group(0)[:-1], escaped)
 
 
 def encode_block_id(block_id: str) -> str:
@@ -168,7 +183,8 @@ def render_case(case: dict) -> str:
     return header + "\n" + "\n\n".join(blocks)
 
 
-_HEADER = re.compile(r"gavel anchor v(\d+) view=([a-z]+)\n")
+# The version as render_case writes it: no leading zero, no non-ASCII digit.
+_HEADER = re.compile(r"gavel anchor v([1-9][0-9]*) view=([a-z]+)\n")
 _OPEN = re.compile(r'<<<GAVEL:EVIDENCE id="([^"\n]*)" sha256="([0-9a-f]{64})">>>\n')
 
 

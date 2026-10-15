@@ -15,17 +15,26 @@ Exam-validity fixes (takeover audit 2026-10-15):
   escapes as an unhandled exception.
 - CR-16: the context size (num_ctx) is explicit and returned for the receipt;
   a full context (prompt_eval_count >= num_ctx), a length stop or a
-  daemon-reported truncation is UNAUDITED.
+  daemon-reported truncation is UNAUDITED. So is a response without a
+  positive integer prompt_eval_count: without it truncation cannot be
+  excluded. The guard sees only what the daemon reports; if the daemon
+  counts only the prompt tokens it did not take from its cache, a full
+  context can still go unseen (judge-smoke records whether it does).
 - CR-07: UnauditedError carries any raw text the model returned, so the
   receipt can keep it.
 - CR-17: extract_json is strict: the whole output must be one JSON object, or
   exactly one fenced block that is the whole output. extract_json_v2 keeps
-  the round-2 extractor for verifying v2 receipts only.
+  the round-2 extractor for verifying v2 receipts only. strict_loads (no
+  duplicate keys, no NaN/Infinity) also reads every locked input: paper
+  manifests, case files, receipts lines, JSON answer keys, results.json,
+  approved-models.json and daemon responses.
 - CR-02/CR-15/F4: the approved-models manifest defaults to the file at the
   root of the repository that holds this package (never the working
   directory); a missing, unreadable or malformed manifest is UNAUDITED; an
   entry with a null digest approves only an explicitly declared cloud
   transport. The caller (qualify.judge_case) checks it on every judgment.
+  check_approved returns the name and sha256 of the manifest it checked
+  against, which receipts and results.json record.
 - CR-08/CR-09/CR-13: the agy transport resolves and hashes its executable,
   runs it without a shell in an empty temporary directory, guards the
   command-line size, enforces its timeout without blocking on pipes, and
@@ -168,29 +177,37 @@ def default_approved_path() -> Path:
     return Path(__file__).resolve().parent.parent / APPROVED_MODELS_FILENAME
 
 
-def load_approved(approved_path=None) -> dict:
+def read_approved(approved_path=None) -> tuple[dict, dict]:
     """Read the approved-models manifest; None means default_approved_path().
 
-    A missing, unreadable, non-JSON or malformed manifest is UNAUDITED.
-    Reasons name the file, not its directory, because they go into receipts.
+    Returns (manifest, identity), where identity is {"file": the file name,
+    "sha256": sha256 of the bytes that were parsed}. A missing, unreadable,
+    non-JSON (strict_loads) or malformed manifest is UNAUDITED. Reasons name
+    the file, not its directory, because they go into receipts.
     """
     path = Path(approved_path) if approved_path is not None else default_approved_path()
     try:
-        text = path.read_text(encoding="utf-8")
+        raw = path.read_bytes()
+        text = raw.decode("utf-8")
     except (OSError, ValueError) as exc:
         raise UnauditedError(f"approved-models manifest unreadable ({path.name}): "
                              f"{type(exc).__name__}") from exc
     try:
-        data = json.loads(text)
-    except ValueError as exc:
+        data = strict_loads(text)
+    except (ValueError, RecursionError) as exc:
         raise UnauditedError(f"approved-models manifest is not valid JSON ({path.name})") from exc
     if not isinstance(data, dict) or not isinstance(data.get("approved"), list):
         raise UnauditedError(f"approved-models manifest malformed ({path.name}): "
                              f"no 'approved' list")
-    return data
+    return data, {"file": path.name, "sha256": hashlib.sha256(raw).hexdigest()}
 
 
-def check_approved(pin: dict, approved_path=None, transport: str = OLLAMA) -> None:
+def load_approved(approved_path=None) -> dict:
+    """The approved-models manifest (read_approved without the identity)."""
+    return read_approved(approved_path)[0]
+
+
+def check_approved(pin: dict, approved_path=None, transport: str = OLLAMA) -> dict:
     """Compare a live pin against the approved-models manifest.
 
     A model whose tag+digest (or, for cloud arms, tag alone) is not in the
@@ -203,8 +220,12 @@ def check_approved(pin: dict, approved_path=None, transport: str = OLLAMA) -> No
     An entry with a null or missing digest approves only a pin without a
     digest, and only when the entry names a cloud transport explicitly and
     that transport is the one in use (CR-15).
+
+    Returns the identity of the manifest that approved the pin ({"file",
+    "sha256"}, see read_approved), so callers can record which file gated
+    the judgment.
     """
-    approved = load_approved(approved_path)
+    approved, identity = read_approved(approved_path)
     model = pin.get("model")
     digest = pin.get("manifest_digest")
     for entry in approved["approved"]:
@@ -215,12 +236,12 @@ def check_approved(pin: dict, approved_path=None, transport: str = OLLAMA) -> No
         if want_digest is None:  # cloud arm: identity = model id + transport
             if entry_transport in CLOUD_TRANSPORTS and entry_transport == transport \
                     and digest is None:
-                return
+                return identity
             continue
         if (entry_transport or OLLAMA) != transport:
             continue
         if isinstance(want_digest, str) and want_digest and digest == want_digest:
-            return
+            return identity
     raise UnauditedError(
         f"model/pin not in approved manifest: {model} "
         f"digest={digest} transport={transport}")
@@ -232,7 +253,7 @@ def _request_json(method: str, url: str, payload: dict | None = None, timeout: f
     if data is not None:
         req.add_header("Content-Type", "application/json")
     with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode())
+        return strict_loads(resp.read().decode())
 
 
 def resolve_options(options: dict | None = None) -> dict:
@@ -259,9 +280,10 @@ def generate(model: str, prompt: str, base_url: str, timeout_s: float, transport
     Returns {"raw": text, "generation": {...}} where generation holds the
     daemon's prompt_eval_count, eval_count, done and done_reason. Raises
     UnauditedError (carrying any text received) when the daemon is
-    unreachable or answers malformed JSON (CR-14), when the context was full
-    or the output stopped at a length limit (CR-16), or when the text is
-    empty.
+    unreachable or answers malformed JSON (CR-14), when the context was full,
+    the output stopped at a length limit or the daemon reported no positive
+    integer prompt_eval_count (CR-16: truncation cannot be excluded then),
+    or when the text is empty.
     """
     do = transport or _request_json
     opts = resolve_options(options)
@@ -300,8 +322,13 @@ def generate(model: str, prompt: str, base_url: str, timeout_s: float, transport
         raise UnauditedError("daemon reported the prompt as truncated",
                              raw=raw, generation=generation)
     prompt_tokens = resp.get("prompt_eval_count")
-    if isinstance(prompt_tokens, int) and not isinstance(prompt_tokens, bool) \
-            and prompt_tokens >= opts["num_ctx"]:
+    if not isinstance(prompt_tokens, int) or isinstance(prompt_tokens, bool) \
+            or prompt_tokens <= 0:
+        raise UnauditedError(
+            f"daemon reported no prompt_eval_count (got {prompt_tokens!r}, need a "
+            f"positive integer); truncation cannot be excluded",
+            raw=raw, generation=generation)
+    if prompt_tokens >= opts["num_ctx"]:
         raise UnauditedError(
             f"context full: prompt_eval_count {prompt_tokens} >= num_ctx "
             f"{opts['num_ctx']}; the prompt may have been truncated",
@@ -484,7 +511,14 @@ def agy_generate(model: str, prompt: str, base_url: str = "", timeout_s: float =
 _WHOLE_FENCE = re.compile(r"```(?:json)?[ \t]*\r?\n(.*)\r?\n[ \t]*```", re.DOTALL)
 
 
-def _strict_loads(body: str):
+def strict_loads(body: str):
+    """json.loads that refuses what a plain reader would silently accept.
+
+    Raises ValueError for invalid JSON, a duplicate key in any object (a
+    plain reader keeps the last one, so two readers can see different
+    values), the non-standard constants NaN, Infinity and -Infinity, and
+    nesting too deep to parse (RecursionError is converted).
+    """
     def no_duplicate_keys(pairs):
         obj = {}
         for key, value in pairs:
@@ -496,8 +530,11 @@ def _strict_loads(body: str):
     def no_constants(name):
         raise ValueError(f"non-standard JSON constant {name}")
 
-    return json.loads(body, object_pairs_hook=no_duplicate_keys,
-                      parse_constant=no_constants)
+    try:
+        return json.loads(body, object_pairs_hook=no_duplicate_keys,
+                          parse_constant=no_constants)
+    except RecursionError as exc:
+        raise ValueError("JSON nested too deeply to parse") from exc
 
 
 def extract_json(text: str) -> dict:
@@ -506,7 +543,8 @@ def extract_json(text: str) -> dict:
     Accepted, after stripping surrounding whitespace: the whole output is one
     JSON object; or the whole output is exactly one fenced block (```json or
     ```) whose body is one JSON object. Rejected: prose before or after the
-    object or the fence, a second fence, duplicate keys, NaN/Infinity.
+    object or the fence, a second fence, duplicate keys, NaN/Infinity,
+    nesting too deep to parse.
     """
     if not isinstance(text, str):
         raise UnauditedError("model output is not text")
@@ -523,8 +561,8 @@ def extract_json(text: str) -> dict:
     if not (body.startswith("{") and body.endswith("}")):
         raise UnauditedError("output is not exactly one JSON object")
     try:
-        obj = _strict_loads(body)
-    except ValueError as exc:
+        obj = strict_loads(body)
+    except (ValueError, RecursionError) as exc:
         raise UnauditedError(f"no parseable JSON verdict in response: {exc}") from exc
     if not isinstance(obj, dict):
         raise UnauditedError("verdict JSON is not an object")

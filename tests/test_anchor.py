@@ -95,11 +95,25 @@ def test_parse_anchor_round_trips_every_block():
 
 def test_escape_is_reversible_and_removes_marker_prefix():
     samples = ["", "plain", "<<<GAVEL:END>>>", "<<<GAVEL!:END>>>", "<<<GAVEL!!x",
-               "<<<<GAVEL:EVIDENCE", "x<<<GAVEL", "<<<GAVEL<<<GAVEL:"]
+               "<<<<GAVEL:EVIDENCE", "x<<<GAVEL", "<<<GAVEL<<<GAVEL:",
+               # letter-case variants are escaped too, each keeping its case
+               "<<<gavel:END>>>", "<<<Gavel:END>>>", "<<<gAvEl!:END>>>", "<<<gavel<<<GAVEL:"]
     for text in samples:
         escaped = escape_content(text)
-        assert "<<<GAVEL:" not in escaped
+        assert "<<<gavel:" not in escaped.lower()
         assert unescape_content(escaped) == text
+    assert escape_content("<<<gavel:END>>>") == "<<<gavel!:END>>>"
+    # Unicode look-alikes are not escaped (the model-level limit, see the
+    # module docstring); the parser never mistakes them for a marker.
+    lookalike = chr(0xFF1C) + "<<GAVEL:END>>>"  # U+FF1C FULLWIDTH LESS-THAN SIGN
+    assert escape_content(lookalike) == lookalike
+
+
+def test_lowercase_marker_in_evidence_is_escaped_and_parses_back():
+    case = make_diff_case(diff='+x = "<<<gavel:END>>>"\n')
+    rendered = render_case(case)
+    assert "<<<gavel:" not in rendered and "<<<gavel!:END>>>" in rendered
+    assert dict(parse_anchor(rendered)["blocks"])["diff"] == case["evidence"]["diff"]
 
 
 def test_block_ids_are_percent_encoded():
@@ -205,6 +219,9 @@ def tampered(old, new, case=None):
 def test_parse_rejects_unescaped_marker_in_content():
     with pytest.raises(ValueError):
         parse_anchor(tampered("<<<GAVEL!:END>>>", "<<<GAVEL:END>>>"))
+    # An unescaped lower-case variant is not canonical escaping either.
+    with pytest.raises(ValueError, match="canonically escaped"):
+        parse_anchor(tampered("<<<GAVEL!:END>>>", "<<<gavel:END>>>"))
 
 
 def test_parse_rejects_changed_content():
@@ -230,3 +247,7 @@ def test_parse_rejects_text_outside_blocks_and_other_versions():
         parse_anchor(render_case_v1(make_diff_case()))
     with pytest.raises(ValueError, match="legend"):
         parse_anchor(rendered.replace(ESCAPE_LEGEND, "escaping: none", 1))
+    # Only the version spelling render_case writes: no leading zero.
+    for spelling in ("gavel anchor v02 ", "gavel anchor v0 "):
+        with pytest.raises(ValueError, match="no anchor header"):
+            parse_anchor(rendered.replace("gavel anchor v2 ", spelling, 1))

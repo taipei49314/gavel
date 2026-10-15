@@ -12,8 +12,8 @@ from pathlib import Path
 
 import gavel
 import pytest
-from fakes import (fake_judgment, legacy_receipt, make_diff_case, verdict,
-                   write_lines)
+from fakes import (APPROVED_BY, fake_judgment, legacy_receipt, make_diff_case,
+                   verdict, write_lines)
 from gavel.anchor import render_case_v1, sha256_text
 from gavel.prompt import MECHANISM_CLASSES, render_prompt
 from gavel.receipts import (GENESIS, RECEIPT_VERSION, ReceiptLog,
@@ -59,6 +59,7 @@ def test_v3_records_host_runtime_options_transport(tmp_path):
     path = tmp_path / "receipts.jsonl"
     rec = write_chain(path, [body()])[0]
     assert rec["host"] == HOST
+    assert rec["approved_models"] == APPROVED_BY
     assert rec["transport"] == {"name": "ollama", "version": "0.35.0"}
     assert rec["options"]["num_ctx"] == 16384 and rec["options"]["temperature"] == 0
     assert rec["pin"]["manifest_digest"] == rec["pin_after"]["manifest_digest"]
@@ -354,13 +355,59 @@ def test_v3_verdict_across_digest_change_rejected(tmp_path):
         verify_file(path, MECHANISM_CLASSES, content=True)
 
 
+@pytest.mark.parametrize("generation", [
+    {"eval_count": 60, "done": True, "done_reason": "stop"},
+    {"prompt_eval_count": 0, "done_reason": "stop"},
+    {"prompt_eval_count": None, "done_reason": "stop"},
+])
+def test_v3_local_verdict_without_prompt_count_rejected(tmp_path, generation):
+    # CR-16: generate() refuses such a response, so a valid local verdict
+    # recorded without a positive prompt_eval_count did not pass that guard.
+    path = tmp_path / "receipts.jsonl"
+    write_chain(path, [body(generation=generation)])
+    verify_file(path)  # structurally fine
+    with pytest.raises(ValueError, match="positive prompt_eval_count"):
+        verify_file(path, MECHANISM_CLASSES, content=True)
+
+
+@pytest.mark.parametrize("approved", [None, {}, {"file": "approved-models.json"},
+                                      {"file": "", "sha256": "a" * 64},
+                                      {"file": "approved-models.json", "sha256": "A" * 64}])
+def test_v3_verdict_without_the_approving_file_rejected(tmp_path, approved):
+    path = tmp_path / "receipts.jsonl"
+    write_chain(path, [body(approved_models=approved)])
+    with pytest.raises(ValueError, match="approved-models file"):
+        verify_file(path, MECHANISM_CLASSES, content=True)
+
+
+def test_v3_unaudited_receipt_needs_no_approving_file(tmp_path):
+    # A judgment refused by the approved-models check has none to record.
+    path = tmp_path / "receipts.jsonl"
+    write_chain(path, [body(unaudited="model/pin not in approved manifest", approved_models=None,
+                            generation={})])
+    rec = verify_file(path, MECHANISM_CLASSES, content=True)[0]
+    assert rec["approved_models"] is None
+
+
 def test_v3_cloud_receipt_needs_no_post_pin(tmp_path):
     path = tmp_path / "receipts.jsonl"
     b = build_receipt(case_id="T-1", arm="informed", run=1, attempt=1,
-                      judgment=fake_judgment(transport_name="agy"), host=HOST)
+                      judgment=fake_judgment(transport_name="agy",
+                                             generation={"exit_code": 0}), host=HOST)
     write_chain(path, [b])
     rec = verify_file(path, MECHANISM_CLASSES, content=True)[0]
     assert rec["execution"] == {"timeout_s": 600.0} and rec["options"] == {}
+    assert rec["generation"] == {"exit_code": 0}  # no Ollama token counts for agy
+
+
+def test_receipt_lines_are_read_strictly(tmp_path):
+    path = tmp_path / "receipts.jsonl"
+    rec = write_chain(path, [body()])[0]
+    line = json.dumps(rec, sort_keys=True)
+    # A duplicate key: a plain reader would keep the last value.
+    path.write_text(line[:-1] + ', "arm": "primary"}\n', encoding="utf-8")
+    with pytest.raises(ValueError, match="not strict JSON: duplicate key 'arm'"):
+        verify_file(path)
 
 
 # --- v1/v2 keep their own rules ------------------------------------------------

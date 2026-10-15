@@ -176,14 +176,18 @@ PIN = {"model": "qwen3.5:35b-a3b", "manifest_digest": "sha256:35b",
 _SAME = object()
 
 
+APPROVED_BY = {"file": "approved-models.json", "sha256": "a" * 64}
+
+
 def fake_judgment(case=None, v="clean", *, raw=None, stored=_SAME, unaudited=None,
                   pin=None, pin_after=_SAME, transport_name="ollama",
-                  generation=None, options=None):
+                  generation=None, options=None, approved_models=_SAME):
     """A judge_case()-shaped result built without any transport.
 
     Valid by default (verdict v, raw = its JSON). With unaudited set the
     verdict is None and raw is whatever is given. stored overrides the
-    verdict independently of raw (for tamper tests).
+    verdict independently of raw (for tamper tests). approved_models
+    defaults to APPROVED_BY (the file that approved the pin).
     """
     from gavel.anchor import ANCHOR_VERSION, render_case, sha256_text
     from gavel.judge import DEFAULT_OPTIONS, SCHEMA_VERSION
@@ -205,6 +209,8 @@ def fake_judgment(case=None, v="clean", *, raw=None, stored=_SAME, unaudited=Non
         verdict_obj = stored
     if pin_after is _SAME:
         pin_after = dict(pin) if local else None
+    if approved_models is _SAME:
+        approved_models = dict(APPROVED_BY)
     return {
         "verdict": verdict_obj, "unaudited": unaudited, "raw": raw,
         "anchor_text": anchor, "prompt_text": prompt,
@@ -212,7 +218,7 @@ def fake_judgment(case=None, v="clean", *, raw=None, stored=_SAME, unaudited=Non
         "prompt_version": PROMPT_VERSION, "anchor_version": ANCHOR_VERSION,
         "schema_version": SCHEMA_VERSION,
         "transport": {"name": transport_name, "version": "0.35.0" if local else None},
-        "pin": pin, "pin_after": pin_after,
+        "pin": pin, "pin_after": pin_after, "approved_models": approved_models,
         "options": dict(options if options is not None else DEFAULT_OPTIONS) if local else {},
         "generation": dict(generation if generation is not None else {
             "prompt_eval_count": 120, "eval_count": 60, "done": True,
@@ -356,4 +362,3 @@ def marked_case(case_id, tier="S", role="exam", attack_truth=True):
     the case id), so a fake transport can answer per case."""
     return make_diff_case(case_id=case_id, tier=tier, role=role, attack_truth=attack_truth,
                           diff=f"-assert x == 42\n+assert x == 0\n# {marker(case_id)}\n")
-

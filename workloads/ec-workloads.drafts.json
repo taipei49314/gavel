@@ -10,7 +10,7 @@
       "parameters": {}
     },
     "judge-smoke": {
-      "description": "DRAFT, NOT FOR APPROVAL (host not named, Ollama not pinned). On the named pool host after judge-host-prepare: start the pinned Ollama from the cache on a private loopback port and judge only the three synthetic smoke cases (smoke/SMOKE-*.json, never exam material) with the primary arm, three runs each, through gavel's single judgment path with v3 receipts and no re-attempts. Record seconds per judgment, determinism over the three runs, context headroom and length stops, UNAUDITED reasons and /api/ps memory placement. No informed arm, no exam case. Refuses on any other COMPUTERNAME and on the work machines.",
+      "description": "DRAFT, NOT FOR APPROVAL (host not named, Ollama not pinned). On the named pool host after judge-host-prepare: start the pinned Ollama from the cache on a private loopback port and judge only the three synthetic smoke cases (smoke/SMOKE-*.json, never exam material) with the primary arm, three runs each, through gavel's single judgment path with v3 receipts and no re-attempts. Record seconds per judgment, determinism over the three runs, context headroom and length stops, whether prompt_eval_count stays the same over the three runs of a case (fail if not), UNAUDITED reasons and /api/ps memory placement. No informed arm, no exam case. Refuses on any other COMPUTERNAME and on the work machines.",
       "entry": "workloads/judge_smoke/run.py",
       "profile": "profile-ec-integrity",
       "timeout_minutes": 120,
@@ -18,7 +18,7 @@
       "parameters": {}
     },
     "gavel-exam": {
-      "description": "DRAFT, NOT FOR APPROVAL (round-3 not locked). On the named pool host: run one locked round-3 paper once with gavel exam --manifest (preflight before any judgment, harness-only re-attempts of UNAUDITED slots up to the locked cap, every attempt receipted in a hash-chained v3 file), then gavel verify --content --results. Every arm must use the local Ollama transport (the informed agy arm is excluded); the manifest must pin the Ollama version and the options. One dispatch per paper; succeeds only on PASS or COMPLETE with verified receipts. Refuses on any other COMPUTERNAME and on the work machines.",
+      "description": "DRAFT, NOT FOR APPROVAL (round-3 not locked). On the named pool host: run one locked round-3 paper once with gavel exam --manifest (preflight before any judgment, harness-only re-attempts of UNAUDITED slots up to the locked cap, every attempt receipted in a hash-chained v3 file), then gavel verify --content --results. Every arm must use the local Ollama transport (the informed agy arm is excluded); the manifest must pin the Ollama version and the options; results.json and every approved receipt must record the sha256 of the committed approved-models.json. One dispatch per paper; succeeds only on PASS or COMPLETE with verified receipts. Refuses on any other COMPUTERNAME and on the work machines.",
       "entry": "workloads/gavel_exam/run.py",
       "profile": "profile-ec-integrity",
       "timeout_minutes": 700,

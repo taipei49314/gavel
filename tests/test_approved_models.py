@@ -5,6 +5,7 @@ missing or unparseable manifest is UNAUDITED) and CR-15 (a null digest
 approves only an explicitly declared cloud transport).
 """
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -41,6 +42,25 @@ def approved_path(tmp_path):
 def test_matching_digest_passes(approved_path):
     pin = {"model": "qwen3.5:35b-a3b", "manifest_digest": APPROVED["approved"][0]["manifest_digest"]}
     check_approved(pin, approved_path)
+
+
+def test_check_returns_the_identity_of_the_approving_file(approved_path):
+    # Receipts and results.json record which file gated the judgment.
+    pin = {"model": "qwen3.5:35b-a3b", "manifest_digest": APPROVED["approved"][0]["manifest_digest"]}
+    assert check_approved(pin, approved_path) == {
+        "file": "approved-models.json",
+        "sha256": hashlib.sha256(approved_path.read_bytes()).hexdigest()}
+    cloud = {"model": "gemini-4-argon-high", "manifest_digest": None}
+    assert check_approved(cloud, approved_path, transport="agy")["file"] == "approved-models.json"
+
+
+def test_duplicate_keys_in_the_manifest_are_unaudited(tmp_path):
+    # A plain reader keeps the last "approved" list; two readers could see
+    # different approvals.
+    path = write(tmp_path, '{"approved": [], "approved": [{"model": "qwen3.5:35b-a3b", '
+                           '"manifest_digest": "x", "transport": "ollama"}]}')
+    with pytest.raises(UnauditedError, match="not valid JSON"):
+        check_approved({"model": "qwen3.5:35b-a3b", "manifest_digest": "x"}, path)
 
 
 def test_wrong_digest_refused(approved_path):

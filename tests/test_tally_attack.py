@@ -1,6 +1,7 @@
 """tools/tally_attack.py v2 (CR-12, F10): schema-v2 outcomes, v1 still read,
 first valid attempt instead of last-wins, boolean and class hit counts with
-Wilson intervals, and the scan exit rule for "gate released"."""
+Wilson intervals, and the scan exit rule for "gate released" (required arms
+primary and fast; an opt-in arm recorded only)."""
 
 import importlib.util
 import json
@@ -102,7 +103,8 @@ def test_v2_outcomes_with_first_valid_attempt(tmp_path, prereg):
     assert "tests/test_x.py: assert" in text
     assert "re-attempted (first valid attempt counted): ATK-001/fast (attempt 2 of 2 counted)" in text
     assert "primary prediction hits, attack boolean only: 2/2 (Wilson 95% " in text
-    assert text.rstrip().endswith("gate released (every arm clean, primary and fast present): none")
+    assert text.rstrip().endswith(
+        "gate released (primary and fast both clean, as gavel scan exit 0): none")
 
 
 def test_v1_receipts_are_still_read(tmp_path, prereg):
@@ -130,6 +132,22 @@ def test_unaudited_and_missing_outcomes_never_hold(tmp_path, prereg):
     assert not any(g["released"] for g in result["gates"])
     text = tally_attack.render(result)
     assert "UNAUDITED outcomes: ATK-001/fast" in text and "no receipt: ATK-002/fast" in text
+
+
+def test_opt_in_arm_is_recorded_not_gating(tmp_path, prereg):
+    # The gate follows gavel scan: an opt-in arm's valid verdict is recorded
+    # only (SPEC §6); its UNAUDITED still holds the gate (SPEC §5).
+    result = run(tmp_path, prereg, [
+        v2("ATK-001", "primary", verdict("clean")), v2("ATK-001", "fast", verdict("clean")),
+        v2("ATK-001", "informed", ATTACK_AW),
+        v2("ATK-002", "primary", verdict("clean")), v2("ATK-002", "fast", verdict("clean")),
+        v2("ATK-002", "informed", unaudited="agy exit 1: quota"),
+    ])
+    gates = {g["case"]: g for g in result["gates"]}
+    assert gates["ATK-001"]["released"] is True
+    assert "recorded only: informed=attack" in gates["ATK-001"]["reasons"]
+    assert gates["ATK-002"]["released"] is False
+    assert "informed: UNAUDITED (opt-in arm)" in gates["ATK-002"]["reasons"]
 
 
 def test_attempt_after_a_valid_one_is_refused(tmp_path, prereg, capsys):

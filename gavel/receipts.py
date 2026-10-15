@@ -18,7 +18,16 @@ Receipt v3 (takeover audit 2026-10-15: CR-06, CR-07, R2-12, GOV-12):
   (CR-07); it never carries a verdict.
 - The host (socket.gethostname, platform.node), the Ollama version, the
   model digest read before and after the call, the options (temperature,
-  num_ctx, seed if any) and the transport are recorded (GOV-12).
+  num_ctx, seed if any) and the transport are recorded (GOV-12), and so are
+  the name and sha256 of the approved-models file that approved the pin
+  (approved_models; None when the check did not pass).
+- Content verification refuses a valid verdict that could not have passed
+  the guards it was judged under: a full context, a length stop or a
+  reported truncation; for Ollama, no post-judgment pin, a digest change or
+  no positive prompt_eval_count; for any transport, no approved_models
+  record.
+- Every line is read with judge.strict_loads (no duplicate keys, no
+  NaN/Infinity).
 
 Older receipts keep the rules they were written under: v1 (round-0, round-1,
 attack round-1) get structural checks only; v2 (round-2) get structural
@@ -44,7 +53,7 @@ from pathlib import Path
 from . import __version__
 from .anchor import ANCHOR_VERSION, parse_anchor
 from .judge import (OLLAMA, SCHEMA_VERSION, extract_json, extract_json_v2,
-                    validate_verdict)
+                    strict_loads, validate_verdict)
 from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
 
 RECEIPT_VERSION = 3
@@ -62,7 +71,7 @@ V3_FIELDS = frozenset({
     "receipt_version", "receipt_id", "prev_receipt_sha256", "harness_version",
     "paper_id", "case_id", "case_sha256", "arm", "run", "attempt",
     "timestamp", "host", "transport", "pin", "pin_sha256", "pin_after",
-    "options", "prompt_version", "anchor_version", "schema_version",
+    "approved_models", "options", "prompt_version", "anchor_version", "schema_version",
     "prompt_sha256", "anchor_sha256", "prompt_text", "anchor_text",
     "raw_response", "verdict", "unaudited_reason", "generation", "execution",
 })
@@ -137,6 +146,8 @@ def build_receipt(*, case_id: str, arm: str, run: int, attempt: int, judgment: d
         "pin": pin,
         "pin_sha256": _hash(pin),
         "pin_after": judgment.get("pin_after"),
+        "approved_models": (dict(judgment["approved_models"])
+                            if isinstance(judgment.get("approved_models"), dict) else None),
         "options": dict(judgment.get("options") or {}),
         "prompt_version": judgment["prompt_version"],
         "anchor_version": judgment["anchor_version"],
@@ -289,9 +300,9 @@ def load_receipts(path) -> list[dict]:
             if not line:
                 continue
             try:
-                rec = json.loads(line)
-            except json.JSONDecodeError as exc:
-                raise ValueError(f"{path}:{lineno}: not JSON: {exc}") from exc
+                rec = strict_loads(line)
+            except ValueError as exc:
+                raise ValueError(f"{path}:{lineno}: not strict JSON: {exc}") from exc
             if not isinstance(rec, dict):
                 raise ValueError(f"{path}:{lineno}: not a JSON object")
             check_structure(rec, f"{path}:{lineno}")
@@ -371,7 +382,15 @@ def _verify_content_v3(rec: dict, mechanism_classes) -> None:
         raise ValueError(f"{label}: valid verdict recorded with a full context")
     if generation.get("done_reason") == "length" or generation.get("truncated") is True:
         raise ValueError(f"{label}: valid verdict recorded from truncated output")
+    approved = rec.get("approved_models")
+    if not isinstance(approved, dict) or not isinstance(approved.get("file"), str) \
+            or not approved["file"] or not _is_hex64(approved.get("sha256")):
+        raise ValueError(f"{label}: valid verdict without the approved-models file that "
+                         f"approved it")
     if transport.get("name") == OLLAMA:
+        if not _is_pos_int(prompt_tokens):
+            raise ValueError(f"{label}: local verdict without a positive prompt_eval_count "
+                             f"(truncation cannot be excluded)")
         if not isinstance(pin_after, dict):
             raise ValueError(f"{label}: local verdict without the post-judgment pin")
         if pin_after.get("manifest_digest") != pin.get("manifest_digest"):

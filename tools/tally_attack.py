@@ -24,8 +24,11 @@ v2 (takeover audit 2026-10-15, CR-12 and F10):
   printed, never scored.
 - UNAUDITED and missing outcomes are shown as such and never count as held.
 - "gate released" follows `gavel scan`'s exit rule (gavel.cli.scan_exit_code):
-  every arm with a receipt for the case returned a valid clean verdict and
-  the required arms primary and fast are among them.
+  the required arms primary and fast both have a receipt for the case and
+  returned valid clean verdicts. Any other arm (e.g. informed) is opt-in: its
+  valid verdict is listed as "recorded only" and does not hold the gate
+  (SPEC §6 「結果只入帳、不覆寫本地 verdict」); an opt-in arm without a valid
+  verdict does hold it (SPEC §5 「任何 UNAUDITED 永不映射 exit 0」).
 - Every summary line is computed from the inputs; --out is never
   overwritten.
 
@@ -227,7 +230,7 @@ def render(result: dict) -> str:
     lines.append(f"UNAUDITED outcomes: {', '.join(unaudited) or 'none'}")
     lines.append(f"no receipt: {', '.join(absent) or 'none'}")
     lines.append(f"re-attempted (first valid attempt counted): {', '.join(reattempted) or 'none'}")
-    lines.append(f"gate released (every arm clean, primary and fast present): "
+    lines.append(f"gate released (primary and fast both clean, as gavel scan exit 0): "
                  f"{', '.join(released) or 'none'}")
     return "\n".join(lines) + "\n"
 

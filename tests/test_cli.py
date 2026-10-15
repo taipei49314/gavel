@@ -14,9 +14,10 @@ from fakes import (FakeTransport, NEGATIVE_BAR, legacy_receipt, load_json,
                    make_diff_case, marked_case, marker, raising, verdict,
                    write_approved, write_lines, write_paper)
 from gavel import cli, judge, qualify
+from gavel.anchor import render_case, sha256_text
 from gavel.cli import EXAM_EXIT, SCAN_REQUIRED_ARMS, main, scan_exit_code
-from gavel.prompt import MECHANISM_CLASSES
-from gavel.receipts import verify_file
+from gavel.prompt import MECHANISM_CLASSES, render_prompt
+from gavel.receipts import ReceiptLog, verify_file
 
 PRIMARY = "qwen3.5:35b-a3b"
 FAST = "qwen3.5:9b"
@@ -51,11 +52,20 @@ def test_scan_exit_matrix_required_arms(primary, fast):
 
 @pytest.mark.parametrize("primary,fast,informed", list(itertools.product(VALUES, VALUES, VALUES)))
 def test_scan_exit_matrix_with_opt_in_informed(primary, fast, informed):
-    # An opt-in arm can only make the result stricter: its UNAUDITED is 2,
-    # its attack or inconclusive (or any disagreement) is 1, never 0.
-    code, _ = scan_exit_code({"primary": outcome(primary), "fast": outcome(fast),
-                              "informed": outcome(informed)})
-    assert code == expected_code(primary, fast, informed)
+    # SPEC §6: the opt-in arm's result is recorded only and never overrides
+    # the local verdict, so a valid informed verdict leaves the code of the
+    # required arms unchanged. SPEC §5: no UNAUDITED maps to exit 0, so an
+    # informed UNAUDITED is 2.
+    code, reasons = scan_exit_code({"primary": outcome(primary), "fast": outcome(fast),
+                                    "informed": outcome(informed)})
+    expected = 2 if informed is UNAUDITED else expected_code(primary, fast)
+    assert code == expected, reasons
+    if informed is UNAUDITED:
+        assert "informed: UNAUDITED (opt-in arm)" in reasons
+    else:
+        assert reasons[-1] == f"recorded only: informed={informed}"
+        assert not any(r.startswith(("attack:", "inconclusive:", "arms disagree:"))
+                       and "informed" in r for r in reasons)
 
 
 def test_inconclusive_is_never_clean():
@@ -134,11 +144,29 @@ def test_scan_informed_arm_goes_to_agy_not_ollama(env, monkeypatch):
     assert informed["execution"] == {"timeout_s": 5.0} and informed["options"] == {}
 
 
-def test_scan_informed_attack_is_a_finding(env, monkeypatch):
+def test_scan_informed_attack_is_recorded_not_a_finding(env, monkeypatch, capsys):
+    # SPEC §6 「結果只入帳、不覆寫本地 verdict」: primary and fast agree on
+    # clean, so the scan is clean; the informed attack is receipted and listed.
     env["daemon"]()
     monkeypatch.setattr(qualify, "agy_generate", lambda *a, **k: {
         "raw": json.dumps(verdict("attack")), "generation": {}})
-    assert scan(env, "--arms", "primary", "fast", "informed") == 1
+    assert scan(env, "--arms", "primary", "fast", "informed") == 0
+    last = capsys.readouterr().out.splitlines()[-1]
+    assert last.startswith("exit 0: ") and "recorded only: informed=attack" in last
+    informed = verify_file(env["receipts"], MECHANISM_CLASSES, content=True)[-1]
+    assert informed["arm"] == "informed" and informed["verdict"]["verdict"] == "attack"
+
+
+def test_scan_informed_unaudited_is_never_0(env, monkeypatch, capsys):
+    # SPEC §5 「任何 UNAUDITED 永不映射 exit 0」, read as covering the opt-in arm
+    # too (the reading spec-clarifications.md leaves for Nelson to confirm).
+    env["daemon"]()
+
+    def failing_agy(*args, **kwargs):
+        raise judge.UnauditedError("agy exit 1: quota")
+    monkeypatch.setattr(qualify, "agy_generate", failing_agy)
+    assert scan(env, "--arms", "primary", "fast", "informed") == 2
+    assert "informed: UNAUDITED (opt-in arm)" in capsys.readouterr().out.splitlines()[-1]
 
 
 def test_scan_without_a_required_arm_is_refused_before_judging(env, capsys):
@@ -157,8 +185,13 @@ def test_scan_refuses_a_legacy_receipts_file_before_judging(env, capsys):
     assert t.calls == []
 
 
-@pytest.mark.parametrize("content", ["{not json", "[1, 2]", json.dumps({"view": "diff"}),
-                                     json.dumps({**make_diff_case(), "view": "voodoo"})])
+@pytest.mark.parametrize("content", [
+    "{not json", "[1, 2]", json.dumps({"view": "diff"}),
+    json.dumps({**make_diff_case(), "view": "voodoo"}),
+    # strict JSON: a duplicate key and NaN, both of which a plain reader accepts
+    json.dumps(make_diff_case())[:-1] + ', "view": "diff"}',
+    json.dumps({**make_diff_case(), "note": float("nan")}),
+])
 def test_scan_bad_case_file_is_unaudited(env, capsys, content):
     t = env["daemon"]()
     env["case"].write_text(content, encoding="utf-8")
@@ -194,6 +227,8 @@ def test_pin_defaults_to_the_local_arms(env, capsys):
     lines = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
     assert [line["arm"] for line in lines] == ["primary", "fast"]
     assert lines[0]["manifest_digest"] == "sha256:35b"
+    assert lines[0]["approved_models"]["file"] == "approved-models.json"
+    assert len(lines[0]["approved_models"]["sha256"]) == 64
 
 
 def test_pin_unapproved_or_daemon_down_is_unaudited(env, tmp_path, monkeypatch):
@@ -266,8 +301,8 @@ def test_exam_refusals_exit_2(tmp_path, monkeypatch, capsys):
     t = install_responder(monkeypatch)
     manifest = write_paper(tmp_path / "paper", PAPER)
     assert exam(tmp_path, manifest) == 0
-    assert exam(tmp_path, manifest) == 2  # a paper is run once
-    assert "run once" in capsys.readouterr().err
+    assert exam(tmp_path, manifest) == 2  # the output directory already holds a run
+    assert "one run per output directory" in capsys.readouterr().err
     assert exam(tmp_path, tmp_path / "absent.json", out="other") == 2
     before = len(t.generate_calls())
     bad = write_paper(tmp_path / "bad", PAPER, bars={"tier_counts": {"S": 1, "A": 1},
@@ -317,6 +352,34 @@ def test_evaluate_detects_a_cut_tail(tmp_path, monkeypatch, capsys):
     # Without the external anchor the shortened run is still never a PASS.
     assert main(["evaluate", "--manifest", str(manifest), "--receipts",
                  str(out / "receipts.jsonl")]) == 2
+
+
+def test_evaluate_refuses_receipts_that_judged_other_evidence(tmp_path, monkeypatch, capsys):
+    # A self-consistent chain whose S-1/fast receipt carries the anchor and
+    # prompt of NEG-1 passes `verify --content` (the hashes are unkeyed and
+    # case_sha256 is copied from the manifest), but evaluate re-renders each
+    # receipt's locked case file and refuses it.
+    install_responder(monkeypatch)
+    manifest = write_paper(tmp_path / "paper", PAPER)
+    assert exam(tmp_path, manifest) == 0
+    receipts = verify_file(tmp_path / "out" / "receipts.jsonl", MECHANISM_CLASSES, content=True)
+    forged = tmp_path / "forged.jsonl"
+    log = ReceiptLog(forged)
+    for rec in receipts:
+        body = {k: v for k, v in rec.items() if k not in ("receipt_id", "prev_receipt_sha256")}
+        if (rec["case_id"], rec["arm"]) == ("S-1", "fast"):
+            anchor = render_case(PAPER["NEG-1"])
+            prompt = render_prompt(anchor)
+            body.update(anchor_text=anchor, anchor_sha256=sha256_text(anchor),
+                        prompt_text=prompt, prompt_sha256=sha256_text(prompt))
+        log.append(body)
+    capsys.readouterr()
+    assert main(["verify", str(forged), "--content"]) == 0
+    assert main(["evaluate", "--manifest", str(manifest), "--receipts", str(forged)]) == 2
+    err = capsys.readouterr().err
+    assert "do not match the locked paper" in err
+    assert "(S-1/fast): anchor_sha256 is not the anchor of case file S-1" in err
+    assert err.count("anchor_sha256 is not") == 1  # every other receipt matches
 
 
 def test_evaluate_legacy_receipts_need_the_flag(tmp_path, capsys):

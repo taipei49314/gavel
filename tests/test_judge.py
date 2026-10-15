@@ -3,13 +3,14 @@ Ollama transport's fail-closed behaviour (CR-14, CR-16, CR-17)."""
 
 import http.client
 import json
+import re
 import urllib.error
 
 import pytest
 from fakes import FakeTransport, raising, verdict
 from gavel.judge import (DEFAULT_NUM_CTX, UnauditedError, extract_json,
                          extract_json_v2, generate, get_pin,
-                         get_runtime_version, validate_verdict)
+                         get_runtime_version, strict_loads, validate_verdict)
 
 PRIMARY = "qwen3.5:35b-a3b"
 
@@ -82,6 +83,30 @@ def test_extract_nan_is_unaudited():
     assert "NaN" in text
     with pytest.raises(UnauditedError):
         extract_json(text)
+
+
+def test_extract_deeply_nested_output_is_unaudited():
+    depth = 100_000
+    with pytest.raises(UnauditedError, match="no parseable JSON verdict"):
+        extract_json('{"a": ' + "[" * depth + "]" * depth + "}")
+
+
+@pytest.mark.parametrize("text,needle", [
+    ('{"attempt_cap": 1, "attempt_cap": 3}', "duplicate key 'attempt_cap'"),
+    ('{"outer": {"k": 1, "k": 1}}', "duplicate key 'k'"),
+    ('{"x": NaN}', "NaN"),
+    ('[Infinity]', "Infinity"),
+    ('{"x": -Infinity}', "-Infinity"),
+    ("[" * 100_000 + "]" * 100_000, "nested too deeply"),
+], ids=["duplicate-key", "nested-duplicate-key", "nan", "infinity", "minus-infinity",
+        "deep-nesting"])
+def test_strict_loads_refuses_what_a_plain_reader_accepts(text, needle):
+    with pytest.raises(ValueError, match=re.escape(needle)):
+        strict_loads(text)
+
+
+def test_strict_loads_reads_plain_json():
+    assert strict_loads('{"a": [1, 2.5, "x", null, true]}') == {"a": [1, 2.5, "x", None, True]}
 
 
 def test_extract_non_object_is_unaudited():
@@ -290,6 +315,20 @@ def test_generate_below_context_limit_is_fine():
     t = FakeTransport(response_by_model={PRIMARY: json.dumps(verdict("clean"))},
                       extra={"prompt_eval_count": DEFAULT_NUM_CTX - 1})
     assert generate(PRIMARY, "prompt", "http://x", 5, transport=t)["raw"]
+
+
+@pytest.mark.parametrize("count", ["missing", None, 0, -1, True, 120.0, "120"])
+def test_generate_without_a_prompt_count_is_unaudited(count):
+    # CR-16: without a positive integer prompt_eval_count a full context
+    # cannot be excluded, so the verdict is not accepted.
+    response = {"model": PRIMARY, "response": json.dumps(verdict("clean")), "done": True,
+                "done_reason": "stop", "eval_count": 60}
+    if count != "missing":
+        response["prompt_eval_count"] = count
+    t = FakeTransport(response_by_model={PRIMARY: response})
+    with pytest.raises(UnauditedError, match="truncation cannot be excluded") as info:
+        generate(PRIMARY, "prompt", "http://x", 5, transport=t)
+    assert info.value.raw == response["response"]
 
 
 def test_generate_length_stop_is_unaudited():

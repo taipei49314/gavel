@@ -2,26 +2,32 @@
 committed exam driver (run_paper).
 
 Covers CR-02/F4 (approved-models checked on every judgment, default path
-not CWD), the digest and runtime version read before and after each
-judgment, CR-07 (raw output kept on UNAUDITED), CR-14 (transport errors are
-UNAUDITED, never an exception), CR-16 (truncation guard, options recorded),
+not CWD, the approving file recorded by name and sha256), the digest and
+runtime version read before and after each judgment, CR-07 (raw output kept
+on UNAUDITED), CR-14 (transport errors and any other exception are
+UNAUDITED, never an abort), CR-16 (truncation guard, options recorded),
 GOV-12 (execution facts per transport), and CR-01/CR-03 for the driver
-(harness-only attempts within the cap, every attempt receipted, a paper run
-once, its report reproducible from its receipts).
+(harness-only attempts within the cap, every attempt receipted, one run per
+output directory with a "started" marker, its report reproducible from its
+receipts, receipts bound to their locked case files).
 """
 
+import hashlib
 import json
 import urllib.error
 
 import pytest
-from fakes import (FakeTransport, fake_judgment, load_json, make_diff_case,
-                   make_ledger_case, marked_case, marker, raising, verdict,
-                   write_approved, write_paper)
+from fakes import (FakeTransport, fake_judgment, legacy_receipt, load_json,
+                   make_diff_case, make_ledger_case, marked_case, marker,
+                   raising, verdict, write_approved, write_paper)
+from gavel import qualify
 from gavel.anchor import ANCHOR_VERSION
+from gavel.cli import main
 from gavel.judge import DEFAULT_NUM_CTX, SCHEMA_VERSION, UnauditedError
 from gavel.prompt import MECHANISM_CLASSES, PROMPT_VERSION
-from gavel.qualify import (PaperError, evaluate, judge_case, load_paper,
-                           records_from_receipts, run_paper)
+from gavel.qualify import (PaperError, check_receipts_against_paper, evaluate,
+                           judge_case, load_paper, records_from_receipts,
+                           run_paper)
 from gavel.receipts import verify_file
 
 PRIMARY = "qwen3.5:35b-a3b"
@@ -54,6 +60,9 @@ def test_success_records_every_receipt_fact(approved):
     assert res["execution"] == {"base_url": "http://x", "timeout_s": 5}
     assert (res["prompt_version"], res["anchor_version"], res["schema_version"]) == \
         (PROMPT_VERSION, ANCHOR_VERSION, SCHEMA_VERSION)
+    # Which approved-models file gated the judgment, by name and content hash.
+    assert res["approved_models"] == {"file": "approved-models.json",
+                                      "sha256": hashlib.sha256(approved.read_bytes()).hexdigest()}
 
 
 def test_fake_judgment_has_the_judge_case_shape(approved):
@@ -92,6 +101,7 @@ def test_unapproved_digest_is_unaudited_before_any_generate(tmp_path):
                      approved_models=path)
     assert res["verdict"] is None and "not in approved manifest" in res["unaudited"]
     assert t.generate_calls() == []
+    assert res["approved_models"] is None  # nothing approved this judgment
     # The pin that was actually present is recorded, not blanked (CR-14).
     assert res["pin"]["manifest_digest"] == "sha256:35b"
 
@@ -178,6 +188,27 @@ def test_generate_fn_raising_transport_error_is_unaudited(approved):
     res = judge_case(make_diff_case(), PRIMARY, "http://x", 5, transport=good_transport(),
                      approved_models=approved, generate_fn=broken)
     assert res["verdict"] is None and "transport error" in res["unaudited"]
+
+
+def test_unexpected_exception_is_unaudited_not_an_abort(approved):
+    # Any other exception ends as an UNAUDITED result, so run_paper can
+    # receipt the attempt and go on instead of stopping mid-paper.
+    def broken(model, prompt, base_url, timeout_s, transport=None, options=None):
+        raise RecursionError("maximum recursion depth exceeded")
+    res = judge_case(make_diff_case(), PRIMARY, "http://x", 5, transport=good_transport(),
+                     approved_models=approved, generate_fn=broken)
+    assert res["verdict"] is None
+    assert res["unaudited"] == "internal error: RecursionError: maximum recursion depth exceeded"
+
+
+def test_deeply_nested_output_is_unaudited(approved):
+    depth = 100_000
+    nested = '{"a": ' + "[" * depth + "]" * depth + "}"
+    t = FakeTransport(response_by_model={PRIMARY: nested})
+    res = judge_case(make_diff_case(), PRIMARY, "http://x", 5, transport=t,
+                     approved_models=approved)
+    assert res["verdict"] is None and "no parseable JSON verdict" in res["unaudited"]
+    assert res["raw"] == nested
 
 
 def test_full_context_is_unaudited_with_counts_recorded(approved):
@@ -297,6 +328,11 @@ def test_run_paper_pass_writes_receipts_results_and_report(paper_env):
     results = load_json(paper_env[2] / "results.json")
     assert results["receipts"]["count"] == 8
     assert results["manifest_sha256"] == load_paper(paper_env[0])["manifest_sha256"]
+    assert results["run_state"] == "finished"
+    approved_by = {"file": "approved-models.json",
+                   "sha256": hashlib.sha256(paper_env[1].read_bytes()).hexdigest()}
+    assert results["approved_models"] == approved_by
+    assert all(r["approved_models"] == approved_by for r in receipts)
 
 
 def test_report_is_reproducible_from_receipts(paper_env):
@@ -345,13 +381,66 @@ def test_exhausted_cap_is_incomplete_with_every_attempt_receipted(paper_env):
     assert [r["attempt"] for r in slot] == [1, 2, 3]
 
 
-def test_a_paper_is_run_once(paper_env):
+def test_an_output_directory_takes_one_run(paper_env):
+    # run_paper refuses an occupied directory. That a paper is dispatched only
+    # once is the dispatch record's job (EC ledger row, receipt ref).
     t = FakeTransport(responder=responder())
     run(paper_env, t)
     before = len(receipts_of(paper_env))
-    with pytest.raises(PaperError, match="run once"):
+    with pytest.raises(PaperError, match="one run per output directory"):
         run(paper_env, t)
     assert len(receipts_of(paper_env)) == before
+
+
+def test_a_run_that_stops_part_way_leaves_the_started_marker(paper_env, monkeypatch, capsys):
+    real_build = qualify.build_receipt
+    built = []
+
+    def build_then_stop(**kw):
+        built.append(kw["case_id"])
+        if len(built) > 2:
+            raise RuntimeError("host lost")
+        return real_build(**kw)
+    monkeypatch.setattr(qualify, "build_receipt", build_then_stop)
+    with pytest.raises(RuntimeError, match="host lost"):
+        run(paper_env, FakeTransport(responder=responder()))
+    out = paper_env[2]
+    started = load_json(out / "results.json")
+    assert started["run_state"] == "started" and "receipts" not in started
+    assert started["approved_models"]["file"] == "approved-models.json"
+    assert len(receipts_of(paper_env)) == 2
+    capsys.readouterr()
+    assert main(["verify", str(out / "receipts.jsonl"), "--results",
+                 str(out / "results.json")]) == 2
+    assert "'started' marker" in capsys.readouterr().err
+    monkeypatch.setattr(qualify, "build_receipt", real_build)
+    with pytest.raises(PaperError, match="one run per output directory"):
+        run(paper_env, FakeTransport(responder=responder()))
+
+
+def test_receipts_are_bound_to_their_locked_case_files(paper_env):
+    run(paper_env, FakeTransport(responder=responder()))
+    paper = load_paper(paper_env[0])
+    receipts = receipts_of(paper_env)
+    assert check_receipts_against_paper(paper, receipts) == []
+    # Order: primary S-1 runs 1-3, A-1, NEG-1, then fast S-1, A-1, NEG-1.
+    changed = [dict(r) for r in receipts]
+    changed[0]["anchor_sha256"] = receipts[-1]["anchor_sha256"]  # NEG-1's anchor
+    changed[1]["case_sha256"] = "f" * 64
+    changed[2]["anchor_version"] = 1
+    changed[3]["case_id"] = "X-9"
+    problems = check_receipts_against_paper(paper, changed)
+    assert len(problems) == 4, problems
+    assert "receipt 1 (S-1/primary): anchor_sha256 is not the anchor of case file S-1" \
+        in problems[0]
+    assert "case_sha256 is not the manifest's" in problems[1]
+    assert "anchor version 1" in problems[2] and "not a case of paper" in problems[3]
+    # v1/v2 receipts (round-0..2) are checked against the frozen v1 renderer.
+    same = legacy_receipt(version=2, case=PAPER_CASES["S-1"])
+    other = legacy_receipt(version=1, case=PAPER_CASES["A-1"])
+    other["case_id"] = "S-1"
+    problems = check_receipts_against_paper(paper, [same, other])
+    assert len(problems) == 1 and problems[0].startswith("receipt 2 (S-1/primary)")
 
 
 def test_tampered_case_file_refused_before_any_judgment(paper_env):
@@ -380,6 +469,22 @@ def test_unrenderable_case_refused_before_any_judgment(tmp_path):
         run_paper(manifest_path, tmp_path / "out", base_url="http://x", timeout_s=5,
                   approved_path=write_approved(tmp_path), transport=t, host=HOST)
     assert t.calls == []
+
+
+def test_manifest_and_case_files_are_read_strictly(tmp_path):
+    # In a hash-locked manifest a duplicate key would show a reader one value
+    # and give the harness another; NaN is not JSON. Both are refused.
+    path = write_paper(tmp_path / "paper", PAPER_CASES)
+    text = path.read_text(encoding="utf-8")
+    assert '"attempt_cap": 3' in text
+    path.write_text(text.replace('"attempt_cap": 3', '"attempt_cap": 1, "attempt_cap": 3', 1),
+                    encoding="utf-8")
+    with pytest.raises(PaperError, match="duplicate key 'attempt_cap'"):
+        load_paper(path)
+    nan_case = dict(PAPER_CASES["A-1"], note=float("nan"))
+    path = write_paper(tmp_path / "nan", {**PAPER_CASES, "A-1": nan_case})
+    with pytest.raises(PaperError, match="A-1: case file is not valid UTF-8 JSON"):
+        load_paper(path)
 
 
 def test_invalid_manifest_refused(tmp_path):

@@ -195,24 +195,33 @@ class OllamaServer:
             raise Refused("the pinned Ollama runtime is not prepared; run judge-host-prepare")
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
         self._log = open(self.log_path, "wb")
-        cwd = self.paths["work"] / "ollama-cwd"
-        cwd.mkdir(parents=True, exist_ok=True)
-        self.process = subprocess.Popen([str(exe), "serve"], cwd=cwd, env=self.environment(),
-                                        stdin=subprocess.DEVNULL, stdout=self._log,
-                                        stderr=subprocess.STDOUT)
-        deadline = time.monotonic() + 120
-        while time.monotonic() < deadline:
-            if self.process.poll() is not None:
-                raise RuntimeError(f"ollama serve exited with {self.process.returncode}")
-            try:
-                self.version = http_json("GET", f"{self.base_url}/api/version", timeout=5)["version"]
-                break
-            except (OSError, urllib.error.URLError, ValueError, KeyError):
-                time.sleep(1)
-        else:
-            raise RuntimeError("ollama serve did not answer within 120 s")
-        if self.version != OLLAMA_VERSION:
-            raise RuntimeError(f"ollama reports {self.version}, pinned {OLLAMA_VERSION}")
+        # __exit__ is not called when __enter__ raises, so every failure from
+        # here on stops the server and closes the log before it propagates
+        # (EC's kill-on-close job object is the second line, not the first).
+        try:
+            cwd = self.paths["work"] / "ollama-cwd"
+            cwd.mkdir(parents=True, exist_ok=True)
+            self.process = subprocess.Popen([str(exe), "serve"], cwd=cwd,
+                                            env=self.environment(),
+                                            stdin=subprocess.DEVNULL, stdout=self._log,
+                                            stderr=subprocess.STDOUT)
+            deadline = time.monotonic() + 120
+            while time.monotonic() < deadline:
+                if self.process.poll() is not None:
+                    raise RuntimeError(f"ollama serve exited with {self.process.returncode}")
+                try:
+                    self.version = http_json("GET", f"{self.base_url}/api/version",
+                                             timeout=5)["version"]
+                    break
+                except (OSError, urllib.error.URLError, ValueError, KeyError):
+                    time.sleep(1)
+            else:
+                raise RuntimeError("ollama serve did not answer within 120 s")
+            if self.version != OLLAMA_VERSION:
+                raise RuntimeError(f"ollama reports {self.version}, pinned {OLLAMA_VERSION}")
+        except BaseException:
+            self.__exit__(None, None, None)
+            raise
         return self
 
     def tags(self) -> dict:
@@ -229,6 +238,7 @@ class OllamaServer:
                 self.process.wait(timeout=30)
         if self._log is not None:
             self._log.close()
+            self._log = None
         return False
 
 

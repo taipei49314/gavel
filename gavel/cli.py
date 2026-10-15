@@ -3,15 +3,21 @@
 Exit codes
 
   scan  (SPEC §5: 「0＝clean（雙臂一致且無 findings）」, 1 findings,
-        2 UNAUDITED; SPEC §6: arm divergence is itself a finding, and the
-        informed arm is opt-in)
-    0  clean: every required arm (primary and fast) ran and returned a valid
-       clean verdict, so they agree, and every opt-in arm that ran did too
-    1  findings: any attack, any inconclusive, or arms that disagree
+        2 UNAUDITED, 「任何 UNAUDITED 永不映射 exit 0」; SPEC §6: the two
+        local arms are required, their divergence is itself a finding, and
+        the informed arm is opt-in: 「結果只入帳、不覆寫本地 verdict」)
+    0  clean: both required arms (primary and fast) ran and returned a
+       valid clean verdict, so they agree
+    1  findings: a required arm returned attack or inconclusive, or the
+       required arms disagree
     2  UNAUDITED: any arm without a valid verdict, or the scan could not be
        made (case file, receipts file, required arm not selected).
        UNAUDITED wins over findings; nothing UNAUDITED ever exits 0.
-    An opt-in arm can only make the result stricter, never 0.
+    An opt-in arm's valid verdict is printed, receipted and listed as
+    "recorded only"; it never changes the exit code. An opt-in arm without
+    a valid verdict still gives 2: this build reads 「任何 UNAUDITED 永不映射
+    exit 0」 as covering every arm that ran, a reading left for Nelson to
+    confirm (docs/proposals/spec-clarifications.md).
 
   exam, evaluate
     0  PASS
@@ -41,10 +47,11 @@ import sys
 from pathlib import Path
 
 from .anchor import render_case
-from .judge import VERDICT_VALUES, UnauditedError, check_approved, live_pin
+from .judge import (VERDICT_VALUES, UnauditedError, check_approved, live_pin,
+                    strict_loads)
 from .prompt import MECHANISM_CLASSES
-from .qualify import (ARMS, PaperError, evaluate, judge_case, load_paper,
-                      records_from_receipts, run_paper)
+from .qualify import (ARMS, PaperError, check_receipts_against_paper, evaluate,
+                      judge_case, load_paper, records_from_receipts, run_paper)
 from .receipts import ReceiptLog, build_receipt, verify_file
 from .sealed import (SCORE_OUTPUTS, load_answer_key, provenance_for,
                      score_sealed, summary_lines, write_outputs)
@@ -62,11 +69,15 @@ EXAM_EXIT = {"PASS": 0, "FAIL": 1, "INCOMPLETE": 2, "INVALID_RECORDS": 2,
 # ASCII only: help text must print on any console encoding.
 EXIT_CODES_HELP = """\
 exit codes:
-  scan      0 clean: required arms primary and fast (and any opt-in arm)
-              all returned valid clean verdicts
-            1 findings: any attack, any inconclusive, or arms that disagree
-            2 UNAUDITED: any arm without a valid verdict, or the scan could
-              not be made; UNAUDITED wins, and never exits 0
+  scan      0 clean: required arms primary and fast both returned valid
+              clean verdicts
+            1 findings: a required arm returned attack or inconclusive, or
+              the required arms disagree
+            2 UNAUDITED: any arm without a valid verdict (opt-in arms
+              included), or the scan could not be made; UNAUDITED wins, and
+              never exits 0
+            an opt-in arm's valid verdict is recorded only and never changes
+            the exit code
   exam,     0 PASS, 1 FAIL, 2 INVALID_PAPER / INVALID_RECORDS / INCOMPLETE
   evaluate    or refused (never scored), 3 COMPLETE (scoring is external;
               not a pass)
@@ -109,7 +120,10 @@ def _expectations(args) -> tuple:
     if head is not None or count is not None:
         raise ValueError("give --results or --expect-head/--expect-count, not both")
     results_path = Path(args.results)
-    data = json.loads(results_path.read_text(encoding="utf-8"))
+    data = strict_loads(results_path.read_text(encoding="utf-8"))
+    if isinstance(data, dict) and data.get("run_state") == "started":
+        raise ValueError(f"{results_path.name} is the 'started' marker of a run that did not "
+                         f"finish; it records no receipts head or count")
     info = data.get("receipts") if isinstance(data, dict) else None
     if not isinstance(info, dict) or not isinstance(info.get("head"), str) \
             or not _is_count(info.get("count")):
@@ -129,38 +143,54 @@ def cmd_pin(args) -> int:
         spec = ARMS[arm]
         try:
             pin = live_pin(spec["model"], args.base_url, spec["transport"])
-            check_approved(pin, args.approved_models, transport=spec["transport"])
+            approved_by = check_approved(pin, args.approved_models, transport=spec["transport"])
         except UnauditedError as exc:
             _err(f"{arm}: UNAUDITED ({exc.reason})")
             code = 2
             continue
-        print(json.dumps({"arm": arm, **pin, "approved": True}, sort_keys=True))
+        print(json.dumps({"arm": arm, **pin, "approved": True, "approved_models": approved_by},
+                         sort_keys=True))
     return code
 
 
 # --- scan -----------------------------------------------------------------------
+
+def _valid_value(res):
+    """The verdict value of a valid judge_case() result, or None."""
+    judged = res.get("verdict") if isinstance(res, dict) else None
+    value = judged.get("verdict") if isinstance(judged, dict) else None
+    if not isinstance(res, dict) or res.get("unaudited") or value not in VERDICT_VALUES:
+        return None
+    return value
+
 
 def scan_exit_code(outcomes: dict, required=SCAN_REQUIRED_ARMS) -> tuple[int, list[str]]:
     """The scan exit code (see the module docstring) and its reasons.
 
     outcomes maps every arm that ran, in run order, to its judge_case()
     result (anything with "verdict" and "unaudited"). required lists the
-    arms that must have run.
+    arms that must have run; only their verdicts set codes 0 and 1 (SPEC §5
+    「雙臂一致且無 findings」). Any other arm is opt-in: its valid verdict is
+    appended to the reasons as "recorded only: <arm>=<value>" and changes
+    nothing (SPEC §6 「結果只入帳、不覆寫本地 verdict」); its UNAUDITED gives
+    2 like any other (SPEC §5 「任何 UNAUDITED 永不映射 exit 0」).
     """
     reasons = []
     missing = [arm for arm in required if arm not in outcomes]
     if missing:
         reasons.append(f"required arm(s) not run: {', '.join(missing)}")
-    values = {}
+    values, recorded = {}, []
     for arm, res in outcomes.items():
-        judged = res.get("verdict") if isinstance(res, dict) else None
-        value = judged.get("verdict") if isinstance(judged, dict) else None
-        if not isinstance(res, dict) or res.get("unaudited") or value not in VERDICT_VALUES:
-            reasons.append(f"{arm}: UNAUDITED")
-        else:
+        value = _valid_value(res)
+        if value is None:
+            reasons.append(f"{arm}: UNAUDITED" if arm in required
+                           else f"{arm}: UNAUDITED (opt-in arm)")
+        elif arm in required:
             values[arm] = value
+        else:
+            recorded.append(f"recorded only: {arm}={value}")
     if reasons:
-        return 2, reasons
+        return 2, reasons + recorded
     attacks = [arm for arm, value in values.items() if value == "attack"]
     inconclusive = [arm for arm, value in values.items() if value == "inconclusive"]
     if attacks:
@@ -171,8 +201,8 @@ def scan_exit_code(outcomes: dict, required=SCAN_REQUIRED_ARMS) -> tuple[int, li
         reasons.append("arms disagree: " + ", ".join(f"{arm}={value}"
                                                      for arm, value in values.items()))
     if reasons:
-        return 1, reasons
-    return 0, [f"clean, all arms agree: {', '.join(values)}"]
+        return 1, reasons + recorded
+    return 0, [f"clean, required arms agree: {', '.join(values)}"] + recorded
 
 
 def cmd_scan(args) -> int:
@@ -185,7 +215,7 @@ def cmd_scan(args) -> int:
         return 2
     case_path = Path(args.case)
     try:
-        case = json.loads(case_path.read_text(encoding="utf-8"))
+        case = strict_loads(case_path.read_text(encoding="utf-8"))
         if not isinstance(case, dict) or not isinstance(case.get("case_id"), str) \
                 or not case["case_id"]:
             raise ValueError("no case_id")
@@ -279,19 +309,44 @@ def cmd_exam(args) -> int:
     return EXAM_EXIT[report["status"]]
 
 
+class ReceiptsNotOfPaper(ValueError):
+    """Verified receipts that do not record judgments of the paper's locked
+    case files (qualify.check_receipts_against_paper)."""
+
+    def __init__(self, problems: list[str]):
+        super().__init__(f"{len(problems)} receipt(s) do not match the locked paper")
+        self.problems = problems
+
+
+def _paper_receipts(args, paper) -> list[dict]:
+    """Verify the receipts (content and tail) and bind them to the paper's
+    case files; raises ValueError (ReceiptsNotOfPaper for a mismatch)."""
+    head, count = _expectations(args)
+    receipts = verify_file(args.receipts, MECHANISM_CLASSES, content=True,
+                           expect_head=head, expect_count=count)
+    problems = check_receipts_against_paper(paper, receipts)
+    if problems:
+        raise ReceiptsNotOfPaper(problems)
+    return receipts
+
+
+def _fail(exc: Exception) -> int:
+    _err(f"FAIL: {exc}")
+    for problem in getattr(exc, "problems", []):
+        _err(f"  {problem}")
+    return 2
+
+
 def cmd_evaluate(args) -> int:
     try:
         paper = load_paper(args.manifest)
-        head, count = _expectations(args)
-        receipts = verify_file(args.receipts, MECHANISM_CLASSES, content=True,
-                               expect_head=head, expect_count=count)
+        receipts = _paper_receipts(args, paper)
         records = records_from_receipts(receipts, legacy_attempts=args.legacy_attempts)
     except PaperError as exc:
         _err(f"REFUSED: {exc}")
         return 2
     except (OSError, ValueError) as exc:
-        _err(f"FAIL: {exc}")
-        return 2
+        return _fail(exc)
     report = evaluate(paper["manifest"], records)
     print(json.dumps(report, sort_keys=True, indent=2))
     return EXAM_EXIT[report["status"]]
@@ -307,9 +362,7 @@ def cmd_score_sealed(args) -> int:
     try:
         paper = load_paper(args.manifest)
         key = load_answer_key(args.key)
-        head, count = _expectations(args)
-        receipts = verify_file(args.receipts, MECHANISM_CLASSES, content=True,
-                               expect_head=head, expect_count=count)
+        receipts = _paper_receipts(args, paper)
         records = records_from_receipts(receipts, legacy_attempts=args.legacy_attempts)
         score = score_sealed(paper["manifest"], key, records)
         provenance = provenance_for(args.manifest, paper, key, args.receipts, receipts)
@@ -318,8 +371,7 @@ def cmd_score_sealed(args) -> int:
         _err(f"REFUSED: {exc}")
         return 2
     except (OSError, ValueError) as exc:
-        _err(f"FAIL: {exc}")
-        return 2
+        return _fail(exc)
     print(_ascii(f"status: {score['status']} ({'scored' if score['scored'] else 'not scored'})"))
     for line in summary_lines(score):
         print(_ascii(line))
@@ -370,7 +422,8 @@ def build_parser(default_timeout: float = DEFAULT_TIMEOUT_S) -> argparse.Argumen
     p = sub.add_parser("scan", help="judge one case file (exit 0 clean, 1 findings, "
                                     "2 UNAUDITED)",
                        description="Judge one case with the required arms primary and "
-                                   "fast (and any opt-in arm).",
+                                   "fast, and any opt-in arm (its valid verdict is "
+                                   "recorded only and never changes the exit code).",
                        epilog=EXIT_CODES_HELP, formatter_class=raw)
     p.add_argument("case")
     p.add_argument("--arms", nargs="+", default=list(SCAN_REQUIRED_ARMS), choices=list(ARMS),
@@ -393,11 +446,13 @@ def build_parser(default_timeout: float = DEFAULT_TIMEOUT_S) -> argparse.Argumen
     tail_checks(p)
     p.set_defaults(func=cmd_verify)
 
-    p = sub.add_parser("exam", help="run a locked paper once (exit 0 PASS, 1 FAIL, "
-                                    "2 not scored, 3 COMPLETE)",
-                       description="Run a locked paper manifest once with "
+    p = sub.add_parser("exam", help="run a locked paper into a new output directory "
+                                    "(exit 0 PASS, 1 FAIL, 2 not scored, 3 COMPLETE)",
+                       description="Run a locked paper manifest with "
                                    "gavel.qualify.run_paper and write receipts.jsonl, "
-                                   "results.json and report.json into --out.",
+                                   "results.json and report.json into --out, which must "
+                                   "not hold a run. That a paper is dispatched only once "
+                                   "is kept by the dispatch record, not by this command.",
                        epilog=EXIT_CODES_HELP, formatter_class=raw)
     p.add_argument("--manifest", required=True, help="the locked paper manifest (JSON)")
     p.add_argument("--out", required=True, help="output directory (must not hold a run)")
@@ -406,8 +461,10 @@ def build_parser(default_timeout: float = DEFAULT_TIMEOUT_S) -> argparse.Argumen
 
     p = sub.add_parser("evaluate", help="re-evaluate a paper from its receipts",
                        description="Verify the receipts (content and, with --results, "
-                                   "the tail), rebuild the records and evaluate them "
-                                   "against the locked manifest. Prints the report JSON.",
+                                   "the tail), check that each receipt's anchor is its "
+                                   "locked case file re-rendered, rebuild the records and "
+                                   "evaluate them against the locked manifest. Prints the "
+                                   "report JSON.",
                        epilog=EXIT_CODES_HELP, formatter_class=raw)
     p.add_argument("--manifest", required=True)
     p.add_argument("--receipts", required=True)
@@ -422,7 +479,9 @@ def build_parser(default_timeout: float = DEFAULT_TIMEOUT_S) -> argparse.Argumen
                                    "against its answer key and write scoring.md and "
                                    "scoring.json once. Every table cell and summary line "
                                    "is computed from the manifest, the key and the "
-                                   "receipts. An INCOMPLETE paper is never scored.",
+                                   "receipts, after each receipt's anchor is checked "
+                                   "against its locked case file re-rendered. An "
+                                   "INCOMPLETE paper is never scored.",
                        epilog=EXIT_CODES_HELP, formatter_class=raw)
     p.add_argument("--manifest", required=True, help="the locked sealed-paper manifest")
     p.add_argument("--key", required=True,

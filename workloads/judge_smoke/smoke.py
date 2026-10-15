@@ -10,6 +10,15 @@ because the smoke run measures how often a judgment fails.
 Writes under --out: receipts.jsonl, smoke.json (per-judgment seconds, token
 counts, done_reason, memory placement from /api/ps, UNAUDITED reasons) and
 the determinism and truncation findings.
+
+prompt_eval_count stability: gavel's truncation guard (CR-16) trusts the
+daemon's prompt_eval_count. If the daemon counts only the prompt tokens it
+did not take from its KV cache, a repeated prompt reports fewer tokens and a
+full context can go unseen. So the count of runs 2..n of a case is compared
+with run 1, and any run whose count differs is flagged and fails the smoke.
+Every prompt also shares the instruction header, so even run 1 of a later
+case may be counted after a cached prefix; the headroom figure is only as
+good as the counts, and the lock must settle how the pinned runtime counts.
 """
 
 from __future__ import annotations
@@ -26,7 +35,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from gavel.judge import DEFAULT_OPTIONS  # noqa: E402
+from gavel.judge import DEFAULT_OPTIONS, strict_loads  # noqa: E402
 from gavel.prompt import MECHANISM_CLASSES  # noqa: E402
 from gavel.qualify import ARMS, judge_case  # noqa: E402
 from gavel.receipts import ReceiptLog, build_receipt, verify_file  # noqa: E402
@@ -56,7 +65,7 @@ def main(argv=None) -> int:
     log = ReceiptLog(out / "receipts.jsonl")
     judgments = []
     for path in sorted((ROOT / "smoke").glob("SMOKE-*.json")):
-        case = json.loads(path.read_bytes().decode("utf-8"))
+        case = strict_loads(path.read_bytes().decode("utf-8"))
         for run in range(1, args.runs + 1):
             started = time.monotonic()
             result = judge_case(case, model, args.base_url, args.timeout,
@@ -85,6 +94,16 @@ def main(argv=None) -> int:
         determinism[cid] = {
             "verdicts_identical": len({json.dumps(j["verdict"], sort_keys=True) for j in runs}) == 1,
             "raw_identical": len({j["raw_sha256"] for j in runs}) == 1}
+    prompt_counts = {}
+    for cid in cases:
+        runs = sorted((j for j in judgments if j["case_id"] == cid), key=lambda j: j["run"])
+        first = runs[0]["prompt_eval_count"]
+        prompt_counts[cid] = {
+            "per_run": {str(j["run"]): j["prompt_eval_count"] for j in runs},
+            "runs_differing_from_run_1": [j["run"] for j in runs[1:]
+                                          if j["prompt_eval_count"] != first]}
+    counts_differ = {cid: c["runs_differing_from_run_1"] for cid, c in prompt_counts.items()
+                     if c["runs_differing_from_run_1"]}
     valid = [j for j in judgments if not j["unaudited"]]
     headroom = [j["num_ctx"] - j["prompt_eval_count"] for j in judgments
                 if isinstance(j["num_ctx"], int) and isinstance(j["prompt_eval_count"], int)]
@@ -96,7 +115,9 @@ def main(argv=None) -> int:
                     "max": max(j["seconds"] for j in judgments)},
         "determinism": determinism,
         "truncation": {"done_reason_length": [j for j in judgments if j["done_reason"] == "length"],
-                       "min_context_headroom_tokens": min(headroom) if headroom else None},
+                       "min_context_headroom_tokens": min(headroom) if headroom else None,
+                       "prompt_eval_count": prompt_counts,
+                       "prompt_eval_count_differs": counts_differ},
         "receipts": {"count": log.count, "head": log.head},
         "per_judgment": judgments}
     (out / "smoke.json").write_text(json.dumps(summary, sort_keys=True, indent=2,
@@ -104,7 +125,8 @@ def main(argv=None) -> int:
                                     encoding="utf-8", newline="\n")
     ok = (len(valid) == len(judgments)
           and all(d["verdicts_identical"] for d in determinism.values())
-          and not summary["truncation"]["done_reason_length"])
+          and not summary["truncation"]["done_reason_length"]
+          and not counts_differ)
     return 0 if ok else 1
 
 

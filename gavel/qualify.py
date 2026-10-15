@@ -17,10 +17,17 @@ Exam-validity contract (takeover audit 2026-10-15: CR-01, CR-03, CR-10):
   last-record-wins. Every slot that needed more than one attempt is
   disclosed in the report.
 - run_paper() is the committed exam driver. It re-attempts an UNAUDITED slot
-  immediately, up to the cap, and receipts every attempt. It refuses to
-  write into a directory that already holds a paper run, so a paper is run
-  once; there are no operator re-runs. evaluate() over the receipts it wrote
+  immediately, up to the cap, and receipts every attempt. It refuses an
+  output directory that already holds a run; that a paper is dispatched
+  only once is enforced by the dispatch record (EC ledger row and private
+  receipt ref), not by this function. It creates results.json first, with
+  exclusive create, as a "started" marker, so a run that stops part-way
+  leaves visible evidence. evaluate() over the receipts it wrote
   (records_from_receipts) reproduces its report.
+- check_receipts_against_paper() binds receipts to the locked case files:
+  each receipt's anchor must be the anchor of its case file as rendered
+  under the receipt's own anchor version (`gavel evaluate` and
+  `gavel score-sealed` refuse receipts that judged other evidence).
 - Status precedence: INVALID_PAPER (the manifest is unusable, including any
   enabled bar with a zero denominator) > INVALID_RECORDS (the attempt
   protocol is broken) > INCOMPLETE (a cell has no record, or no valid attempt
@@ -35,12 +42,12 @@ import json
 from pathlib import Path, PurePosixPath
 
 from . import __version__
-from .anchor import ANCHOR_VERSION, render_case, sha256_text
+from .anchor import ANCHOR_VERSION, render_case, render_case_v1, sha256_text
 from .judge import (CLOUD_TRANSPORTS, OLLAMA, OPTION_KEYS, SCHEMA_VERSION,
                     TRANSPORT_ERRORS, UnauditedError, agy_generate,
                     check_approved, extract_json, generate, get_pin,
                     get_runtime_version, live_pin, resolve_options,
-                    validate_verdict)
+                    strict_loads, validate_verdict)
 from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
 from .receipts import RECEIPT_VERSION, ReceiptLog, build_receipt
 
@@ -108,11 +115,16 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
                pinned_runtime: dict | None = None) -> dict:
     """One judgment: the single judgment path for exam and scan.
 
-    Never raises for a judgment failure. Returns a dict with "verdict"
-    (schema-v2 dict, or None) and "unaudited" (reason, or None), plus every
-    fact a receipt records: raw output (kept on UNAUDITED, CR-07), prompt and
-    anchor texts, hashes and versions, transport name and version, the pin
-    read before and after the call, options and generation facts, and
+    Raises only when the case cannot be rendered (render_case's ValueError;
+    load_paper and `gavel scan` check that before judging). After that it
+    never raises: any exception, even an unexpected one, ends as an
+    UNAUDITED result, so every attempt can be receipted.
+    Returns a dict with "verdict" (schema-v2 dict, or None) and "unaudited"
+    (reason, or None), plus every fact a receipt records: raw output (kept
+    on UNAUDITED, CR-07), prompt and anchor texts, hashes and versions,
+    transport name and version, the pin read before and after the call, the
+    name and sha256 of the approved-models file that approved the pin (None
+    when the check did not pass), options and generation facts, and
     execution settings.
 
     Order (CR-02/F4): live pin -> approved-models check (approved_models
@@ -140,6 +152,7 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
         "transport": {"name": transport_name, "version": None},
         "pin": {"model": model, "manifest_digest": None},
         "pin_after": None,
+        "approved_models": None,
         "options": {},
         "generation": {},
         "execution": ({"base_url": base_url, "timeout_s": timeout_s} if is_local
@@ -151,7 +164,8 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
             raise UnauditedError(f"unknown transport: {transport_name!r}")
         pin = live_pin(model, base_url, transport_name, transport=transport)
         result["pin"] = pin
-        check_approved(pin, approved_models, transport=transport_name)
+        result["approved_models"] = check_approved(pin, approved_models,
+                                                   transport=transport_name)
         version = None
         if is_local:
             result["options"] = resolve_options(options)
@@ -184,6 +198,8 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
         _mark_unaudited(result, exc.reason, exc)
     except TRANSPORT_ERRORS as exc:  # CR-14 safety net for a transport not covered above
         _mark_unaudited(result, f"transport error: {type(exc).__name__}: {exc}")
+    except Exception as exc:  # anything else: never abort a paper mid-way
+        _mark_unaudited(result, f"internal error: {type(exc).__name__}: {exc}")
     return result
 
 
@@ -463,10 +479,12 @@ def expected_cells(manifest: dict) -> set:
 def load_paper(manifest_path) -> dict:
     """Load a locked paper: the manifest plus every case file, hash-checked.
 
-    Raises PaperError when the manifest is invalid, a case file is missing
-    or unreadable, its sha256 differs from the manifest, its case_id, tier
-    or role differ from the manifest entry, or it cannot be rendered into an
-    anchor (so no paper stops part-way on a malformed case).
+    Raises PaperError when the manifest or a case file is not strict JSON
+    (judge.strict_loads: no duplicate keys, no NaN/Infinity), the manifest
+    is invalid, a case file is missing or unreadable, its sha256 differs
+    from the manifest, its case_id, tier or role differ from the manifest
+    entry, or it cannot be rendered into an anchor (so no paper stops
+    part-way on a malformed case).
     Returns {"manifest", "manifest_sha256" (of the file's bytes), "cases"}.
     """
     path = Path(manifest_path)
@@ -475,9 +493,10 @@ def load_paper(manifest_path) -> dict:
     except OSError as exc:
         raise PaperError(f"manifest unreadable: {path.name}: {type(exc).__name__}") from exc
     try:
-        manifest = json.loads(raw.decode("utf-8"))
+        manifest = strict_loads(raw.decode("utf-8"))
     except ValueError as exc:
-        raise PaperError(f"manifest is not valid UTF-8 JSON: {path.name}") from exc
+        raise PaperError(f"manifest is not valid UTF-8 JSON (duplicate keys and "
+                         f"NaN/Infinity are refused): {path.name}: {exc}") from exc
     problems = validate_manifest(manifest)
     if problems:
         raise PaperError("invalid paper manifest: " + "; ".join(problems))
@@ -494,9 +513,10 @@ def load_paper(manifest_path) -> dict:
             raise PaperError(f"{cid}: case file sha256 {digest} is not the locked "
                              f"{entry['sha256']}")
         try:
-            case = json.loads(data.decode("utf-8"))
+            case = strict_loads(data.decode("utf-8"))
         except ValueError as exc:
-            raise PaperError(f"{cid}: case file is not valid UTF-8 JSON") from exc
+            raise PaperError(f"{cid}: case file is not valid UTF-8 JSON (duplicate keys "
+                             f"and NaN/Infinity are refused): {exc}") from exc
         if not isinstance(case, dict) or case.get("case_id") != cid:
             raise PaperError(f"{cid}: case file does not carry case_id {cid}")
         if case.get("tier") != entry["tier"] or case.get("role", "exam") != entry["role"]:
@@ -510,6 +530,59 @@ def load_paper(manifest_path) -> dict:
         cases[cid] = case
     return {"manifest": manifest, "manifest_sha256": hashlib.sha256(raw).hexdigest(),
             "cases": cases}
+
+
+def check_receipts_against_paper(paper: dict, receipts: list[dict]) -> list[str]:
+    """Every reason a receipt does not record a judgment of its locked case.
+
+    paper is a load_paper() result; receipts are verified receipts (the
+    content checks bind anchor_text to anchor_sha256, so only the hash is
+    compared here). Receipt hashes are unkeyed and case_sha256 in a v3
+    receipt is copied from the manifest, so neither shows on its own what
+    was judged. This re-renders each receipt's case file and requires:
+
+    - v3: anchor_version is this build's ANCHOR_VERSION, anchor_sha256 is
+      the sha256 of render_case(case), and case_sha256 is the manifest's;
+    - v1/v2 (round-0..2, anchor v1): anchor_sha256 is the sha256 of
+      render_case_v1(case);
+    - every receipt names a case of the paper.
+
+    Returns an empty list when every receipt matches.
+    """
+    cases = paper["cases"]
+    case_sha = {entry["case_id"]: entry["sha256"] for entry in paper["manifest"]["cases"]}
+    problems = []
+    for index, rec in enumerate(receipts, 1):
+        cid = rec.get("case_id")
+        label = f"receipt {index} ({cid}/{rec.get('arm')})"
+        case = cases.get(cid) if isinstance(cid, str) else None
+        if case is None:
+            problems.append(f"{label}: not a case of paper {paper['manifest']['paper_id']}")
+            continue
+        version = rec.get("receipt_version")
+        if version == RECEIPT_VERSION:
+            if rec.get("anchor_version") != ANCHOR_VERSION:
+                problems.append(f"{label}: anchor version {rec.get('anchor_version')!r} is not "
+                                f"v{ANCHOR_VERSION}")
+                continue
+            if rec.get("case_sha256") != case_sha[cid]:
+                problems.append(f"{label}: case_sha256 is not the manifest's")
+            renderer = render_case
+        elif version in (1, 2):
+            renderer = render_case_v1
+        else:
+            problems.append(f"{label}: unknown receipt_version {version!r}")
+            continue
+        try:
+            expected = sha256_text(renderer(case))
+        except (ValueError, TypeError, KeyError, AttributeError) as exc:
+            problems.append(f"{label}: the case file cannot be rendered for this receipt "
+                            f"version: {exc}")
+            continue
+        if rec.get("anchor_sha256") != expected:
+            problems.append(f"{label}: anchor_sha256 is not the anchor of case file {cid} "
+                            f"(the receipt judged other evidence)")
+    return problems
 
 
 # --- records and attempt resolution -------------------------------------------
@@ -868,29 +941,43 @@ def _score_bars(manifest: dict, resolved: dict, out: list) -> bool:
 
 # --- the exam driver -------------------------------------------------------------
 
+def _json_text(obj) -> str:
+    return json.dumps(obj, sort_keys=True, indent=2, ensure_ascii=False) + "\n"
+
+
 def _write_json(path: Path, obj) -> None:
-    path.write_text(json.dumps(obj, sort_keys=True, indent=2, ensure_ascii=False) + "\n",
-                    encoding="utf-8", newline="\n")
+    path.write_text(_json_text(obj), encoding="utf-8", newline="\n")
 
 
 def run_paper(manifest_path, out_dir, *, base_url: str = DEFAULT_BASE_URL,
               timeout_s: float = 600.0, approved_path=None, transport=None,
               generate_fns: dict | None = None, host: dict | None = None,
               clock=None) -> dict:
-    """Run a locked paper once and write receipts.jsonl, results.json, report.json.
+    """Run a locked paper into out_dir: receipts.jsonl, results.json, report.json.
 
     Loads and hash-checks the paper (load_paper), refuses an out_dir that
     already holds any of PAPER_OUTPUTS, and preflights every arm (live pin,
     approved-models check, pinned Ollama version) before the first judgment.
-    Then judges arm by arm (gating arm first, in manifest order), case by
-    case, run by run. A slot whose attempt is UNAUDITED is re-attempted
-    immediately, up to the manifest's attempt_cap; every attempt is
-    receipted; nothing else is ever re-run.
+    It then creates results.json with exclusive create as a "started"
+    marker (run_state "started"), so a run that stops part-way leaves
+    visible evidence and two runs cannot share a directory. Then it judges
+    arm by arm (gating arm first, in manifest order), case by case, run by
+    run. A slot whose attempt is UNAUDITED is re-attempted immediately, up
+    to the manifest's attempt_cap; every attempt is receipted; nothing else
+    is ever re-run. At the end results.json is replaced by the full results
+    (run_state "finished").
 
-    approved_path None means the repo-root approved-models.json. transport is
-    the Ollama HTTP callable; generate_fns maps a transport name to a
-    generate function (tests); host and clock override the recorded host
-    facts and timestamps (tests).
+    This function refuses an output directory that already holds a run;
+    that a paper is dispatched only once is enforced by the dispatch record
+    (EC ledger row and private receipt ref), not by this function: the same
+    manifest can be run again into a fresh directory.
+
+    approved_path None means the repo-root approved-models.json; the name
+    and sha256 of the file that approved the preflight are recorded in
+    results.json (approved_models), and every receipt records the file that
+    approved its own judgment. transport is the Ollama HTTP callable;
+    generate_fns maps a transport name to a generate function (tests); host
+    and clock override the recorded host facts and timestamps (tests).
 
     Raises PaperError or UnauditedError before any judgment when the paper,
     the output directory or the preflight is not acceptable; nothing is
@@ -902,15 +989,19 @@ def run_paper(manifest_path, out_dir, *, base_url: str = DEFAULT_BASE_URL,
     taken = [name for name in PAPER_OUTPUTS if (out / name).exists()]
     if taken:
         raise PaperError(f"output directory already holds a paper run ({', '.join(taken)}); "
-                         f"a paper is run once")
+                         f"one run per output directory")
     generate_fns = generate_fns or {}
     arm_order = [manifest["gating_arm"]] + [a for a in manifest["arms"]
                                             if a != manifest["gating_arm"]]
     pinned_runtime = manifest.get("runtime")
+    approved_identity = None
     for arm in arm_order:
         spec = manifest["arms"][arm]
         pin = live_pin(spec["model"], base_url, spec["transport"], transport=transport)
-        check_approved(pin, approved_path, transport=spec["transport"])
+        identity = check_approved(pin, approved_path, transport=spec["transport"])
+        if approved_identity is not None and identity != approved_identity:
+            raise UnauditedError("the approved-models manifest changed during the preflight")
+        approved_identity = identity
         if spec["transport"] == OLLAMA and (pinned_runtime or {}).get("ollama_version"):
             version = get_runtime_version(base_url, transport=transport)
             if version != pinned_runtime["ollama_version"]:
@@ -918,6 +1009,15 @@ def run_paper(manifest_path, out_dir, *, base_url: str = DEFAULT_BASE_URL,
                                      f"{pinned_runtime['ollama_version']}")
 
     out.mkdir(parents=True, exist_ok=True)
+    started = {"run_state": "started", "paper_id": manifest["paper_id"],
+               "manifest_sha256": paper["manifest_sha256"], "harness_version": __version__,
+               "approved_models": approved_identity}
+    try:
+        with open(out / "results.json", "x", encoding="utf-8", newline="\n") as fh:
+            fh.write(_json_text(started))
+    except FileExistsError as exc:
+        raise PaperError("output directory already holds a paper run (results.json); "
+                         "one run per output directory") from exc
     log = ReceiptLog(out / "receipts.jsonl")
     cap = manifest["attempt_cap"]
     records = []
@@ -943,9 +1043,11 @@ def run_paper(manifest_path, out_dir, *, base_url: str = DEFAULT_BASE_URL,
                         break
     report = evaluate(manifest, records)
     results = {
+        "run_state": "finished",
         "paper_id": manifest["paper_id"],
         "manifest_sha256": paper["manifest_sha256"],
         "harness_version": __version__,
+        "approved_models": approved_identity,
         "receipts": {"file": "receipts.jsonl", "receipt_version": RECEIPT_VERSION,
                      "count": log.count, "head": log.head},
         "records": records,

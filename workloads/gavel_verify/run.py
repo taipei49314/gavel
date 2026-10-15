@@ -29,6 +29,11 @@ Steps, each logged with its command, exit code, duration and output hashes:
    observations; they do not decide the result.
 6. The source SHA and a clean checkout again.
 
+Steps 1-5 share a 25-minute budget (the entry allows 30): each step's timeout
+is cut to what is left, and a step that would start after the budget is
+spent is skipped and recorded as a problem, so result.json and SUMMARY.md
+are always written. The step-6 checks get one more minute of their own.
+
 Writes out/result.json, out/SUMMARY.md, out/suite.xml, out/logs/ and
 out/round2/seed-<n>/.
 """
@@ -55,6 +60,14 @@ WORK_MACHINES = frozenset({"LAPTOP-01AGNPJU", "LAPTOP-16NUA5I8"})
 DEPENDENCIES = {"pytest", "colorama", "iniconfig", "packaging", "pluggy", "pygments"}
 WHEEL_HOST = "https://files.pythonhosted.org/packages/"
 SEEDS = ("1", "17")
+# The declared entry allows 30 minutes (timeout_minutes). The steps share a
+# 25-minute budget, so that result.json and SUMMARY.md are always written
+# before EC ends the job: each step's timeout is cut to what is left, and a
+# step that would start after the budget is spent is skipped and recorded.
+# The two final git checks (step 6) get one more minute of their own, so a
+# spent budget does not also hide whether the checkout changed.
+TIME_BUDGET_SECONDS = 25 * 60
+FINAL_CHECKS_SECONDS = 60
 COMMITTED_RECEIPTS = frozenset({
     "attack/round-1/receipts.jsonl",
     "results/round-0/receipts-rerun-LWR1.jsonl",
@@ -118,6 +131,7 @@ def tree_files(base: Path) -> dict[str, bytes]:
 
 
 def main() -> int:
+    deadline = time.monotonic() + TIME_BUDGET_SECONDS
     try:
         expected, host, out, work = identity()
     except Refused as exc:
@@ -137,7 +151,17 @@ def main() -> int:
     steps: list[dict] = []
     problems: list[str] = []
 
-    def run(name: str, command: list[str], *, seed: str = "1", timeout: int = 300):
+    def run(name: str, command: list[str], *, seed: str = "1", timeout: int = 300,
+            final: bool = False):
+        limit = deadline + (FINAL_CHECKS_SECONDS if final else 0)
+        remaining = int(limit - time.monotonic())
+        if remaining < 1:
+            problems.append(f"time budget exhausted before {name}")
+            steps.append({"name": name, "command": [Path(command[0]).name] + command[1:],
+                          "exit_code": 2, "skipped": "time budget exhausted",
+                          "pythonhashseed": seed})
+            return 2, b"", b""
+        timeout = max(1, min(timeout, remaining))
         started = time.monotonic()
         timed_out = False
         try:
@@ -154,7 +178,7 @@ def main() -> int:
         (logs / f"{name}.stderr").write_bytes(stderr)
         steps.append({"name": name, "command": [Path(command[0]).name] + command[1:],
                       "exit_code": code, "elapsed_seconds": round(time.monotonic() - started, 3),
-                      "timed_out": timed_out, "pythonhashseed": seed,
+                      "timeout_seconds": timeout, "timed_out": timed_out, "pythonhashseed": seed,
                       "stdout_sha256": digest(stdout), "stderr_sha256": digest(stderr)})
         return code, stdout, stderr
 
@@ -266,10 +290,12 @@ def main() -> int:
                 problems.append(f"round2.py summary unreadable: {exc}")
 
         # 6. nothing changed the source
-        code, final, _ = run("final-source", ["git", "rev-parse", "--verify", "HEAD"])
+        code, final, _ = run("final-source", ["git", "rev-parse", "--verify", "HEAD"],
+                             timeout=30, final=True)
         if code or final.decode("ascii", "replace").strip() != expected:
             problems.append("verification changed the source SHA")
-        code, status, _ = run("final-status", ["git", "status", "--porcelain", "-z"])
+        code, status, _ = run("final-status", ["git", "status", "--porcelain", "-z"],
+                              timeout=30, final=True)
         if code or status:
             problems.append("verification changed the source checkout")
 
