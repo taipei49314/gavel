@@ -11,8 +11,8 @@ import json
 import urllib.error
 
 import pytest
-from fakes import (FakeTransport, make_diff_case, make_ledger_case, raising,
-                   verdict, write_approved)
+from fakes import (FakeTransport, fake_judgment, make_diff_case,
+                   make_ledger_case, raising, verdict, write_approved)
 from gavel.anchor import ANCHOR_VERSION
 from gavel.judge import DEFAULT_NUM_CTX, SCHEMA_VERSION
 from gavel.prompt import PROMPT_VERSION
@@ -48,6 +48,15 @@ def test_success_records_every_receipt_fact(approved):
     assert res["execution"] == {"base_url": "http://x", "timeout_s": 5}
     assert (res["prompt_version"], res["anchor_version"], res["schema_version"]) == \
         (PROMPT_VERSION, ANCHOR_VERSION, SCHEMA_VERSION)
+
+
+def test_fake_judgment_has_the_judge_case_shape(approved):
+    # Receipt tests build judgments with fakes.fake_judgment; keep its shape
+    # identical to the real judgment path.
+    res = judge_case(make_diff_case(), PRIMARY, "http://x", 5, transport=good_transport(),
+                     approved_models=approved)
+    assert set(fake_judgment()) == set(res)
+    assert set(fake_judgment()["transport"]) == set(res["transport"])
 
 
 def test_unreachable_model_is_unaudited(approved):

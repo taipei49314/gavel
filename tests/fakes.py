@@ -166,3 +166,100 @@ def write_approved(directory, entries=None) -> Path:
     path = Path(directory) / "approved-models.json"
     path.write_text(json.dumps(approved_manifest(entries)), encoding="utf-8")
     return path
+
+
+PIN = {"model": "qwen3.5:35b-a3b", "manifest_digest": "sha256:35b",
+       "size_bytes": 1, "modified_at": "t"}
+
+_SAME = object()
+
+
+def fake_judgment(case=None, v="clean", *, raw=None, stored=_SAME, unaudited=None,
+                  pin=None, pin_after=_SAME, transport_name="ollama",
+                  generation=None, options=None):
+    """A judge_case()-shaped result built without any transport.
+
+    Valid by default (verdict v, raw = its JSON). With unaudited set the
+    verdict is None and raw is whatever is given. stored overrides the
+    verdict independently of raw (for tamper tests).
+    """
+    from gavel.anchor import ANCHOR_VERSION, render_case, sha256_text
+    from gavel.judge import DEFAULT_OPTIONS, SCHEMA_VERSION
+    from gavel.prompt import PROMPT_VERSION, render_prompt
+
+    case = case or make_diff_case()
+    anchor = render_case(case)
+    prompt = render_prompt(anchor)
+    local = transport_name == "ollama"
+    pin = dict(pin or (PIN if local else {"model": "gemini-4-argon-high",
+                                          "manifest_digest": None,
+                                          "transport": transport_name}))
+    if unaudited:
+        verdict_obj = None
+    else:
+        verdict_obj = verdict(v)
+        raw = raw if raw is not None else json.dumps(verdict_obj)
+    if stored is not _SAME:
+        verdict_obj = stored
+    if pin_after is _SAME:
+        pin_after = dict(pin) if local else None
+    return {
+        "verdict": verdict_obj, "unaudited": unaudited, "raw": raw,
+        "anchor_text": anchor, "prompt_text": prompt,
+        "anchor_sha256": sha256_text(anchor), "prompt_sha256": sha256_text(prompt),
+        "prompt_version": PROMPT_VERSION, "anchor_version": ANCHOR_VERSION,
+        "schema_version": SCHEMA_VERSION,
+        "transport": {"name": transport_name, "version": "0.35.0" if local else None},
+        "pin": pin, "pin_after": pin_after,
+        "options": dict(options if options is not None else DEFAULT_OPTIONS) if local else {},
+        "generation": dict(generation if generation is not None else {
+            "prompt_eval_count": 120, "eval_count": 60, "done": True,
+            "done_reason": "stop"}),
+        "execution": ({"base_url": "http://127.0.0.1:11434", "timeout_s": 600.0}
+                      if local else {"timeout_s": 600.0}),
+    }
+
+
+def legacy_receipt(version=2, case=None, arm="primary", raw=None, stored=_SAME,
+                   unaudited=None, run=1, pin=None):
+    """A v1/v2 receipt exactly as round-0..2 wrote them (make_receipt + run)."""
+    import hashlib
+
+    from gavel.anchor import render_case, sha256_text
+    from gavel.prompt import render_prompt
+
+    def h(obj):
+        return hashlib.sha256(json.dumps(obj, sort_keys=True).encode()).hexdigest()
+
+    case = case or make_diff_case()
+    anchor = render_case(case)
+    prompt = render_prompt(anchor)
+    pin = dict(pin or PIN)
+    if unaudited:
+        verdict_obj = None
+    else:
+        verdict_obj = verdict("clean")
+        raw = raw if raw is not None else json.dumps(verdict_obj)
+    if stored is not _SAME:
+        verdict_obj = stored
+    receipt = {
+        "receipt_version": version,
+        "receipt_id": h({"case_id": case["case_id"], "arm": arm, "pin_sha256": h(pin)})[:16],
+        "timestamp": "2026-10-14T16:00:00+00:00",
+        "case_id": case["case_id"], "arm": arm, "pin": pin, "pin_sha256": h(pin),
+        "prompt_sha256": sha256_text(prompt), "anchor_sha256": sha256_text(anchor),
+        "raw_response": raw, "verdict": verdict_obj, "unaudited_reason": unaudited,
+        "run": run,
+    }
+    if version >= 2:
+        receipt.update(prompt_text=prompt, anchor_text=anchor,
+                       execution={"schema_version": 2, "temperature": 0,
+                                  "base_url": "http://127.0.0.1:11434",
+                                  "timeout_s": 600.0})
+    return receipt
+
+
+def write_lines(path, receipts):
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        for rec in receipts:
+            fh.write(json.dumps(rec, sort_keys=True) + "\n")

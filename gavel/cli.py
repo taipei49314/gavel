@@ -9,11 +9,10 @@ import os
 import sys
 from pathlib import Path
 
-from .anchor import render_case, sha256_text
 from .judge import UnauditedError, check_approved, get_pin
-from .prompt import MECHANISM_CLASSES, render_prompt
+from .prompt import MECHANISM_CLASSES
 from .qualify import ARMS, evaluate, expected_judgments, judge_case, run_exam
-from .receipts import make_receipt, verify_file, write_receipt
+from .receipts import append_receipt, build_receipt, verify_file
 
 DEFAULT_BASE_URL = os.environ.get("GAVEL_OLLAMA", "http://127.0.0.1:11434")
 DEFAULT_TIMEOUT = float(os.environ.get("GAVEL_TIMEOUT", "600"))
@@ -58,15 +57,8 @@ def cmd_scan(args) -> int:
         res = judge_case(case, spec["model"], args.base_url, args.timeout,
                          approved_models=args.approved_models,
                          transport_name=spec.get("transport", "ollama"))
-        pin = res["pin"]
-        receipt = make_receipt(
-            case["case_id"], arm, pin, res["prompt_sha256"], res["anchor_sha256"],
-            res["raw"] if res["verdict"] is not None else None,
-            res["verdict"], res["unaudited"],
-            prompt_text=res["prompt_text"], anchor_text=res["anchor_text"],
-            execution={"schema_version": 2, "temperature": 0,
-                       "base_url": args.base_url, "timeout_s": args.timeout})
-        write_receipt(receipts_path, receipt)
+        append_receipt(receipts_path, build_receipt(
+            case_id=case["case_id"], arm=arm, run=1, attempt=1, judgment=res))
         outcomes.append((arm, res))
     for arm, res in outcomes:
         if res["unaudited"]:

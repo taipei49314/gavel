@@ -17,7 +17,7 @@ from .judge import (OLLAMA, SCHEMA_VERSION, TRANSPORT_ERRORS, UnauditedError,
                     get_pin, get_runtime_version, live_pin, resolve_options,
                     validate_verdict)
 from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
-from .receipts import make_receipt, write_receipt
+from .receipts import ReceiptLog, build_receipt
 
 ARMS = {
     "primary": {"model": "qwen3.5:35b-a3b", "role": "gating", "runs": 1, "s_runs": 3,
@@ -157,7 +157,7 @@ def run_exam(cases_dir, out_dir, base_url="http://127.0.0.1:11434",
 
     cases_dir, out_dir = Path(cases_dir), Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    receipts_path = out_dir / "receipts.jsonl"
+    log = ReceiptLog(out_dir / "receipts.jsonl")
     records = []
     for case_path in sorted(cases_dir.glob("*.json")):
         case = json_load(case_path)
@@ -168,18 +168,10 @@ def run_exam(cases_dir, out_dir, base_url="http://127.0.0.1:11434",
                 res = judge_case(case, spec["model"], base_url, timeout_s,
                                  transport=transport, approved_models=approved_models,
                                  transport_name=spec.get("transport", OLLAMA))
-                receipt = make_receipt(
-                    case["case_id"], arm, res["pin"], res["prompt_sha256"],
-                    res["anchor_sha256"],
-                    res["raw"] if res["verdict"] is not None else None,
-                    res["verdict"], res["unaudited"],
-                    prompt_text=res["prompt_text"], anchor_text=res["anchor_text"],
-                    execution={"schema_version": receipt_schema_version(),
-                               "temperature": 0, "base_url": base_url,
-                               "timeout_s": timeout_s})
-                receipt["run"] = run
-                write_receipt(receipts_path, receipt)
+                log.append(build_receipt(case_id=case["case_id"], arm=arm, run=run,
+                                         attempt=1, judgment=res))
                 records.append({"case_id": case["case_id"], "arm": arm, "run": run,
+                                "attempt": 1,
                                 "verdict": res["verdict"], "unaudited": res["unaudited"]})
     manifest = sorted(expected_judgments(json_load_all(cases_dir), arms))
     (out_dir / "results.json").write_text(json.dumps(
