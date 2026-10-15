@@ -12,8 +12,8 @@ Round-2 contract (PREREG Addendum 4):
 import json
 
 from .anchor import render_case, sha256_text
-from .judge import (UnauditedError, agy_generate, generate, extract_json,
-                    validate_verdict, get_pin)
+from .judge import (TRANSPORT_ERRORS, UnauditedError, agy_generate, generate,
+                    extract_json, validate_verdict, get_pin)
 from .prompt import MECHANISM_CLASSES, render_prompt
 from .receipts import make_receipt, write_receipt
 
@@ -49,14 +49,16 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
     prompt = render_prompt(anchor_block)
     gen = generate_fn or generate
     try:
-        raw = gen(model, prompt, base_url, timeout_s, transport=transport)
+        raw = gen(model, prompt, base_url, timeout_s, transport=transport)["raw"]
         verdict = validate_verdict(extract_json(raw), MECHANISM_CLASSES)
         return {"verdict": verdict, "unaudited": None, "raw": raw,
                 "anchor_text": anchor_block, "prompt_text": prompt,
                 "anchor_sha256": sha256_text(anchor_block),
                 "prompt_sha256": sha256_text(prompt)}
-    except UnauditedError as exc:
-        return {"verdict": None, "unaudited": exc.reason, "raw": None,
+    except (UnauditedError, *TRANSPORT_ERRORS) as exc:
+        reason = exc.reason if isinstance(exc, UnauditedError) \
+            else f"transport error: {type(exc).__name__}: {exc}"
+        return {"verdict": None, "unaudited": reason, "raw": None,
                 "anchor_text": anchor_block, "prompt_text": prompt,
                 "anchor_sha256": sha256_text(anchor_block),
                 "prompt_sha256": sha256_text(prompt)}

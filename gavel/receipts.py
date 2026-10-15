@@ -88,7 +88,7 @@ def verify_content(rec: dict, mechanism_classes: list[str]) -> None:
     """Content verification for one receipt (v2+). Raises ValueError on any
     disagreement between embedded content, recomputed hashes, and the
     stored verdict. This never calls a model — replay is separate."""
-    from .judge import extract_json, validate_verdict
+    from .judge import extract_json_v2, validate_verdict
 
     if rec.get("prompt_text") is None or rec.get("anchor_text") is None:
         return  # legacy receipt: structural checks only
@@ -101,7 +101,7 @@ def verify_content(rec: dict, mechanism_classes: list[str]) -> None:
             raise ValueError(f"{rec['case_id']}/{rec['arm']}: unaudited receipt carries verdict/raw")
         return
     try:
-        reparsed = validate_verdict(extract_json(rec["raw_response"]), mechanism_classes)
+        reparsed = validate_verdict(extract_json_v2(rec["raw_response"]), mechanism_classes)
     except Exception as exc:
         raise ValueError(f"{rec['case_id']}/{rec['arm']}: raw response no longer parses: {exc}")
     if reparsed != rec["verdict"]:

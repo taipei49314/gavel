@@ -61,25 +61,89 @@ def verdict(v="attack", confidence=0.9, mechanism="test-disabled",
     return base
 
 
-class FakeTransport:
-    """Deterministic transport: tags catalog + canned generate responses."""
+FAKE_MODELS = [
+    {"name": "qwen3.5:35b-a3b", "model": "qwen3.5:35b-a3b",
+     "digest": "sha256:35b", "size": 23869191742, "modified_at": "t"},
+    {"name": "qwen3.5:9b", "model": "qwen3.5:9b",
+     "digest": "sha256:9b", "size": 6594474711, "modified_at": "t"},
+]
 
-    def __init__(self, response_by_model=None, models=None):
+
+class FakeTransport:
+    """Deterministic Ollama transport: tags catalog, version, canned generate responses.
+
+    response_by_model: model -> response text, or a list consumed one item
+      per generate call for that model (the last item repeats). An item may
+      be text, a dict (returned as the whole response object) or an
+      exception instance (raised).
+    responder: optional callable (model, prompt) -> item, used instead of
+      response_by_model.
+    extra: fields merged into every text response (e.g. prompt_eval_count,
+      done_reason).
+    digest_after_generate: model -> digest the catalog reports once any
+      generate call has happened.
+    version / version_after_generate: what /api/version reports before /
+      after the first generate call.
+    tags_error: exception raised by /api/tags.
+    """
+
+    def __init__(self, response_by_model=None, models=None, *, responder=None,
+                 extra=None, version="0.0.0-fake", version_after_generate=None,
+                 digest_after_generate=None, tags_error=None):
         self.response_by_model = response_by_model or {}
-        self.models = models or [
-            {"name": "qwen3.5:35b-a3b", "model": "qwen3.5:35b-a3b",
-             "digest": "sha256:35b", "size": 23869191742, "modified_at": "t"},
-            {"name": "qwen3.5:9b", "model": "qwen3.5:9b",
-             "digest": "sha256:9b", "size": 6594474711, "modified_at": "t"},
-        ]
+        self.models = models or [dict(m) for m in FAKE_MODELS]
+        self.responder = responder
+        self.extra = extra or {}
+        self.version = version
+        self.version_after_generate = version_after_generate
+        self.digest_after_generate = digest_after_generate or {}
+        self.tags_error = tags_error
+        self.generate_counts = {}
+        self.generated = 0
         self.calls = []
+
+    def generate_calls(self):
+        return [c for c in self.calls if "/api/generate" in c[1]]
 
     def __call__(self, method, url, payload=None, timeout=30):
         self.calls.append((method, url, payload))
         if "/api/tags" in url:
-            return {"models": self.models}
+            if self.tags_error is not None:
+                raise self.tags_error
+            models = [dict(m) for m in self.models]
+            if self.generated:
+                for m in models:
+                    if m["name"] in self.digest_after_generate:
+                        m["digest"] = self.digest_after_generate[m["name"]]
+            return {"models": models}
+        if "/api/version" in url:
+            if self.generated and self.version_after_generate is not None:
+                return {"version": self.version_after_generate}
+            return {"version": self.version}
         model = payload["model"]
-        resp = self.response_by_model.get(model)
-        if resp is None:
+        index = self.generate_counts.get(model, 0)
+        self.generate_counts[model] = index + 1
+        self.generated += 1
+        if self.responder is not None:
+            item = self.responder(model, payload["prompt"])
+        else:
+            item = self.response_by_model.get(model)
+            if isinstance(item, list):
+                item = item[min(index, len(item) - 1)]
+        if item is None:
             raise ConnectionError("model not mounted")
-        return {"response": resp}
+        if isinstance(item, BaseException):
+            raise item
+        if isinstance(item, dict):
+            return dict(item)
+        out = {"model": model, "response": item, "done": True,
+               "done_reason": "stop", "prompt_eval_count": 120, "eval_count": 60}
+        out.update(self.extra)
+        return out
+
+
+def raising(exc):
+    """A transport callable that raises exc on every call."""
+    def do(method, url, payload=None, timeout=30):
+        raise exc
+    return do
