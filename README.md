@@ -8,8 +8,8 @@ gavel 對家族工具（checkwash／ledgerwash／pinwash）的殘餘風險面做
 
 ## 它承諾什麼（v0.1.0 語意）
 
-- 裁判通過 round-0 資格考：16 個已知逃脫面（S 級 5/5 零容錯、A 級 ≥4/5）＋否定控制組零誤傷
-- 每個判決是一張收據：模型 sha256、prompt hash、完整 transcript、verdict——離線可重放
+- ~~裁判通過 round-0 資格考：16 個已知逃脫面（S 級 5/5 零容錯、A 級 ≥4/5）＋否定控制組零誤傷~~ **[Correction 2026-10-15]** Round-0 recorded FAIL ([results/round-0/REPORT.md](results/round-0/REPORT.md)), and no judge is qualified; see Status below.
+- 每個判決是一張收據：模型 sha256、prompt hash、完整 transcript、verdict——~~離線可重放~~ **[Correction 2026-10-15]** Replay is not implemented: at d0cb1dc, `gavel verify` has only `--content`, which re-hashes stored content and re-parses stored responses without running a model.
 - fail-closed：模型不可用／schema 違規 → UNAUDITED（exit 2），永不 exit 0
 
 ## 它不承諾什麼
@@ -28,7 +28,16 @@ gavel 對家族工具（checkwash／ledgerwash／pinwash）的殘餘風險面做
 
 ## 狀態
 
-已上架（github.com/taipei49314/gavel，main）。spec 0；裁判已通過 round-1 資格考（results/round-1/REPORT.md）；
+**Status (2026-10-15)**
+
+- **No judge is qualified.** Round-0 recorded FAIL. Round-1 and round-2 were run on work machine LAPTOP-01AGNPJU, and neither is a qualification of record.
+- **Round-2 is closed as INCOMPLETE** under its locked contract (PREREG Addendum 4 completeness gate). The first pass is the status of record; later re-attempts are disclosed and not counted. See the ERRATUM in [results/round-2/REPORT.md](results/round-2/REPORT.md).
+- **All exam results are 「未驗收」** (not accepted) under EC POLICY work-machine-local: round-0, round-1, attack round-1 and round-2. So are the test runs made on the work machine.
+- **Next steps**, all on the EC pool: a model-free `gavel-verify` workload; then the judge on an EC pool host that Nelson names (model work is BLOCKED until then); then round-3.
+- **v0.1.0 stays frozen** until a round-3 run on the EC pool passes.
+- Decisions of record: [docs/DECISIONS.md](docs/DECISIONS.md). Where the paragraph below differs from this block, this block is current.
+
+已上架（github.com/taipei49314/gavel，main）。spec 0；~~裁判已通過 round-1 資格考（results/round-1/REPORT.md）~~；**[Correction 2026-10-15]** Round-1 was run on work machine LAPTOP-01AGNPJU and is 未驗收; it is not a qualification of record (see Status above).
 M4 外部攻擊輪 wave-1 已入帳（attack/round-1/REPORT.md，1 個新逃脫面 E1 已披露為 known-limitation）。
 v0.1.0 tag 尚未發行：候選條件＝round-2 重考（prompt v4＋考卷 v2）PASS。
 License：Apache-2.0。人類決策記錄見 [docs/DECISIONS.md](docs/DECISIONS.md)。
