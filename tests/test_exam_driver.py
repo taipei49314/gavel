@@ -1,22 +1,28 @@
-"""The single judgment path (judge_case) shared by exam and scan.
+"""The single judgment path (judge_case) shared by exam and scan, and the
+committed exam driver (run_paper).
 
 Covers CR-02/F4 (approved-models checked on every judgment, default path
 not CWD), the digest and runtime version read before and after each
 judgment, CR-07 (raw output kept on UNAUDITED), CR-14 (transport errors are
-UNAUDITED, never an exception), CR-16 (truncation guard, options recorded)
-and GOV-12 (execution facts per transport).
+UNAUDITED, never an exception), CR-16 (truncation guard, options recorded),
+GOV-12 (execution facts per transport), and CR-01/CR-03 for the driver
+(harness-only attempts within the cap, every attempt receipted, a paper run
+once, its report reproducible from its receipts).
 """
 
 import json
 import urllib.error
 
 import pytest
-from fakes import (FakeTransport, fake_judgment, make_diff_case,
-                   make_ledger_case, raising, verdict, write_approved)
+from fakes import (FakeTransport, fake_judgment, load_json, make_diff_case,
+                   make_ledger_case, marked_case, marker, raising, verdict,
+                   write_approved, write_paper)
 from gavel.anchor import ANCHOR_VERSION
-from gavel.judge import DEFAULT_NUM_CTX, SCHEMA_VERSION
-from gavel.prompt import PROMPT_VERSION
-from gavel.qualify import judge_case
+from gavel.judge import DEFAULT_NUM_CTX, SCHEMA_VERSION, UnauditedError
+from gavel.prompt import MECHANISM_CLASSES, PROMPT_VERSION
+from gavel.qualify import (PaperError, evaluate, judge_case, load_paper,
+                           records_from_receipts, run_paper)
+from gavel.receipts import verify_file
 
 PRIMARY = "qwen3.5:35b-a3b"
 FAST = "qwen3.5:9b"
@@ -228,3 +234,166 @@ def test_transport_returning_no_text_is_unaudited(approved):
                      approved_models=approved,
                      generate_fn=lambda *a, **k: "bare string, not the protocol dict")
     assert res["verdict"] is None and "no text" in res["unaudited"]
+
+
+# --- run_paper: the committed exam driver (CR-01, CR-03) ----------------------
+
+HOST = {"hostname": "pool-host-1", "node": "pool-host-1", "system": "Windows",
+        "python": "3.12.10"}
+PAPER_CASES = {
+    "S-1": marked_case("S-1", tier="S"),
+    "A-1": marked_case("A-1", tier="A"),
+    "NEG-1": marked_case("NEG-1", tier=None, role="negative", attack_truth=False),
+}
+
+
+def responder(overrides=None):
+    """Attack on every case except NEG-1 (clean); overrides maps
+    (model, case_id) to a list of items consumed one per call."""
+    overrides = overrides or {}
+    calls = {}
+
+    def respond(model, prompt):
+        cid = next(c for c in PAPER_CASES if marker(c) in prompt)
+        key = (model, cid)
+        if key in overrides:
+            index = calls.get(key, 0)
+            calls[key] = index + 1
+            seq = overrides[key]
+            return seq[min(index, len(seq) - 1)]
+        return json.dumps(verdict("clean" if cid == "NEG-1" else "attack"))
+    return respond
+
+
+@pytest.fixture
+def paper_env(tmp_path):
+    manifest_path = write_paper(tmp_path / "paper", PAPER_CASES)
+    approved = write_approved(tmp_path)
+    return manifest_path, approved, tmp_path / "out"
+
+
+def run(paper_env, transport, **kw):
+    manifest_path, approved, out = paper_env
+    return run_paper(manifest_path, out, base_url="http://x", timeout_s=5,
+                     approved_path=approved, transport=transport, host=HOST, **kw)
+
+
+def receipts_of(paper_env):
+    return verify_file(paper_env[2] / "receipts.jsonl", MECHANISM_CLASSES, content=True)
+
+
+def test_run_paper_pass_writes_receipts_results_and_report(paper_env):
+    t = FakeTransport(responder=responder())
+    result = run(paper_env, t)
+    assert result["report"]["status"] == "PASS", result["report"]
+    # primary: S-1 x3 + A-1 + NEG-1; fast: 3 cases x1
+    receipts = verify_file(paper_env[2] / "receipts.jsonl", MECHANISM_CLASSES, content=True,
+                           expect_head=result["results"]["receipts"]["head"],
+                           expect_count=8)
+    assert all(r["attempt"] == 1 and r["paper_id"] == "test-paper" for r in receipts)
+    assert all(r["host"] == HOST for r in receipts)
+    assert [r["arm"] for r in receipts[:5]] == ["primary"] * 5  # gating arm first
+    assert load_json(paper_env[2] / "report.json") == result["report"]
+    results = load_json(paper_env[2] / "results.json")
+    assert results["receipts"]["count"] == 8
+    assert results["manifest_sha256"] == load_paper(paper_env[0])["manifest_sha256"]
+
+
+def test_report_is_reproducible_from_receipts(paper_env):
+    result = run(paper_env, FakeTransport(responder=responder()))
+    manifest = load_paper(paper_env[0])["manifest"]
+    assert evaluate(manifest, records_from_receipts(receipts_of(paper_env))) == result["report"]
+
+
+def test_unaudited_slot_is_reattempted_immediately_and_disclosed(paper_env):
+    t = FakeTransport(responder=responder({
+        ("qwen3.5:9b", "A-1"): ["", json.dumps(verdict("attack"))]}))
+    result = run(paper_env, t)
+    report = result["report"]
+    assert report["status"] == "PASS"
+    assert report["reattempted"] == [{"cell": ["A-1", "fast", 1], "attempts": 2,
+                                      "counted_attempt": 2,
+                                      "unaudited_reasons": ["empty model response"]}]
+    receipts = receipts_of(paper_env)
+    slot = [r for r in receipts if (r["case_id"], r["arm"]) == ("A-1", "fast")]
+    assert [r["attempt"] for r in slot] == [1, 2]
+    assert slot[0]["unaudited_reason"] == "empty model response"
+    assert slot[0]["raw_response"] == ""  # CR-07: what came back is kept
+    assert len(receipts) == 9
+    assert sum(1 for r in receipts if r["attempt"] > 1) == 1
+
+
+def test_valid_verdicts_are_never_reattempted(paper_env):
+    # A wrong but valid verdict (a miss) is final: only UNAUDITED is retried.
+    t = FakeTransport(responder=responder({
+        ("qwen3.5:35b-a3b", "A-1"): [json.dumps(verdict("clean")),
+                                     json.dumps(verdict("attack"))]}))
+    result = run(paper_env, t)
+    assert result["report"]["status"] == "FAIL"
+    slot = [r for r in receipts_of(paper_env) if (r["case_id"], r["arm"]) == ("A-1", "primary")]
+    assert len(slot) == 1 and slot[0]["verdict"]["verdict"] == "clean"
+
+
+def test_exhausted_cap_is_incomplete_with_every_attempt_receipted(paper_env):
+    t = FakeTransport(responder=responder({("qwen3.5:9b", "A-1"): [""]}))
+    result = run(paper_env, t)
+    report = result["report"]
+    assert report["status"] == "INCOMPLETE"
+    assert report["gaps"]["unresolved"][0]["cell"] == ["A-1", "fast", 1]
+    assert report["gaps"]["unresolved"][0]["attempts"] == 3
+    slot = [r for r in receipts_of(paper_env) if (r["case_id"], r["arm"]) == ("A-1", "fast")]
+    assert [r["attempt"] for r in slot] == [1, 2, 3]
+
+
+def test_a_paper_is_run_once(paper_env):
+    t = FakeTransport(responder=responder())
+    run(paper_env, t)
+    before = len(receipts_of(paper_env))
+    with pytest.raises(PaperError, match="run once"):
+        run(paper_env, t)
+    assert len(receipts_of(paper_env)) == before
+
+
+def test_tampered_case_file_refused_before_any_judgment(paper_env):
+    case_path = paper_env[0].parent / "cases" / "A-1.json"
+    case_path.write_bytes(case_path.read_bytes().replace(b"x == 0", b"x == 1"))
+    t = FakeTransport(responder=responder())
+    with pytest.raises(PaperError, match="sha256"):
+        run(paper_env, t)
+    assert t.calls == [] and not paper_env[2].exists()
+
+
+def test_missing_case_file_refused_before_any_judgment(paper_env):
+    (paper_env[0].parent / "cases" / "NEG-1.json").unlink()
+    t = FakeTransport(responder=responder())
+    with pytest.raises(PaperError, match="missing"):
+        run(paper_env, t)
+    assert t.calls == []
+
+
+def test_invalid_manifest_refused(tmp_path):
+    path = write_paper(tmp_path / "paper", PAPER_CASES, bars={"a_mim": 1})
+    with pytest.raises(PaperError, match="invalid paper manifest"):
+        load_paper(path)
+
+
+def test_preflight_unapproved_arm_refused_before_any_judgment(paper_env, tmp_path):
+    strict_dir = tmp_path / "strict"
+    strict_dir.mkdir()
+    only_primary = write_approved(strict_dir, [
+        {"model": "qwen3.5:35b-a3b", "manifest_digest": "sha256:35b", "transport": "ollama"}])
+    t = FakeTransport(responder=responder())
+    with pytest.raises(UnauditedError, match="not in approved manifest"):
+        run_paper(paper_env[0], paper_env[2], base_url="http://x", timeout_s=5,
+                  approved_path=only_primary, transport=t, host=HOST)
+    assert t.generate_calls() == [] and not paper_env[2].exists()
+
+
+def test_preflight_pinned_runtime_refused_before_any_judgment(tmp_path):
+    manifest_path = write_paper(tmp_path / "paper", PAPER_CASES,
+                                runtime={"ollama_version": "0.35.0"})
+    t = FakeTransport(responder=responder(), version="0.40.4")
+    with pytest.raises(UnauditedError, match="not the pinned"):
+        run_paper(manifest_path, tmp_path / "out", base_url="http://x", timeout_s=5,
+                  approved_path=write_approved(tmp_path), transport=t, host=HOST)
+    assert t.generate_calls() == []

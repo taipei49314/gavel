@@ -1,5 +1,7 @@
 """Shared case builders and fakes for the gavel test suite."""
 
+import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -223,8 +225,6 @@ def fake_judgment(case=None, v="clean", *, raw=None, stored=_SAME, unaudited=Non
 def legacy_receipt(version=2, case=None, arm="primary", raw=None, stored=_SAME,
                    unaudited=None, run=1, pin=None):
     """A v1/v2 receipt exactly as round-0..2 wrote them (make_receipt + run)."""
-    import hashlib
-
     from gavel.anchor import render_case, sha256_text
     from gavel.prompt import render_prompt
 
@@ -259,7 +259,100 @@ def legacy_receipt(version=2, case=None, arm="primary", raw=None, stored=_SAME,
     return receipt
 
 
+def load_json(path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
 def write_lines(path, receipts):
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         for rec in receipts:
             fh.write(json.dumps(rec, sort_keys=True) + "\n")
+
+
+# --- paper manifests ---------------------------------------------------------
+
+DEFAULT_ARMS = {
+    "primary": {"model": "qwen3.5:35b-a3b", "transport": "ollama",
+                "runs": {"default": 1, "S": 3}},
+    "fast": {"model": "qwen3.5:9b", "transport": "ollama", "runs": {"default": 1}},
+}
+INFORMED_ARM = {"model": "gemini-4-argon-high", "transport": "agy", "runs": {"default": 1}}
+NEGATIVE_BAR = {"hard_max": 0, "soft_max": 2, "inconclusive_max": 1,
+                "soft_confidence_below": 0.6}
+
+
+def case_bytes(case) -> bytes:
+    return json.dumps(case, sort_keys=True, indent=2).encode("utf-8")
+
+
+def case_sha(case) -> str:
+    return hashlib.sha256(case_bytes(case)).hexdigest()
+
+
+def default_bars(cases: dict) -> dict:
+    """Census from the cases plus every bar whose denominator is non-zero
+    (the PREREG qualification bars: S all, A >= min(4, |A|), negatives,
+    agree >= 80%, S reproducibility)."""
+    tiers = {"S": 0, "A": 0, "B": 0}
+    roles = {"negative": 0, "agree": 0}
+    for case in cases.values():
+        role = case.get("role", "exam")
+        if role == "exam" and case.get("tier") in tiers:
+            tiers[case["tier"]] += 1
+        elif role in roles:
+            roles[role] += 1
+    bars = {"tier_counts": tiers, "role_counts": roles}
+    if tiers["S"]:
+        bars["s_all"] = True
+        bars["s_reproducibility"] = True
+    if tiers["A"]:
+        bars["a_min"] = min(4, tiers["A"])
+    if roles["negative"]:
+        bars["negative"] = dict(NEGATIVE_BAR)
+    if roles["agree"]:
+        bars["agree_min_rate"] = 0.8
+    return bars
+
+
+def build_manifest(cases: dict, *, paper_id="test-paper", arms=None, gating_arm="primary",
+                   attempt_cap=3, scoring="bars", bars=None, **extra) -> dict:
+    """A paper manifest over cases (case files at cases/<id>.json)."""
+    manifest = {
+        "manifest_version": 1,
+        "paper_id": paper_id,
+        "cases": [{"case_id": cid, "path": f"cases/{cid}.json", "sha256": case_sha(case),
+                   "tier": case.get("tier"), "role": case.get("role", "exam")}
+                  for cid, case in cases.items()],
+        "arms": copy.deepcopy(arms if arms is not None else DEFAULT_ARMS),
+        "gating_arm": gating_arm,
+        "attempt_cap": attempt_cap,
+        "scoring": scoring,
+    }
+    if scoring == "bars":
+        manifest["bars"] = bars if bars is not None else default_bars(cases)
+    manifest.update(extra)
+    return manifest
+
+
+def write_paper(directory, cases: dict, **manifest_kw) -> Path:
+    """Write the case files and paper.json; return the manifest path."""
+    directory = Path(directory)
+    (directory / "cases").mkdir(parents=True, exist_ok=True)
+    for cid, case in cases.items():
+        (directory / "cases" / f"{cid}.json").write_bytes(case_bytes(case))
+    path = directory / "paper.json"
+    path.write_text(json.dumps(build_manifest(cases, **manifest_kw), indent=2),
+                    encoding="utf-8")
+    return path
+
+
+def marker(case_id: str) -> str:
+    return f"case-marker {case_id} end"
+
+
+def marked_case(case_id, tier="S", role="exam", attack_truth=True):
+    """A diff case whose rendered prompt identifies it (anchors never render
+    the case id), so a fake transport can answer per case."""
+    return make_diff_case(case_id=case_id, tier=tier, role=role, attack_truth=attack_truth,
+                          diff=f"-assert x == 42\n+assert x == 0\n# {marker(case_id)}\n")
+

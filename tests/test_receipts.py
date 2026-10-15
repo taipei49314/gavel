@@ -16,9 +16,8 @@ from fakes import (fake_judgment, legacy_receipt, make_diff_case, verdict,
                    write_lines)
 from gavel.prompt import MECHANISM_CLASSES
 from gavel.receipts import (GENESIS, RECEIPT_VERSION, ReceiptLog,
-                            append_receipt, build_receipt, load_receipts,
-                            receipt_digest, seal_receipt, verify_content,
-                            verify_file)
+                            append_receipt, build_receipt, receipt_digest,
+                            seal_receipt, verify_content, verify_file)
 
 HOST = {"hostname": "pool-host-1", "node": "pool-host-1", "system": "Windows",
         "python": "3.12.10"}

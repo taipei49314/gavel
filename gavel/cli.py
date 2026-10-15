@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .judge import UnauditedError, check_approved, get_pin
 from .prompt import MECHANISM_CLASSES
-from .qualify import ARMS, evaluate, expected_judgments, judge_case, run_exam
+from .qualify import ARMS, judge_case
 from .receipts import append_receipt, build_receipt, verify_file
 
 DEFAULT_BASE_URL = os.environ.get("GAVEL_OLLAMA", "http://127.0.0.1:11434")
@@ -84,22 +84,13 @@ def cmd_verify(args) -> int:
 
 
 def cmd_qualify(args) -> int:
-    cases_dir = Path(args.cases)
-    meta = {p.stem: json.loads(p.read_text(encoding="utf-8"))
-            for p in sorted(cases_dir.glob("*.json"))}
-    records = run_exam(cases_dir, Path(args.out), base_url=args.base_url,
-                       timeout_s=args.timeout, arms=tuple(args.arms))
-    data = json.loads((Path(args.out) / "results.json").read_text(encoding="utf-8"))
-    expected = {tuple(t) for t in data["manifest"]}
-    report = evaluate(meta, records, expected=expected)
-    (Path(args.out) / "report.json").write_text(
-        json.dumps(report, sort_keys=True, indent=2, ensure_ascii=False))
-    print("STATUS:", report["status"])
-    for b in report["bars"]:
-        print(("PASS" if b["ok"] else "FAIL"), b["bar"], "—", b["detail"])
-    for other in ("fast", "informed"):
-        print(f"{other} arm divergence:", report.get(f"{other}_arm_divergence"))
-    return 0 if report["status"] == "PASS" else 1
+    # The directory-driven exam (run_exam) derived its expected matrix from
+    # the arms and cases of the same run (CR-03/CR-10) and was removed. A
+    # paper is now run from a locked manifest by gavel.qualify.run_paper();
+    # its CLI command is not wired yet, so this fails closed.
+    print("UNAUDITED: `qualify` without a locked paper manifest is retired; "
+          "use gavel.qualify.run_paper (CLI command pending)", file=sys.stderr)
+    return 2
 
 
 def main(argv=None) -> int:
