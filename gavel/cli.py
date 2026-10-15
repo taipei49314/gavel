@@ -1,4 +1,4 @@
-"""gavel CLI: pin / scan / verify / exam / evaluate.
+"""gavel CLI: pin / scan / verify / exam / evaluate / score-sealed.
 
 Exit codes
 
@@ -21,6 +21,12 @@ Exit codes
     3  COMPLETE: every cell resolved, scoring is external (e.g. a sealed
        paper); this is not a pass
 
+  score-sealed
+    0  scored: the sealed paper is COMPLETE and was scored by the PREREG
+       Addendum 5 rule
+    2  not scored (INCOMPLETE: observations only; invalid records or
+       manifest: errors only) or refused (inputs, existing outputs)
+
   pin, verify: 0 done, 2 otherwise.
 
 Any unexpected error exits 2, never 0 or 1. Replay (re-running a model to
@@ -40,6 +46,8 @@ from .prompt import MECHANISM_CLASSES
 from .qualify import (ARMS, PaperError, evaluate, judge_case, load_paper,
                       records_from_receipts, run_paper)
 from .receipts import ReceiptLog, build_receipt, verify_file
+from .sealed import (SCORE_OUTPUTS, load_answer_key, provenance_for,
+                     score_sealed, summary_lines, write_outputs)
 
 DEFAULT_BASE_URL_FALLBACK = "http://127.0.0.1:11434"
 DEFAULT_TIMEOUT_S = 600.0
@@ -62,6 +70,8 @@ exit codes:
   exam,     0 PASS, 1 FAIL, 2 INVALID_PAPER / INVALID_RECORDS / INCOMPLETE
   evaluate    or refused (never scored), 3 COMPLETE (scoring is external;
               not a pass)
+  score-    0 scored (the paper is COMPLETE), 2 not scored (INCOMPLETE or
+  sealed      invalid records: observations only) or refused
   others    0 done, 2 otherwise; any unexpected error exits 2
 replay (re-running a model to reproduce a receipt) is not implemented."""
 
@@ -287,6 +297,36 @@ def cmd_evaluate(args) -> int:
     return EXAM_EXIT[report["status"]]
 
 
+def cmd_score_sealed(args) -> int:
+    out = Path(args.out)
+    taken = [name for name in SCORE_OUTPUTS if (out / name).exists()]
+    if taken:
+        _err(f"REFUSED: {out.name} already holds {', '.join(taken)}; scoring outputs are "
+             f"written once")
+        return 2
+    try:
+        paper = load_paper(args.manifest)
+        key = load_answer_key(args.key)
+        head, count = _expectations(args)
+        receipts = verify_file(args.receipts, MECHANISM_CLASSES, content=True,
+                               expect_head=head, expect_count=count)
+        records = records_from_receipts(receipts, legacy_attempts=args.legacy_attempts)
+        score = score_sealed(paper["manifest"], key, records)
+        provenance = provenance_for(args.manifest, paper, key, args.receipts, receipts)
+        write_outputs(out, score, provenance)
+    except PaperError as exc:
+        _err(f"REFUSED: {exc}")
+        return 2
+    except (OSError, ValueError) as exc:
+        _err(f"FAIL: {exc}")
+        return 2
+    print(_ascii(f"status: {score['status']} ({'scored' if score['scored'] else 'not scored'})"))
+    for line in summary_lines(score):
+        print(_ascii(line))
+    print(_ascii(f"written to {args.out}: {', '.join(SCORE_OUTPUTS)}"))
+    return 0 if score["scored"] else 2
+
+
 def cmd_qualify(args) -> int:
     # The directory-driven exam derived its expected matrix from the arms and
     # cases of the same run (CR-03/CR-10) and was removed.
@@ -375,6 +415,25 @@ def build_parser(default_timeout: float = DEFAULT_TIMEOUT_S) -> argparse.Argumen
                    help="number the attempts of v1/v2 receipts by file order")
     tail_checks(p)
     p.set_defaults(func=cmd_evaluate)
+
+    p = sub.add_parser("score-sealed", help="score a sealed paper against its answer key "
+                                            "(PREREG Addendum 5)",
+                       description="Score a COMPLETE sealed paper (scoring 'external') "
+                                   "against its answer key and write scoring.md and "
+                                   "scoring.json once. Every table cell and summary line "
+                                   "is computed from the manifest, the key and the "
+                                   "receipts. An INCOMPLETE paper is never scored.",
+                       epilog=EXIT_CODES_HELP, formatter_class=raw)
+    p.add_argument("--manifest", required=True, help="the locked sealed-paper manifest")
+    p.add_argument("--key", required=True,
+                   help="answer key: SEALED-PREREG.md format, or JSON (.json)")
+    p.add_argument("--receipts", required=True)
+    p.add_argument("--out", required=True,
+                   help="directory for scoring.md and scoring.json (never overwritten)")
+    p.add_argument("--legacy-attempts", action="store_true",
+                   help="number the attempts of v1/v2 receipts by file order")
+    tail_checks(p)
+    p.set_defaults(func=cmd_score_sealed)
 
     p = sub.add_parser("qualify", help="retired; use exam")
     p.set_defaults(func=cmd_qualify)
