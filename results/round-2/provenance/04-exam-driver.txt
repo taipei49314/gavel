@@ -1,0 +1,47 @@
+DO NOT RUN. Historical record recovered verbatim on 2026-10-15 from the operator session log.
+These commands append to committed receipts and overwrite committed reports; they are kept only
+so the round-2 numbers can be traced. Source: model-io-sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5.jsonl, message 686, tool Bash, issued about 2026-10-14T15:54:44.317Z.
+Purpose: exam driver that produced results/round-2.
+----- command (verbatim) -----
+rm -rf results/round-2 && cd /c/Users/nelson/.zcode/workspace/default/gavel && uv run python -c "
+import sys, json
+sys.path.insert(0, '.')
+from pathlib import Path
+from gavel.qualify import run_exam, evaluate, json_load_all
+
+papers = [
+    ('round-2-regression', 'round-2/regression', {'S': 5, 'A': 11, 'B': 6}, 11),
+    ('round-2-sealed', 'round-2/sealed', {'S': 0, 'A': 0, 'B': 0}, 4),
+]
+for case_dir, out_dir, tc, amin in papers:
+    print(f'=== {case_dir} -> {out_dir} ===', flush=True)
+    meta = json_load_all(Path('cases') / case_dir)
+    print('cases loaded:', len(meta), flush=True)
+    records = run_exam(Path('cases') / case_dir, Path('results') / out_dir)
+    data = json.loads((Path('results') / out_dir / 'results.json').read_text(encoding='utf-8'))
+    expected = {tuple(t) for t in data['manifest']}
+    report = evaluate(meta, records, expected=expected, tier_counts=tc, a_min=amin)
+    (Path('results') / out_dir / 'report.json').write_text(json.dumps(report, sort_keys=True, indent=2, ensure_ascii=False))
+    print('STATUS:', report['status'], flush=True)
+    for b in report['bars']:
+        print(('PASS' if b['ok'] else 'FAIL'), b['bar'], '—', b['detail'], flush=True)
+    for other in ('fast', 'informed'):
+        print(other, 'divergence:', report.get(f'{other}_arm_divergence'), flush=True)
+print('ALL PAPERS DONE', flush=True)
+" 2>&1
+----- tool output (message 687, verbatim) -----
+Command running in background with ID: exec_0429b4cb-c856-43af-bbe1-e33466969454. Output is being written to: C:\Users\nelson\.zcode\cli\exec\sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5\call_7f66f16c49cd4721bf9f3d8b-stdout.log. You will be notified when it completes. To check interim output, use Read on that file path.
+----- background stdout log call_7f66f16c49cd4721bf9f3d8b-stdout.log (verbatim) -----
+=== round-2-regression -> round-2/regression ===
+cases loaded: 33
+STATUS: INCOMPLETE
+FAIL completeness — 1 missing/invalid, 0 unexpected judgments
+fast divergence: None
+informed divergence: None
+=== round-2-sealed -> round-2/sealed ===
+cases loaded: 12
+STATUS: INCOMPLETE
+FAIL completeness — 2 missing/invalid, 0 unexpected judgments
+fast divergence: None
+informed divergence: None
+ALL PAPERS DONE

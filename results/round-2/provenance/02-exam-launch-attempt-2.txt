@@ -1,0 +1,49 @@
+DO NOT RUN. Historical record recovered verbatim on 2026-10-15 from the operator session log.
+These commands append to committed receipts and overwrite committed reports; they are kept only
+so the round-2 numbers can be traced. Source: model-io-sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5.jsonl, message 670, tool Bash, issued about 2026-10-14T15:40:55.390Z.
+Purpose: launch attempt 2 (aborted).
+----- command (verbatim) -----
+uv run python -c "
+import sys, json
+sys.path.insert(0, '.')
+from pathlib import Path
+from gavel.qualify import run_exam, evaluate, json_load_all
+
+papers = [
+    ('round-2/regression', {'S': 5, 'A': 11, 'B': 6}, 11),
+    ('round-2/sealed', {'S': 0, 'A': 0, 'B': 0}, 4),
+]
+for paper, tc, amin in papers:
+    print(f'=== {paper} ===', flush=True)
+    meta = json_load_all(Path('cases') / paper)
+    records = run_exam(Path('cases') / paper, Path('results') / paper)
+    data = json.loads((Path('results') / paper / 'results.json').read_text(encoding='utf-8'))
+    expected = {tuple(t) for t in data['manifest']}
+    report = evaluate(meta, records, expected=expected, tier_counts=tc, a_min=amin)
+    (Path('results') / paper / 'report.json').write_text(json.dumps(report, sort_keys=True, indent=2, ensure_ascii=False))
+    print('STATUS:', report['status'], flush=True)
+    for b in report['bars']:
+        print(('PASS' if b['ok'] else 'FAIL'), b['bar'], '—', b['detail'], flush=True)
+    for other in ('fast', 'informed'):
+        print(other, 'divergence:', report.get(f'{other}_arm_divergence'), flush=True)
+print('ALL PAPERS DONE', flush=True)
+" 2>&1
+----- tool output (message 671, verbatim) -----
+Command running in background with ID: exec_d81eaa72-9cef-48ef-bb9f-8cb52bffca3a. Output is being written to: C:\Users\nelson\.zcode\cli\exec\sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5\call_e9c8104cf17543caaa91dc5f-stdout.log. You will be notified when it completes. To check interim output, use Read on that file path.
+----- background stdout log call_e9c8104cf17543caaa91dc5f-stdout.log (verbatim) -----
+=== round-2/regression ===
+STATUS: INCOMPLETE
+FAIL tier counts — ['tier S: expected 5 cases, found 0', 'tier A: expected 11 cases, found 0', 'tier B: expected 6 cases, found 0']
+fast divergence: None
+informed divergence: None
+=== round-2/sealed ===
+STATUS: PASS
+PASS S 0/0 — caught 0/0; inconclusive []; missed: []
+PASS A >= 4/0 — caught 0/0; inconclusive []; missed: []
+PASS B uncounted (calibration) — 0/0 flagged (calibration signal)
+PASS negative attack=0 (soft<=2, inconclusive<=1) — hard=[] soft=[] inconclusive=[]
+PASS agree >=80% — 0/0 = 100%
+PASS S reproducibility 3x — 0/0 cases stable
+fast divergence: []
+informed divergence: []
+ALL PAPERS DONE
