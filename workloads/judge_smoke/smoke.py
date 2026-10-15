@@ -25,6 +25,10 @@ model is unloaded (keep_alive 0) and loaded again with the same options, so
 run 1 starts from an empty prompt cache while runs 2..n repeat a prompt the
 runner has just cached. A count that does not depend on the cache is the same
 in every run; the reload's seconds are recorded apart from the judgment's.
+
+--co-load MODEL loads another approved model first and leaves it loaded, so
+the arm's model shares memory with it, as when two arms run one after the
+other; /api/ps records where each model was placed (size_vram).
 """
 
 from __future__ import annotations
@@ -97,11 +101,16 @@ def main(argv=None) -> int:
                         choices=[name for name, spec in ARMS.items()
                                  if spec["transport"] == "ollama"])
     parser.add_argument("--cold-first", action="store_true")
+    parser.add_argument("--co-load", choices=sorted({spec["model"] for spec in ARMS.values()
+                                                     if spec["transport"] == "ollama"}))
     args = parser.parse_args(argv)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=False)
     model = ARMS[args.arm]["model"]
     log = ReceiptLog(out / "receipts.jsonl")
+    if args.co_load:
+        post(args.base_url, "/api/generate", {"model": args.co_load, "options": DEFAULT_OPTIONS},
+             args.timeout)
     judgments = []
     for path in sorted((ROOT / "smoke").glob("SMOKE-*.json")):
         case = strict_loads(path.read_bytes().decode("utf-8"))
@@ -150,7 +159,7 @@ def main(argv=None) -> int:
     headroom = [j["num_ctx"] - j["prompt_eval_count"] for j in judgments
                 if isinstance(j["num_ctx"], int) and isinstance(j["prompt_eval_count"], int)]
     summary = {
-        "arm": args.arm, "cold_first": args.cold_first,
+        "arm": args.arm, "cold_first": args.cold_first, "co_load": args.co_load,
         "model": model, "options": DEFAULT_OPTIONS, "judgments": len(judgments),
         "valid": len(valid), "unaudited": [j for j in judgments if j["unaudited"]],
         "seconds": {"min": min(j["seconds"] for j in judgments),
