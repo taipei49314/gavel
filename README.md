@@ -32,13 +32,14 @@ gavel 對家族工具（checkwash／ledgerwash／pinwash）的殘餘風險面做
 
 - **No judge is qualified.** Round-0 recorded FAIL. Round-1 and round-2 were run on work machine LAPTOP-01AGNPJU, and neither is a qualification of record.
 - **Round-2 is closed as INCOMPLETE** under its locked contract (PREREG Addendum 4 completeness gate). The first pass is the status of record; later re-attempts are disclosed and not counted. See the ERRATUM in [results/round-2/REPORT.md](results/round-2/REPORT.md).
-- **All exam results are 「未驗收」** (not accepted) under EC POLICY work-machine-local: round-0, round-1, attack round-1 and round-2. So are the test runs made on the work machine.
-- **Next steps**, all on the EC pool: a model-free `gavel-verify` workload; then the judge on an EC pool host that Nelson names (model work is BLOCKED until then); then round-3.
-- **v0.1.0 stays frozen** until a round-3 run on the EC pool passes.
+- **All exam results are 「未驗收」** (not accepted) under EC POLICY work-machine-local: round-0, round-1, attack round-1 and round-2. So are the earlier test runs made on the work machine. The one exception is the T-540 verification session (tests, `verify --content`, round-2 table regeneration and a judge smoke), whose results Nelson accepted on 2026-10-15; it qualifies no judge.
+- **Venue.** gavel runs on LAPTOP-01AGNPJU under Nelson's standing authorization, EC POLICY `gavel-pju-execution` (2026-10-15; gavel only, this host only, until he revokes it), within the limits in [AGENTS.md](AGENTS.md). Results from there are labelled "human-authorized local PJU, NOT EC pool".
+- **Next step: round-3** on LAPTOP-01AGNPJU under EC POLICY `gavel-pju-execution`, after Nelson approves the round-3 PREREG lock (draft: [docs/proposals/round-3-PREREG-DRAFT.md](docs/proposals/round-3-PREREG-DRAFT.md)) and a new sealed paper exists.
+- **v0.1.0 stays frozen** until round-3 passes and Nelson decides.
 - Decisions of record: [docs/DECISIONS.md](docs/DECISIONS.md). Where the paragraph below differs from this block, this block is current.
 
 已上架（github.com/taipei49314/gavel，main）。spec 0；~~裁判已通過 round-1 資格考（results/round-1/REPORT.md）~~；**[Correction 2026-10-15]** Round-1 was run on work machine LAPTOP-01AGNPJU and is 未驗收; it is not a qualification of record (see Status above).
 M4 外部攻擊輪 wave-1 已入帳（attack/round-1/REPORT.md，1 個新逃脫面 E1 已披露為 known-limitation）。
-v0.1.0 tag 尚未發行：候選條件＝~~round-2 重考（prompt v4＋考卷 v2）PASS~~。**[Correction 2026-10-15]** Round-2 is closed as INCOMPLETE; v0.1.0 stays frozen until a round-3 run on the EC pool passes (see Status above).
+v0.1.0 tag 尚未發行：候選條件＝~~round-2 重考（prompt v4＋考卷 v2）PASS~~。**[Correction 2026-10-15]** Round-2 is closed as INCOMPLETE; v0.1.0 stays frozen until round-3 passes and Nelson decides (see Status above).
 License：Apache-2.0。人類決策記錄見 [docs/DECISIONS.md](docs/DECISIONS.md)。
 設計細節見 [SPEC.md](SPEC.md)；round-0 考題與及格線見 [PREREG.md](PREREG.md)。

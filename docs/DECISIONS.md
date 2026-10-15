@@ -209,3 +209,48 @@ Notes:
   - approve its design and lock (`docs/proposals/round-3-PREREG-DRAFT.md`);
   - name its venue, with a new authorization if that is a work machine;
   - commission a new sealed paper from a model family gavel has never used.
+
+## 2026-10-15 (standing authorization for LAPTOP-01AGNPJU)
+
+Nelson's later messages in the same takeover session, quoted verbatim with their UTC times.
+
+Times are when each message reached the session; the 09:47:21Z message was queued at 09:46:50Z and the 09:49:47Z message at 09:49:42Z, each delivered when Nelson interrupted a pending step; the repeat send is dated by its queue time.
+
+**2026-10-15T09:47:21Z** 「等等我確認一下 你現在工作的機台是哪一台?」: Wait, let me check: which machine are you working on now? The assistant answered that it was on LAPTOP-01AGNPJU.
+
+**2026-10-15T09:48:06Z** 「那如果是pju可以繼續執行了 我要離開的是518」: Then, if it is PJU, it can carry on; the one I am leaving is 518. 「518」 is LAPTOP-16NUA5I8: the computer Nelson was leaving was LAPTOP-16NUA5I8, not LAPTOP-01AGNPJU.
+
+**2026-10-15T09:48:43Z** 「round3 用pju」: Use PJU for round-3.
+
+Before running anything, the assistant replied (09:49:13Z) that a round-3 exam is judge load on a work machine, which conflicts with EC POLICY work-machine-local, and that under that row it had to stop, point out the conflict and wait for an explicit answer. It added that round-3 could not start yet in any case: Nelson's approval of the PREREG lock, the model family of the new sealed paper's author and N, the number of cases in that paper, were still open.
+
+**2026-10-15T09:49:47Z** 「這個專案授權使用pju跑 因為所有資源都在pju」: This project is authorized to run on PJU, because all of its resources are on PJU. Nelson sent the same text a second time (queued at 09:49:57Z) while the assistant was already working.
+
+How it was recorded:
+- In the private EC repository, as the standing POLICY row `gavel-pju-execution` (task T-542; POLICY commit `f1572fe3f`; T-542 closed in `23a753fce`; evidence `evidence/requests/294885df-7774-4238-accb-7adff594e036/gavel-pju-standing-authority.md`). The row's 規則 cell is the authoritative text; [AGENTS.md](../AGENTS.md) section 1 quotes it byte-for-byte.
+
+What it covers, for gavel work only, on LAPTOP-01AGNPJU only, until Nelson revokes it:
+- building gavel virtual environments from the committed `uv.lock`;
+- running gavel's tests and verification;
+- running the judge through the committed harness, with the Ollama already on that host and the models whose digests are approved in `approved-models.json`: smoke runs, qualification rounds including round-3, and later exams. Every judgment is receipted, and the receipt records the host.
+
+What stays with Nelson:
+- each exam's PREREG is locked, and Nelson approves the lock, before the exam;
+- qualification verdicts, acceptance of results, merges, tags and releases.
+
+Results are labelled "human-authorized local PJU, NOT EC pool".
+
+What it does not cover:
+- any other project's load;
+- LAPTOP-16NUA5I8;
+- host security, service, permission, runner, label or profile changes;
+- installing, upgrading or reconfiguring Ollama, or adding or removing models, without Nelson's separate OK;
+- agent CLIs (agy, codex or others) as judge arms without Nelson's separate OK;
+- presenting any result as EC pool evidence;
+- retroactive acceptance of earlier work-machine exam results.
+
+Effect on earlier decisions:
+- For gavel on LAPTOP-01AGNPJU, it supersedes the venue part of D2(A) (execution only through EC pool workloads, the judge only on a pool host Nelson names), and with it the proposal to remove the LAPTOP-01AGNPJU pin from SPEC §1 (`docs/proposals/spec-clarifications.md`); on any other host D2(A)'s EC pool route still applies.
+- D1(a) is unchanged. Round-2 stays closed as INCOMPLETE, and the round-0, round-1, M4 wave-1 and round-2 exam results stay 未驗收. No judge is qualified. D1(a) keeps v0.1.0 frozen "until a round-3 run on the EC pool passes"; Nelson has not said whether a round-3 pass on LAPTOP-01AGNPJU meets that condition. That is his decision, as are the qualification verdict and the acceptance of results (EC POLICY `gavel-pju-execution`), and any release needs his separate authorization (D5(a)).
+- The 09:41:31Z acceptance above still covers the T-540 session results only.
+- This answers the round-3 venue item in the 09:41:31Z notes above (「round3 用pju」 at 09:48:43Z, with the standing authorization of 09:49:47Z). Approval of the round-3 design and lock, and the new sealed paper from a model family gavel has never used, are still open.

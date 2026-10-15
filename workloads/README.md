@@ -8,6 +8,11 @@ other engine load run only on the EC pool, never on the work machines
 LAPTOP-01AGNPJU and LAPTOP-16NUA5I8 (decision D2(A), 2026-10-15); every script
 here refuses to run on them.
 
+**[Note 2026-10-15]** For gavel on LAPTOP-01AGNPJU, D2(A)'s venue part is
+superseded by EC POLICY `gavel-pju-execution` (see AGENTS.md and
+docs/DECISIONS.md). The scripts here are the EC pool route; they still refuse
+to run on the work machines and are not the PJU route.
+
 | Path | What |
 |---|---|
 | `../ec-workloads.json` | The declaration EC reads. It holds only `gavel-verify`. |
