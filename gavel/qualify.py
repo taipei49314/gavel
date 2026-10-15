@@ -558,6 +558,53 @@ def _is_valid(record: dict) -> bool:
     return isinstance(record.get("verdict"), dict) and not record.get("unaudited")
 
 
+def _record_slot(i: int, rec) -> tuple:
+    """((case_id, arm, run), attempt, None) for a well-formed record, or
+    (None, None, reason) when it lacks those fields."""
+    if not isinstance(rec, dict):
+        return None, None, f"record {i}: not an object"
+    cid, arm, run, attempt = (rec.get("case_id"), rec.get("arm"), rec.get("run"),
+                              rec.get("attempt"))
+    if not isinstance(cid, str) or not isinstance(arm, str) \
+            or not _is_int(run, 1) or not _is_int(attempt, 1):
+        return None, None, (f"record {i}: needs case_id, arm, an integer run >= 1 and an "
+                            f"integer attempt >= 1")
+    return (cid, arm, run), attempt, None
+
+
+def _resolve_slot(cell: tuple, attempts: dict, cap) -> tuple:
+    """The attempt rule for one (case, arm, run) slot.
+
+    attempts maps attempt number -> record (at least one). cap None means no
+    cap. Returns (record of the first valid attempt or None, errors,
+    re-attempt disclosure or None, unresolved entry or None).
+    """
+    label = f"{cell[0]}/{cell[1]}/run {cell[2]}"
+    errors = []
+    numbers = sorted(attempts)
+    if numbers != list(range(1, len(numbers) + 1)):
+        errors.append(f"{label}: attempts {numbers} are not numbered 1..{len(numbers)} "
+                      f"(an attempt is not receipted)")
+    if cap is not None:
+        over = [n for n in numbers if n > cap]
+        if over:
+            errors.append(f"{label}: attempts {over} exceed the attempt cap {cap}")
+    valid = [n for n in numbers if _is_valid(attempts[n])]
+    reasons = [attempts[n].get("unaudited") for n in numbers if not _is_valid(attempts[n])]
+    if not valid:
+        return None, errors, None, {"cell": list(cell), "attempts": len(numbers), "cap": cap,
+                                    "unaudited_reasons": reasons}
+    first = valid[0]
+    later = [n for n in numbers if n > first]
+    if later:
+        errors.append(f"{label}: attempts {later} were made after valid attempt {first}")
+    reattempt = None
+    if len(numbers) > 1:
+        reattempt = {"cell": list(cell), "attempts": len(numbers),
+                     "counted_attempt": first, "unaudited_reasons": reasons}
+    return attempts[first], errors, reattempt, None
+
+
 def resolve_attempts(manifest: dict, records: list[dict]) -> dict:
     """Apply the attempt rule to records. The manifest must be valid.
 
@@ -572,16 +619,11 @@ def resolve_attempts(manifest: dict, records: list[dict]) -> dict:
     errors = []
     slots = {}
     for i, rec in enumerate(records):
-        if not isinstance(rec, dict):
-            errors.append(f"record {i}: not an object")
+        cell, attempt, problem = _record_slot(i, rec)
+        if problem:
+            errors.append(problem)
             continue
-        cid, arm, run, attempt = (rec.get("case_id"), rec.get("arm"), rec.get("run"),
-                                  rec.get("attempt"))
-        if not isinstance(cid, str) or not isinstance(arm, str) \
-                or not _is_int(run, 1) or not _is_int(attempt, 1):
-            errors.append(f"record {i}: needs case_id, arm, an integer run >= 1 and an "
-                          f"integer attempt >= 1")
-            continue
+        cid, arm, run = cell
         where = f"{cid}/{arm}/run {run}/attempt {attempt}"
         if rec.get("paper_id") is not None and rec["paper_id"] != manifest["paper_id"]:
             errors.append(f"{where}: paper_id {rec['paper_id']!r} is not "
@@ -590,10 +632,10 @@ def resolve_attempts(manifest: dict, records: list[dict]) -> dict:
             errors.append(f"{where}: case_sha256 is not the manifest's")
         if isinstance(rec.get("verdict"), dict) and rec.get("unaudited"):
             errors.append(f"{where}: carries both a verdict and an unaudited reason")
-        if (cid, arm, run) not in expected:
+        if cell not in expected:
             errors.append(f"{where}: not a cell of paper {manifest['paper_id']}")
             continue
-        attempts = slots.setdefault((cid, arm, run), {})
+        attempts = slots.setdefault(cell, {})
         if attempt in attempts:
             errors.append(f"{where}: duplicate record")
             continue
@@ -602,33 +644,58 @@ def resolve_attempts(manifest: dict, records: list[dict]) -> dict:
     resolved, missing, unresolved, reattempted = {}, [], [], []
     for cell in sorted(expected):
         attempts = slots.get(cell)
-        label = f"{cell[0]}/{cell[1]}/run {cell[2]}"
         if not attempts:
             missing.append(list(cell))
             continue
-        numbers = sorted(attempts)
-        if numbers != list(range(1, len(numbers) + 1)):
-            errors.append(f"{label}: attempts {numbers} are not numbered 1..{len(numbers)} "
-                          f"(an attempt is not receipted)")
-        over = [n for n in numbers if n > cap]
-        if over:
-            errors.append(f"{label}: attempts {over} exceed the attempt cap {cap}")
-        valid = [n for n in numbers if _is_valid(attempts[n])]
-        reasons = [attempts[n].get("unaudited") for n in numbers if not _is_valid(attempts[n])]
-        if valid:
-            first = valid[0]
-            later = [n for n in numbers if n > first]
-            if later:
-                errors.append(f"{label}: attempts {later} were made after valid attempt {first}")
-            resolved[cell] = attempts[first]
-            if len(numbers) > 1:
-                reattempted.append({"cell": list(cell), "attempts": len(numbers),
-                                    "counted_attempt": first, "unaudited_reasons": reasons})
-        else:
-            unresolved.append({"cell": list(cell), "attempts": len(numbers), "cap": cap,
-                               "unaudited_reasons": reasons})
+        record, slot_errors, reattempt, gap = _resolve_slot(cell, attempts, cap)
+        errors.extend(slot_errors)
+        if record is not None:
+            resolved[cell] = record
+        if reattempt is not None:
+            reattempted.append(reattempt)
+        if gap is not None:
+            unresolved.append(gap)
     return {"resolved": resolved, "errors": errors, "missing": missing,
             "unresolved": unresolved, "reattempted": reattempted}
+
+
+def resolve_slots(records: list[dict], *, cap: int | None = None) -> dict:
+    """The same attempt rule for records that have no paper manifest (e.g. an
+    attack round reconciled by tools/tally_attack.py).
+
+    Records are grouped by (case_id, arm, run); each slot resolves to its
+    first valid attempt; attempts must be numbered 1..n, none may follow a
+    valid one, and duplicates are errors. With no manifest there is no
+    expected matrix, so nothing is "missing" here. Returns {"resolved",
+    "errors", "unresolved", "reattempted"} as resolve_attempts does.
+    """
+    errors = []
+    slots = {}
+    for i, rec in enumerate(records):
+        cell, attempt, problem = _record_slot(i, rec)
+        if problem:
+            errors.append(problem)
+            continue
+        where = f"{cell[0]}/{cell[1]}/run {cell[2]}/attempt {attempt}"
+        if isinstance(rec.get("verdict"), dict) and rec.get("unaudited"):
+            errors.append(f"{where}: carries both a verdict and an unaudited reason")
+        attempts = slots.setdefault(cell, {})
+        if attempt in attempts:
+            errors.append(f"{where}: duplicate record")
+            continue
+        attempts[attempt] = rec
+    resolved, unresolved, reattempted = {}, [], []
+    for cell in sorted(slots):
+        record, slot_errors, reattempt, gap = _resolve_slot(cell, slots[cell], cap)
+        errors.extend(slot_errors)
+        if record is not None:
+            resolved[cell] = record
+        if reattempt is not None:
+            reattempted.append(reattempt)
+        if gap is not None:
+            unresolved.append(gap)
+    return {"resolved": resolved, "errors": errors, "unresolved": unresolved,
+            "reattempted": reattempted}
 
 
 # --- evaluation -----------------------------------------------------------------

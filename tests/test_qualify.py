@@ -13,7 +13,7 @@ import pytest
 from fakes import (DEFAULT_ARMS, INFORMED_ARM, build_manifest, default_bars,
                    legacy_receipt, make_diff_case, verdict)
 from gavel.qualify import (evaluate, expected_cells, records_from_receipts,
-                           runs_for, validate_manifest)
+                           resolve_slots, runs_for, validate_manifest)
 
 
 def build_cases():
@@ -489,6 +489,24 @@ def test_divergence_ignores_superseded_attempts():
 
 
 # --- records from receipts --------------------------------------------------------
+
+def test_resolve_slots_applies_the_same_rule_without_a_manifest():
+    recs = [unaudited("A-1", "fast", attempt=1), valid("A-1", "fast", clean(), attempt=2),
+            valid("S-1", "primary", catch_all())]
+    res = resolve_slots(recs)
+    assert res["errors"] == []
+    assert res["resolved"][("A-1", "fast", 1)]["attempt"] == 2
+    assert res["reattempted"] == [{"cell": ["A-1", "fast", 1], "attempts": 2,
+                                   "counted_attempt": 2,
+                                   "unaudited_reasons": ["empty model response"]}]
+    later = recs + [valid("S-1", "primary", clean(), attempt=2)]
+    assert any("after valid attempt 1" in e for e in resolve_slots(later)["errors"])
+    dup = recs + [valid("S-1", "primary", clean(), attempt=1)]
+    assert any("duplicate record" in e for e in resolve_slots(dup)["errors"])
+    gap = [unaudited("B-1", "fast", attempt=a) for a in (1, 2, 3, 4)]
+    assert resolve_slots(gap)["unresolved"][0]["cap"] is None
+    assert any("exceed the attempt cap 3" in e for e in resolve_slots(gap, cap=3)["errors"])
+
 
 def test_records_from_legacy_receipts_number_attempts_by_file_order():
     first = legacy_receipt(version=2, unaudited="empty model response", arm="fast")
