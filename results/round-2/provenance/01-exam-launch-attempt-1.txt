@@ -1,0 +1,42 @@
+DO NOT RUN. Historical record recovered verbatim on 2026-10-15 from the operator session log.
+These commands append to committed receipts and overwrite committed reports; they are kept only
+so the round-2 numbers can be traced. Source: model-io-sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5.jsonl, message 660, tool Bash, issued about 2026-10-14T15:40:01.840Z.
+Purpose: launch attempt 1 (aborted).
+----- command (verbatim) -----
+uv run python -c "
+import sys, json
+sys.path.insert(0, '.')
+from pathlib import Path
+from gavel.qualify import run_exam, evaluate, json_load_all
+
+papers = [
+    ('round-2/regression', {'S': 5, 'A': 11, 'B': 6}, 11),
+    ('round-2/sealed', {'S': 0, 'A': 0, 'B': 0}, 4),
+]
+for paper, tc, amin in papers:
+    print(f'=== {paper} ===', flush=True)
+    meta = json_load_all(Path('cases') / paper)
+    records = run_exam(Path('cases') / paper, Path('results') / paper)
+    data = json.loads((Path('results') / paper / 'results.json').read_text(encoding='utf-8'))
+    expected = {tuple(t) for t in data['manifest']}
+    report = evaluate(meta, records, expected=expected, tier_counts=tc, a_min=amin)
+    (Path('results') / paper / 'report.json').write_text(json.dumps(report, sort_keys=True, indent=2, ensure_ascii=False))
+    print('STATUS:', report['status'], flush=True)
+    for b in report['bars']:
+        print(('PASS' if b['ok'] else 'FAIL'), b['bar'], '—', b['detail'], flush=True)
+    for other in ('fast', 'informed'):
+        print(other, 'divergence:', report.get(f'{other}_arm_divergence'), flush=True)
+print('ALL PAPERS DONE', flush=True)
+" 2>&1
+----- tool output (message 661, verbatim) -----
+Command running in background with ID: exec_96d54099-ec55-42c7-bbaa-af8de9c93f65. Output is being written to: C:\Users\nelson\.zcode\cli\exec\sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5\call_5d0c04758fa84523b5bccd51-stdout.log. You will be notified when it completes. To check interim output, use Read on that file path.
+----- background stdout log call_5d0c04758fa84523b5bccd51-stdout.log (verbatim) -----
+=== round-2/regression ===
+Traceback (most recent call last):
+  File "<string>", line 14, in <module>
+  File "C:\Users\nelson\.zcode\workspace\default\gavel\gavel\qualify.py", line 72, in run_exam
+    pins = {arm: get_pin(ARMS[arm]["model"], base_url, transport=transport)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nelson\.zcode\workspace\default\gavel\gavel\judge.py", line 57, in get_pin
+    raise UnauditedError(f"model not present on daemon: {model}")
+gavel.judge.UnauditedError: model not present on daemon: gemini-4-argon-high

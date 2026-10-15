@@ -1,0 +1,38 @@
+DO NOT RUN. Historical record recovered verbatim on 2026-10-15 from the operator session log.
+These commands append to committed receipts and overwrite committed reports; they are kept only
+so the round-2 numbers can be traced. Source: model-io-sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5.jsonl, message 711, tool Bash, issued about 2026-10-15T00:16:11.600Z.
+Purpose: SP-007 raw output check.
+----- command (verbatim) -----
+python -c "
+import json
+for l in open('results/round-2/sealed/receipts.jsonl', encoding='utf-8'):
+    r = json.loads(l)
+    if r['case_id']=='SP-007' and r['arm']=='fast' and r.get('execution',{}).get('note'):
+        print('re-attempt reason:', r['unaudited_reason'][:120])
+        print('raw head:', (r['raw_response'] or '')[:100])
+" && uv run python -c "
+import sys
+sys.path.insert(0, '.')
+from pathlib import Path
+from gavel.qualify import judge_case, ARMS, json_load_all
+from gavel.receipts import make_receipt, write_receipt
+from gavel.judge import get_pin, check_approved
+all_cases = json_load_all(Path('cases') / 'round-2-sealed')
+spec = ARMS['fast']
+pin = get_pin(spec['model'], 'http://127.0.0.1:11434')
+check_approved(pin, 'approved-models.json')
+res = judge_case(all_cases['SP-007'], spec['model'], 'http://127.0.0.1:11434', 600)
+receipt = make_receipt('SP-007', 'fast', pin, res['prompt_sha256'], res['anchor_sha256'],
+                       res['raw'], res['verdict'], res['unaudited'],
+                       prompt_text=res['prompt_text'], anchor_text=res['anchor_text'],
+                       execution={'schema_version': 2, 'temperature': 0,
+                                  'base_url': 'http://127.0.0.1:11434', 'timeout_s': 600,
+                                  'note': 'completeness re-attempt 2'})
+receipt['run'] = 1
+write_receipt(Path('results') / 'round-2' / 'sealed' / 'receipts.jsonl', receipt)
+print('SP-007 attempt-2 →', ('verdict: ' + res['verdict']['verdict']) if res['verdict'] else 'STILL UNAUD: ' + (res['unaudited'] or '')[:80])
+" 2>&1
+----- tool output (message 712, verbatim) -----
+re-attempt reason: verdict keys mismatch: ['change_summary', 'confidence', 'evidence_refs', 'mechanism_class', 'offending_element', 'prior_
+raw head: 
+SP-007 attempt-2 → STILL UNAUD: verdict keys mismatch: ['change_summary', 'confidence', 'evidence_refs', 'mechan

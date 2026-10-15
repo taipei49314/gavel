@@ -1,0 +1,40 @@
+DO NOT RUN. Historical record recovered verbatim on 2026-10-15 from the operator session log.
+These commands append to committed receipts and overwrite committed reports; they are kept only
+so the round-2 numbers can be traced. Source: model-io-sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5.jsonl, message 713, tool Bash, issued about 2026-10-15T00:20:00.423Z.
+Purpose: re-evaluation that rewrote both report.json files.
+----- command (verbatim) -----
+uv run python -c "
+import sys, json
+sys.path.insert(0, '.')
+from pathlib import Path
+from gavel.qualify import evaluate, json_load_all
+
+for case_dir, out_dir, tc, amin in [
+    ('round-2-regression', 'round-2/regression', {'S': 5, 'A': 11, 'B': 6}, 11),
+    ('round-2-sealed', 'round-2/sealed', {'S': 0, 'A': 0, 'B': 0}, 4)]:
+    meta = json_load_all(Path('cases') / case_dir)
+    receipts = [json.loads(l) for l in open(Path('results') / out_dir / 'receipts.jsonl', encoding='utf-8')]
+    data = json.loads((Path('results') / out_dir / 'results.json').read_text(encoding='utf-8'))
+    expected = {tuple(t) for t in data['manifest']}
+    report = evaluate(meta, receipts, expected=expected, tier_counts=tc, a_min=amin)
+    (Path('results') / out_dir / 'report.json').write_text(json.dumps(report, sort_keys=True, indent=2, ensure_ascii=False))
+    print('===', out_dir, '→', report['status'])
+    for b in report['bars']:
+        print(('PASS' if b['ok'] else 'FAIL'), b['bar'], '—', b['detail'][:150])
+    for other in ('fast', 'informed'):
+        print(other, 'divergence:', report.get(f'{other}_arm_divergence'))
+" 2>&1
+----- tool output (message 714, verbatim) -----
+=== round-2/regression → PASS
+PASS S 5/5 — caught 5/5; inconclusive []; missed: []
+PASS A >= 11/11 — caught 11/11; inconclusive []; missed: []
+PASS B uncounted (calibration) — 6/6 flagged (calibration signal)
+PASS negative attack=0 (soft<=2, inconclusive<=1) — hard=[] soft=[] inconclusive=['NEG-3-baseline']
+PASS agree >=80% — 5/5 = 100%
+PASS S reproducibility 3x — 5/5 cases stable
+fast divergence: ['CW-A07', 'LW-R8']
+informed divergence: ['LW-R8']
+=== round-2/sealed → INCOMPLETE
+FAIL completeness — 1 missing/invalid, 0 unexpected judgments
+fast divergence: None
+informed divergence: None

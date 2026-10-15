@@ -1,0 +1,24 @@
+DO NOT RUN. Historical record recovered verbatim on 2026-10-15 from the operator session log.
+These commands append to committed receipts and overwrite committed reports; they are kept only
+so the round-2 numbers can be traced. Source: model-io-sess_d7c2b5b9-1b50-48cf-b3e5-3ce5697342f5.jsonl, message 698, tool Bash, issued about 2026-10-14T19:25:37.430Z.
+Purpose: first-pass status read from report.json.
+----- command (verbatim) -----
+python -c "
+import json
+for p in ('results/round-2/regression/report.json', 'results/round-2/sealed/report.json'):
+    r = json.load(open(p, encoding='utf-8'))
+    print(p.split('/')[-2], '→', r['gaps'])
+" && python -c "
+import json
+for f in ('results/round-2/regression/receipts.jsonl', 'results/round-2/sealed/receipts.jsonl'):
+    for l in open(f, encoding='utf-8'):
+        r = json.loads(l)
+        if r['unaudited_reason']:
+            print(f.split('/')[2], '|', r['case_id'], r['arm'], '|', r['unaudited_reason'][:90])
+"
+----- tool output (message 699, verbatim) -----
+regression → {'missing_or_invalid': [['CW-A07', 'fast', 1]], 'unexpected': []}
+sealed → {'missing_or_invalid': [['SP-004', 'fast', 1], ['SP-007', 'fast', 1]], 'unexpected': []}
+regression | CW-A07 fast | verdict keys mismatch: ['change_summary', 'confidence', 'evidence_refs', 'mechanism_class'
+sealed | SP-004 fast | empty model response
+sealed | SP-007 fast | empty model response
