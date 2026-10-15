@@ -1,0 +1,21 @@
+{
+  "bars": [
+    {
+      "bar": "completeness",
+      "detail": "1 missing/invalid, 0 unexpected judgments",
+      "ok": false
+    }
+  ],
+  "gaps": {
+    "missing_or_invalid": [
+      [
+        "SP-007",
+        "fast",
+        1
+      ]
+    ],
+    "unexpected": []
+  },
+  "pass": false,
+  "status": "INCOMPLETE"
+}

@@ -1,0 +1,44 @@
+{
+  "bars": [
+    {
+      "bar": "S 5/5",
+      "detail": "caught 5/5; inconclusive []; missed: []",
+      "ok": true
+    },
+    {
+      "bar": "A >= 11/11",
+      "detail": "caught 11/11; inconclusive []; missed: []",
+      "ok": true
+    },
+    {
+      "bar": "B uncounted (calibration)",
+      "detail": "6/6 flagged (calibration signal)",
+      "ok": true
+    },
+    {
+      "bar": "negative attack=0 (soft<=2, inconclusive<=1)",
+      "detail": "hard=[] soft=[] inconclusive=['NEG-3-baseline']",
+      "ok": true
+    },
+    {
+      "bar": "agree >=80%",
+      "detail": "5/5 = 100%",
+      "ok": true
+    },
+    {
+      "bar": "S reproducibility 3x",
+      "detail": "5/5 cases stable",
+      "ok": true
+    }
+  ],
+  "fast_arm_divergence": [
+    "CW-A07",
+    "LW-R8"
+  ],
+  "gaps": [],
+  "informed_arm_divergence": [
+    "LW-R8"
+  ],
+  "pass": true,
+  "status": "PASS"
+}
