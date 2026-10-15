@@ -26,11 +26,19 @@ Exam-validity fixes (takeover audit 2026-10-15):
   directory); a missing, unreadable or malformed manifest is UNAUDITED; an
   entry with a null digest approves only an explicitly declared cloud
   transport. The caller (qualify.judge_case) checks it on every judgment.
+- CR-08/CR-09/CR-13: the agy transport resolves and hashes its executable,
+  runs it without a shell in an empty temporary directory, guards the
+  command-line size, enforces its timeout without blocking on pipes, and
+  decodes strictly; see the block comment above agy_generate.
 """
 
+import hashlib
 import http.client
 import json
+import os
 import re
+import subprocess
+import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -74,14 +82,17 @@ class UnauditedError(Exception):
 
     raw: model output received before the failure, if any (kept in the
     receipt, CR-07). generation: generate-call facts, if any (CR-16).
+    transport_version: what the transport knew about itself before it
+    failed (for agy: the executable and its sha256, CR-08), if anything.
     """
 
     def __init__(self, reason: str, raw: str | None = None,
-                 generation: dict | None = None):
+                 generation: dict | None = None, transport_version=None):
         super().__init__(reason)
         self.reason = reason
         self.raw = raw
         self.generation = generation
+        self.transport_version = transport_version
 
 
 def _describe(exc: BaseException) -> str:
@@ -303,34 +314,171 @@ def generate(model: str, prompt: str, base_url: str, timeout_s: float, transport
     return {"raw": raw, "generation": generation}
 
 
+# --- agy (informed, cloud) transport -------------------------------------------
+#
+# Takeover audit 2026-10-15, CR-08/CR-09/CR-13. What this transport does and
+# does not establish:
+# - The executable is resolved explicitly: GAVEL_AGY (an absolute path) or
+#   %LOCALAPPDATA%\agy\bin\agy.exe. No PATH lookup, no relative path, and
+#   never a .bat/.cmd file (cmd.exe would parse the evidence text; on Windows
+#   only an .exe is accepted). Its path (home directory shown as "~") and the
+#   sha256 of its bytes are returned as the transport version and recorded
+#   in every receipt, also when the call fails.
+# - It runs with shell=False, stdin from the null device, and cwd set to a
+#   fresh empty temporary directory, never the repository, so no case file or
+#   answer key is reachable through a relative path. This is not a sandbox:
+#   agy's own tool and file-access settings still apply and are not verified
+#   here.
+# - The prompt is still passed as the "-p" argument, as in round-2. A prompt
+#   whose command line would exceed the Windows limit is UNAUDITED before
+#   anything is started. TODO(pool): passing the prompt on stdin instead of
+#   argv needs verification against agy on the pool before it is used; no
+#   unverified agy flag is added here.
+# - stdout and stderr go to temporary files, not pipes, so a grandchild that
+#   keeps a handle open cannot block the harness. On timeout the direct child
+#   is killed and the call is UNAUDITED; a grandchild may outlive it.
+# - The output is decoded as UTF-8, strictly; invalid bytes are UNAUDITED
+#   (the raw text is kept with backslash escapes).
+# - Not established: which model agy actually used (it may fall back to a
+#   default model), and agy's own version string. The executable sha256 is
+#   the identity recorded.
+
+AGY_MAX_COMMAND_UNITS = 32000  # Windows CreateProcess limit is 32767 UTF-16 units
+AGY_KILL_GRACE_S = 5.0
+_SHELL_SCRIPT_SUFFIXES = (".bat", ".cmd")
+_popen = subprocess.Popen  # tests replace this; nothing else does
+
+
+def _display_path(path: Path) -> str:
+    """The path with the user's home directory written as "~" (receipts may be
+    published; the account name is not evidence)."""
+    try:
+        return "~/" + path.relative_to(Path.home()).as_posix()
+    except (ValueError, RuntimeError, KeyError, OSError):
+        return path.as_posix()
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def resolve_agy_executable() -> dict:
+    """Locate the agy executable and describe it for the receipt.
+
+    Returns {"executable": display path, "executable_sha256": hex,
+    "executable_source": "GAVEL_AGY" | "default", "path": resolved Path}.
+    Raises UnauditedError when it is not configured, not an absolute path,
+    missing, a shell script, or (on Windows) not an .exe.
+    """
+    override = os.environ.get("GAVEL_AGY")
+    if override:
+        raw, source = override, "GAVEL_AGY"
+    else:
+        base = os.environ.get("LOCALAPPDATA")
+        if not base:
+            raise UnauditedError("agy executable not configured: set GAVEL_AGY to its "
+                                 "absolute path")
+        raw, source = str(Path(base) / "agy" / "bin" / "agy.exe"), "default"
+    candidate = Path(raw)
+    if not candidate.is_absolute():
+        raise UnauditedError(f"agy executable must be an absolute path ({source})")
+    suffix = candidate.suffix.lower()
+    if suffix in _SHELL_SCRIPT_SUFFIXES or (os.name == "nt" and suffix != ".exe"):
+        raise UnauditedError(f"agy executable {candidate.name!r} is not accepted ({source}): "
+                             f"a .bat/.cmd script is never run, and on Windows only an "
+                             f".exe is")
+    try:
+        path = candidate.resolve(strict=True)
+        if not path.is_file():
+            raise FileNotFoundError(str(candidate))
+        digest = _file_sha256(path)
+    except OSError as exc:
+        raise UnauditedError(f"agy executable missing or unreadable ({source}): "
+                             f"{type(exc).__name__}") from exc
+    if path.suffix.lower() in _SHELL_SCRIPT_SUFFIXES:
+        raise UnauditedError(f"agy executable resolves to a shell script ({source})")
+    return {"executable": _display_path(path), "executable_sha256": digest,
+            "executable_source": source, "path": path}
+
+
+def _command_units(argv: list[str]) -> int:
+    """Length of the Windows command line for argv, in UTF-16 code units."""
+    return len(subprocess.list2cmdline(argv).encode("utf-16-le")) // 2
+
+
+def _scrub(text: str) -> str:
+    try:
+        home = str(Path.home())
+    except (RuntimeError, KeyError, OSError):
+        return text
+    return text.replace(home, "~") if home else text
+
+
 def agy_generate(model: str, prompt: str, base_url: str = "", timeout_s: float = 600,
                  transport=None, options: dict | None = None) -> dict:
     """Cloud-arm transport: one Antigravity CLI (agy) headless call.
 
     Cloud verdicts are recorded, never gating (PREREG Addendum 4): no local
     digest exists, so the approved-models manifest matches on model id.
-    Returns {"raw": stdout, "generation": {}} (the transport protocol shared
-    with generate). options are not applicable to this transport.
+    Returns {"raw": stdout, "generation": {"exit_code"}, "transport_version":
+    {...}} (the transport protocol shared with generate). base_url,
+    transport and options do not apply to this transport and are ignored.
+    Every failure is UnauditedError carrying the transport version when the
+    executable was resolved. See the block comment above for what this
+    transport does and does not establish.
     """
-    import os
-    import subprocess
-
-    exe = os.environ.get("GAVEL_AGY",
-                         str(os.path.expandvars(r"%LOCALAPPDATA%\agy\bin\agy.exe")))
+    exe = resolve_agy_executable()
+    version = {key: exe[key] for key in ("executable", "executable_sha256",
+                                         "executable_source")}
+    version.update(cwd="fresh empty temporary directory", prompt_channel="argv",
+                   stdin="null device")
+    argv = [str(exe["path"]), "-p", prompt, "--model", model]
+    units = _command_units(argv)
+    if units > AGY_MAX_COMMAND_UNITS:
+        raise UnauditedError(f"prompt too long for the agy argv transport: command line "
+                             f"{units} UTF-16 units > {AGY_MAX_COMMAND_UNITS}",
+                             transport_version=version)
+    with tempfile.TemporaryDirectory(prefix="gavel-agy-", ignore_cleanup_errors=True) as workdir, \
+            tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
+        try:
+            proc = _popen(argv, cwd=workdir, shell=False, stdin=subprocess.DEVNULL,
+                          stdout=out, stderr=err)
+        except (OSError, ValueError) as exc:
+            raise UnauditedError(f"agy could not be started: {type(exc).__name__}",
+                                 transport_version=version) from exc
+        try:
+            code = proc.wait(timeout=timeout_s)
+        except subprocess.TimeoutExpired as exc:
+            try:
+                proc.kill()
+                proc.wait(timeout=AGY_KILL_GRACE_S)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+            raise UnauditedError(f"agy timeout after {timeout_s}s (process killed)",
+                                 transport_version=version) from exc
+        out.seek(0)
+        stdout = out.read()
+        err.seek(0)
+        stderr = err.read()
+    generation = {"exit_code": code}
     try:
-        proc = subprocess.run([exe, "-p", prompt, "--model", model],
-                              capture_output=True, text=True,
-                              timeout=timeout_s)
-    except subprocess.TimeoutExpired as exc:
-        raise UnauditedError(f"agy timeout after {timeout_s}s") from exc
-    except OSError as exc:
-        raise UnauditedError(f"agy unreachable: {exc}") from exc
-    if proc.returncode != 0:
-        raise UnauditedError(f"agy exit {proc.returncode}: {proc.stderr[:200]}",
-                             raw=proc.stdout or None)
-    if not proc.stdout.strip():
-        raise UnauditedError("empty agy response", raw=proc.stdout)
-    return {"raw": proc.stdout, "generation": {}}
+        text = stdout.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise UnauditedError("agy output is not valid UTF-8 (raw kept with backslash "
+                             "escapes)", raw=stdout.decode("utf-8", "backslashreplace"),
+                             generation=generation, transport_version=version) from exc
+    if code != 0:
+        tail = _scrub(stderr.decode("utf-8", "replace"))[:200]
+        raise UnauditedError(f"agy exit {code}: {tail}", raw=text or None,
+                             generation=generation, transport_version=version)
+    if not text.strip():
+        raise UnauditedError("empty agy response", raw=text, generation=generation,
+                             transport_version=version)
+    return {"raw": text, "generation": generation, "transport_version": version}
 
 
 _WHOLE_FENCE = re.compile(r"```(?:json)?[ \t]*\r?\n(.*)\r?\n[ \t]*```", re.DOTALL)

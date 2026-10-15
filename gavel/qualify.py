@@ -98,6 +98,8 @@ def _mark_unaudited(result: dict, reason: str, exc: UnauditedError | None = None
             result["raw"] = exc.raw  # CR-07: keep whatever the model returned
         if exc.generation:
             result["generation"] = dict(exc.generation)
+        if exc.transport_version is not None:  # CR-08: e.g. the agy executable hash
+            result["transport"]["version"] = exc.transport_version
 
 
 def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
