@@ -1,0 +1,111 @@
+{
+  "manifest_version": 1,
+  "paper_id": "round-3-K",
+  "note": "DRAFT for the round-3 lock (docs/proposals/round-3-PREREG-DRAFT.md); not locked. Round-3 paper K (known sealed cases SP-001..012 of round-2, whose key has been public since 2026-10-14T15:35:56Z), gating arm primary only (completeness option (B)); scored with gavel score-sealed against cases/round-2-sealed/SEALED-PREREG.md.",
+  "cases": [
+    {
+      "case_id": "SP-001",
+      "path": "round-2-sealed/SP-001.json",
+      "sha256": "02c044f858219b0ad794734202aab6fe51766b48e2886dcb1b4b9ca193fff975",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-002",
+      "path": "round-2-sealed/SP-002.json",
+      "sha256": "9ece20d00c2c0d632de7f57b0c5be7477ae4e801c4462ed99f1b89729fcef8ca",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-003",
+      "path": "round-2-sealed/SP-003.json",
+      "sha256": "aeb5f9941619aaf602ccae69e8638ea729a93a7b232150819eda313f4a844daa",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-004",
+      "path": "round-2-sealed/SP-004.json",
+      "sha256": "fc7b492aa130f36cbeff37a388d2e69b731509fbee5cd8326317a86cf259bb81",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-005",
+      "path": "round-2-sealed/SP-005.json",
+      "sha256": "21ad81d647e7a376e0dfd681fab481d72add6385afff21fe8849df965b4ba65e",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-006",
+      "path": "round-2-sealed/SP-006.json",
+      "sha256": "a6b4c5668558e6c06f4d1570212f9cb9d46760e73927d7c7bd81a5ed61407448",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-007",
+      "path": "round-2-sealed/SP-007.json",
+      "sha256": "aabf2fc6db4f33a92a82e0922e8cb2db24827cb8db29fb2e2e6fb252e17fa9d9",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-008",
+      "path": "round-2-sealed/SP-008.json",
+      "sha256": "cfcf28beee2f73264f887c1f827ce0f2936bb7616a2fef847326065bd5e396dd",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-009",
+      "path": "round-2-sealed/SP-009.json",
+      "sha256": "cd5abf391190652b8b5b032aacea253c7cbe8bd6d2c68e8761c86c63a229ab32",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-010",
+      "path": "round-2-sealed/SP-010.json",
+      "sha256": "eb56bff37ed89c7dfcb232253a4c027636ecd1a9d6cce085b6537b141b313978",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-011",
+      "path": "round-2-sealed/SP-011.json",
+      "sha256": "64eb48d26701066a4d2c278bd4ade46251eb67da6290fd86624f23a3def61d02",
+      "tier": null,
+      "role": "exam"
+    },
+    {
+      "case_id": "SP-012",
+      "path": "round-2-sealed/SP-012.json",
+      "sha256": "1f1d8a27e6ff69271d5cc63f20bc2021d11cfc88265fe12be6bce4394cfbca12",
+      "tier": null,
+      "role": "exam"
+    }
+  ],
+  "arms": {
+    "primary": {
+      "model": "qwen3.5:35b-a3b",
+      "transport": "ollama",
+      "runs": {
+        "default": 1
+      },
+      "role": "gating"
+    }
+  },
+  "gating_arm": "primary",
+  "attempt_cap": 3,
+  "scoring": "external",
+  "options": {
+    "temperature": 0,
+    "num_ctx": 16384
+  },
+  "runtime": {
+    "ollama_version": "0.40.4"
+  }
+}
