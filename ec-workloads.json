@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "workloads": {
+    "gavel-verify": {
+      "description": "Model-free verification of one exact gavel commit on the EC Windows pool. Create a job-local venv and install only the six pure-Python pytest wheels pinned by sha256 in the committed uv.lock (PyPI download with pip --require-hashes, no cache); check that gavel declares no runtime dependency. Run the full test suite and require nonzero tests with zero failures, errors and skips. Run gavel verify --content on every committed receipts file. In separate processes at PYTHONHASHSEED 1 and 17, rebuild every round-2 prompt from the committed case files (frozen anchor v1 renderer plus the prompt v4 header) and require all 149 round-2 receipts to match, and regenerate the round-2 tables from the committed receipts as locked (first attempt of every cell, attempt cap 1) and as reported (evaluate as of d0cb1dc, last receipt per cell wins), requiring byte-identical outputs at both seeds. Preserve the exact source SHA, runtime, dependency lock, commands, exit codes, logs, JUnit and output hashes under out/ with SUMMARY.md. Refuse to run on the work machines. No model, Ollama, agy or codex call; no release or publication; no host or security change; no credentials.",
+      "entry": "workloads/gavel_verify/run.py",
+      "profile": "profile-ec-integrity",
+      "timeout_minutes": 30,
+      "cache": false,
+      "parameters": {}
+    }
+  }
+}
