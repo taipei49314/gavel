@@ -319,13 +319,15 @@ def test_evaluate_detects_a_cut_tail(tmp_path, monkeypatch, capsys):
                  str(out / "receipts.jsonl")]) == 2
 
 
-def test_evaluate_legacy_receipts_need_the_flag(tmp_path):
+def test_evaluate_legacy_receipts_need_the_flag(tmp_path, capsys):
     manifest = write_paper(tmp_path / "paper", PAPER)
     receipts = tmp_path / "legacy.jsonl"
     write_lines(receipts, [legacy_receipt(version=2, case=PAPER["S-1"])])
     args = ["evaluate", "--manifest", str(manifest), "--receipts", str(receipts)]
     assert main(args) == 2
-    assert main(args + ["--legacy-attempts"]) == 2  # evaluated: INCOMPLETE
+    assert "no attempt number" in capsys.readouterr().err
+    assert main(args + ["--legacy-attempts"]) == 2
+    assert json.loads(capsys.readouterr().out)["status"] == "INCOMPLETE"
 
 
 # --- verify ------------------------------------------------------------------------
@@ -357,8 +359,8 @@ def test_verify_help_says_replay_is_not_implemented(capsys):
         main(["verify", "--help"])
     assert info.value.code == 0
     help_text = capsys.readouterr().out
-    words = " ".join(help_text.split())  # argparse wraps lines
-    assert "Replay, i.e. re-running the model to reproduce a verdict, is not implemented" in words
+    words = " ".join(help_text.split())  # argparse wraps lines (also at hyphens)
+    assert "Replay," in words and "verdict, is not implemented" in words
     assert "--replay" not in help_text
     help_text.encode("ascii")  # help prints on any console
 
