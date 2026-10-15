@@ -1,0 +1,10 @@
+# Hash-committed, verbatim and append-only evidence: never convert line endings.
+cases/** -text
+attack/round-1/*.json -text
+attack/round-1/*.jsonl -text
+results/**/*.jsonl -text
+results/**/*.json -text
+results/round-2/provenance/*.txt -text
+cases/round-2-sealed/SEALED-PREREG.md -text
+attack/round-1/PREREG-codex.md -text
+approved-models.json -text
