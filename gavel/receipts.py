@@ -29,7 +29,8 @@ The hashes are unkeyed. Verification detects accidental and naive edits,
 deletions, reordering and downgrades; it cannot detect a whole file rewritten
 by someone who recomputes every hash. The external anchors against that are
 git history and the head recorded in results.json.
-Replay (re-running the model) is a separate, explicit feature.
+Replay (re-running the model to reproduce a verdict) is not implemented;
+verification here never calls a model.
 """
 
 import hashlib
@@ -388,7 +389,7 @@ def _verify_content_v3(rec: dict, mechanism_classes) -> None:
 def verify_content(rec: dict, mechanism_classes=None) -> None:
     """Content verification for one receipt. Raises ValueError on any
     disagreement between embedded content, recomputed hashes, and the
-    stored verdict. This never calls a model — replay is separate.
+    stored verdict. This never calls a model; replay is not implemented.
 
     v1: no embedded content; nothing to check here. v2: round-2 rules.
     v3: hashes, prompt == pinned header + anchor, a well-formed anchor of the
