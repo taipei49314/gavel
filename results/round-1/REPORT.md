@@ -65,6 +65,8 @@ ledger-structure-evasion（R7/R9、AGREE-A03c）、other（AGREE-A02c）。
 
 ## Acceptance status (2026-10-15)
 
+Quotations omit Markdown emphasis markers.
+
 - The 58 receipts in `receipts.jsonl` (2026-10-14T11:09:25Z–13:01:16Z) were produced on work machine LAPTOP-01AGNPJU: the recorded pins (`3460ffee…`, `6488c96f…`) match the Ollama manifests on that host, the Ollama server log on that host matches the receipt times, and `SPEC.md` line 18 pins the judge to that host.
 - EC POLICY work-machine-local, active since 2026-09-30, says: 「2026-09-22 之後在工作機產生的結果是「未驗收」，要當依據須在 pool 重做，或由人類明文接受。」 These results have not been redone on the pool, so they are 未驗收.
 - Nelson's disposition of 2026-10-15 (D1(a), `docs/DECISIONS.md`) keeps them unaccepted.

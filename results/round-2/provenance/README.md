@@ -2,7 +2,7 @@
 
 The round-2 exam, its gap fills, the re-evaluation and the sealed scoring were run as inline `uv run python -c` commands. None of those commands was committed. This folder keeps them verbatim, with their recorded outputs, so every round-2 number can be traced to the command that produced it.
 
-**Do not run these files.** They append to committed receipts and overwrite committed reports. They are a historical record, not tooling; the committed exam driver and scorer are being added separately (branch `fix/exam-validity`).
+**Do not run these files.** They append to committed receipts and overwrite committed reports. They are a historical record, not tooling; a committed exam driver and scorer are planned for a later publication batch.
 
 ## Source
 

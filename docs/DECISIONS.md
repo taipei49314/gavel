@@ -38,7 +38,7 @@ Nelson's gavel-related messages in the operator's ZCode session (`sess_d7c2b5b9-
 之前都是以嚴格 無網路 無llm的路線 你覺得接下來目標建議走什麼
 ```
 
-**2026-10-14T02:00:10Z**: LLMs may be connected; discussion only, no implementation yet. Asks: (1) are the existing repositories to be used as resources? (2) for an LLM route, scan this computer's configuration and installed local models; (3) is EYE's LLM suitable?
+**2026-10-14T02:00:10Z**: LLMs may be connected; discussion only, no implementation yet. Asks (1) whether the existing repositories are to be used as resources and (3) whether EYE's LLM is suitable; suggests (2) that, for an LLM route, the agent first scan this computer's configuration and installed local models.
 
 ```text
 可以接上llm  
@@ -134,7 +134,7 @@ E1 是 35b 漏判、9b 抓到，所以應分別報告「單臂漏判」和「整
 我會先選一個家族工具、連續收集一小批真實變更，讓 Gavel 提供意見，由人確認。第一輪只回答四個問題：多抓到了什麼、誤報了什麼、多少案需要補證據、每案增加或節省多少人工時間。
 ```
 
-**Codex-authored text relayed by Nelson.** This message was written by Codex in a separate Codex Desktop session (2026-10-14T15:04:05Z) and pasted here by Nelson. The Codex review ended with a sentence that is not in the paste: 「以上是靜態審閱，本輪沒有改倉或執行測試。後續重考與模型負載應依你的工作機規則，安排到核可的 pool。」 (The above is a static review; this round did not change the repository or run tests. Later retakes and model load should follow your work-machine rule and be scheduled on an approved pool.)
+**Codex-authored text relayed by Nelson.** Apart from its first line, 「我這邊有幾個想法 你看看」, this message is text from a review that Codex wrote in a separate Codex Desktop session on LAPTOP-01AGNPJU (session `01a13aed-c745-7f23-aa90-318ab7e4a98c`), pasted here by Nelson. In that session Nelson asked 「用你的角度 給gavel 具體建議」 (2026-10-14T15:00:42Z), and Codex completed the review at 15:04:05Z. The paste is an edited excerpt: it leaves out the review's two opening paragraphs, its link targets, the last paragraph of its sixth item (beginning 「我最想看到的下一個成果」) and its last sentence, 「以上是靜態審閱，本輪沒有改倉或執行測試。後續重考與模型負載應依你的工作機規則，安排到核可的 pool。」 (The above is a static review; this round did not change the repository or run tests. Later retakes and model load should follow your work-machine rule and be scheduled on an approved pool.)
 
 **2026-10-14T15:11:49Z** 「開始」: Start. The round-2 receipts start at 15:56:22Z.
 

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Rules for any agent, of any model and in any client, that works on gavel. They follow Nelson's decisions of 2026-10-15 (D2(A), D4(a) and D5(a) in [docs/DECISIONS.md](docs/DECISIONS.md)). When in doubt, stop and ask Nelson.
+Rules for any agent, of any model and in any client, that works on gavel. They follow Nelson's decisions of 2026-10-15 (D1(a), D2(A), D4(a) and D5(a) in [docs/DECISIONS.md](docs/DECISIONS.md)) and item 3 of the 「程序」 section of `PREREG.md`; rule 7 is part of the draft round-3 design and binds from the round-3 PREREG lock, which Nelson approves separately. When in doubt, stop and ask Nelson.
 
 ## 1. EC POLICY rows
 
@@ -22,6 +22,6 @@ The two rule cells below are copied byte-for-byte from the 規則 column of `POL
 4. Record a check that was not run as `NOT_RUN：工作機規則（POLICY work-machine-local），<原因>`, with the reason in place of `<原因>`. NOT_RUN is never written as a pass.
 5. PREREG and REPORT files are append-only: `PREREG.md`, `attack/round-1/PREREG-codex.md`, `cases/round-2-sealed/SEALED-PREREG.md`, and every `REPORT.md` under `results/` and `attack/`. Corrections go in a dated section appended at the end.
 6. No rule, threshold or prompt changes after results are known. A change needs a new round with a new PREREG, locked before that round runs.
-7. A sealed answer key is never committed in plaintext before its reveal; only a salted sha256 commitment is committed. The key is never placed in any judge arm's working directory.
+7. A sealed answer key is never committed in plaintext before its reveal; only a salted sha256 commitment is committed. The key is never placed in any judge arm's working directory. This rule binds from the round-3 PREREG lock (see the top of this file).
 8. Every human approval is quoted verbatim, with its UTC time, in `docs/DECISIONS.md`.
-9. Pushes need Nelson's named OK. Publication goes in batches, each pushed and opened as a PR only after his OK; merges stay with Nelson; tags and releases are authorized separately (D5(a)).
+9. Pushes need Nelson's named OK. Publication goes in batches, each pushed and opened as a PR only after his OK; merges stay with Nelson, or with an agent for a PR he names; tags and releases are authorized separately (D5(a)).
