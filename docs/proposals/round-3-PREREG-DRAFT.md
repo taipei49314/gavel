@@ -1,0 +1,226 @@
+# Round-3 PREREG: DRAFT (nothing here is locked)
+
+- Status: **DRAFT**, written 2026-10-15 by the takeover agent on branch
+  `fix/exam-validity`. Nothing in this file is locked, approved or in force.
+  Every `<TO-LOCK>` and `<TO-PIN>` value is decided at the lock.
+- Lock procedure: Nelson approves the final text and the lock in his own words
+  (recorded verbatim in docs/DECISIONS.md, as with Addendum 1's
+  「人類開考前核可」); the approved text is then appended to `PREREG.md` as its
+  next addendum and pushed before any round-3 judgment (section 8). PREREG.md
+  stays append-only.
+- Round-2 is not changed by anything here. Its status of record is INCOMPLETE
+  on both papers (decision D1(a), adopted by Nelson on 2026-10-15), and every
+  result produced on the work machine LAPTOP-01AGNPJU stays 「未驗收」.
+  v0.1.0 stays frozen until a round-3 run on the EC pool passes
+  (Addendum 3: 「重考；PASS 前不發」).
+
+## 0. Disclosure: this design is motivated by round-2's problems
+
+This draft was written after round-2's results were known, and each rule
+below answers a problem found in round-2 by the 2026-10-15 takeover audit
+(finding ids in parentheses). None of these rules is applied to round-2.
+
+| Round-2 problem | Round-3 rule |
+|---|---|
+| Four re-attempts (CW-A07 fast; SP-004 fast; SP-007 fast twice) that no addendum provided for, plus two calls that left no receipt; evaluation took the last record per cell (CR-01, R2-01, R2-03) | Harness-only attempt rule fixed before the run (section 4) |
+| The re-attempts ran after Ollama had upgraded itself from 0.35.0 to 0.40.4 (03:37-03:38 +0800 on 2026-10-15) | Pinned runtime in every manifest and receipt; no updater on the host (sections 1 and 2) |
+| The expected judgment matrix was derived from the run itself (CR-10) | Locked manifests with case sha256s; evaluate reads the matrix from the manifest only (section 5) |
+| The sealed answer key was public on GitHub from 2026-10-14T15:35:56Z, before the sealed run, and the informed arm ran an agent CLI in the repository's working directory (F3, CR-09) | Salted hash-only commitment; key off-repo until reveal; informed arm excluded (sections 3 and 6) |
+| Evidence text could close its own anchor block (ATK-009) (CR-04) | Anchor v2 (section 1) |
+| The approved-models gate was not called on the exam path (CR-02, F4) | Checked on every judgment, before and after the call (section 1) |
+| Receipts were not unique and did not bind run, time or host; raw output was dropped on UNAUDITED (R2-12, CR-06, CR-07, GOV-12) | Receipt v3, hash-chained, with host and runtime (section 1) |
+| The context size was fixed and unrecorded; truncation could pass silently (CR-16) | num_ctx recorded; a full context or a length stop is UNAUDITED (section 1) |
+| Tables were written by inline commands that were not committed (CR-03, R2-04) | Committed scoring code with its sha256 fixed at the lock (section 7) |
+| Every round ran on a work machine (GOV-1, F1, R2-02) | A Nelson-named EC pool host only (section 2) |
+
+## 1. Engine
+
+| Part | Value |
+|---|---|
+| Prompt | v4, unchanged (`PROMPT_VERSION = 4`); instruction header sha256 `<TO-LOCK: from gavel-verify out/round2/seed-1/versions.json>` |
+| Verdict schema | v2 (attack, clean, inconclusive; four-part anatomy for attack), closed list of 11 mechanism classes, strict JSON parsing (CR-17) |
+| Anchor | v2 (`ANCHOR_VERSION = 2`): `<<<GAVEL` inside evidence is written as `<<<GAVEL!`; END markers repeat the block id and sha256. This changes the judge's input relative to round-2, which is why it needs a new round (PREREG procedure 3: 「揭曉後禁調 prompt／threshold；要改＝round 1、新 PREREG」) |
+| Receipts | v3: receipt_id over the whole body, hash chain, host, Ollama version, pin before and after, options, generation counts, raw output kept on UNAUDITED |
+| Primary arm | `qwen3.5:35b-a3b`, manifest digest `3460ffeede5453ead027dbd2f821b12ad0aa3de54630971993babdb2165221f7` |
+| Fast arm | `qwen3.5:9b`, manifest digest `6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7` |
+| Runtime | Ollama `<TO-PIN>` (portable Windows zip, sha256 `<TO-PIN>`), pinned in every manifest (`runtime.ollama_version`); a judgment on any other version is UNAUDITED. Round-2's main run used 0.35.0; whether it is still obtainable is open |
+| Options | `temperature 0`, `num_ctx 16384`; `seed` `<TO-LOCK: unset or a fixed value>`. A prompt that fills the context, a length stop or a reported truncation is UNAUDITED |
+| Approval check | approved-models.json at the repository root, checked on every judgment; the model digest and the Ollama version are read before and after each call and must not change |
+| Harness | gavel at the lock commit `<TO-LOCK: SHA>` |
+
+If the registry no longer serves either approved digest, or judge-smoke shows
+the pinned runtime cannot run on the named host, round-3 is BLOCKED: a
+different digest is a different engine (SPEC §1: 「換模型＝換引擎」), which
+needs Nelson's decision and requalification under its own lock.
+
+## 2. Venue
+
+- One EC pool host named by Nelson: `<POOL-HOST: named by Nelson>`. Never a
+  work machine and never a one-time exception (EC POLICY work-machine-local).
+- Prepared and measured by the EC workloads `judge-host-prepare` and
+  `judge-smoke`, and examined by `gavel-exam`
+  (drafts in `workloads/ec-workloads.drafts.json`), each approved by its entry
+  sha256 and dispatched under an EC ledger row. The host preparation is a host
+  operation: named host and scope, ledger first, read back.
+- Precondition for the lock: judge-smoke has passed on that host with the
+  pinned runtime. Its timings fix the per-judgment timeout and show whether
+  each paper fits in one 700-minute job. A paper that does not fit is split
+  into smaller manifests at the lock; a paper is never resumed.
+
+## 3. Arms
+
+- Gating arm: `<TO-LOCK: proposal primary>`. The gating arm must use the local
+  Ollama transport (validate_manifest refuses anything else).
+- Fast arm: recorded.
+- Informed arm (agy): **excluded**. The agy transport now runs in an empty
+  temporary directory with no shell, but that is not a sandbox: agy's own tool
+  and file-access settings are not verified (CR-09). It may join a later round
+  only after a sandboxed transport is verified on the pool and approved; it is
+  never run on a sealed paper before reveal.
+- Completeness, to choose at the lock (this choice is motivated by round-2's
+  fast-arm gaps and is disclosed as such):
+  - **(A)** every arm listed in a paper's manifest gates that paper's
+    completeness (the current harness behaviour);
+  - **(B)** a paper's manifest lists only the gating arm; the fast arm runs as
+    a separate observation manifest over the same cases, whose status is
+    reported but does not block the paper.
+
+## 4. Attempt rule
+
+- Attempts are made by the harness only: `gavel exam` (run_paper) re-attempts
+  a cell immediately when its attempt is UNAUDITED, up to an attempt cap of
+  **3**.
+- Only UNAUDITED cells are re-attempted. A valid verdict is never re-attempted,
+  whatever it says.
+- The first valid attempt counts. Attempts after a valid one, duplicate
+  attempts, gaps in attempt numbering and attempts over the cap make the paper
+  INVALID_RECORDS.
+- Every attempt is receipted in one hash-chained v3 receipts file per paper;
+  results.json records the chain head and count, and `gavel verify --content
+  --results` checks them. Every re-attempted cell is listed in the report.
+- No operator re-runs. Each paper is dispatched once. If a dispatch ends before
+  its first receipt (the preflight refused, or the host was unavailable),
+  nothing was judged and the same paper may be dispatched again. Once any
+  receipt exists, that chain is the paper's only record: a paper that ends
+  without resolving every cell is INCOMPLETE and is not run again in round-3.
+- The runtime stays fixed for the round; a version or digest change during a
+  judgment makes it UNAUDITED.
+
+## 5. Papers
+
+Each paper is a locked manifest in the format of
+`gavel.qualify.validate_manifest`: case ids, paths, sha256, tier, role; arms
+and runs; gating arm; attempt cap 3; options; runtime; scoring; bars.
+Completeness comes first: a missing or unresolved cell makes the paper
+INCOMPLETE, and an INCOMPLETE paper is never scored (Addendum 4:
+「缺件/UNAUDITED/題數漂移 → INCOMPLETE，永不計分」).
+
+### R: regression (scoring "bars")
+
+- The 33 round-2 regression cases, unchanged (case sha256 as listed in
+  `workloads/gavel_verify/round2_papers.json`). Census S5, A11, B6, negative 6,
+  agree 5.
+- Gating arm 3 runs on S-tier cases, 1 run otherwise.
+- Bars as Addendum 5: S 5/5; A 11/11; B uncounted (calibration); negative
+  controls: hard false attack 0, soft (confidence below 0.6) at most 2,
+  inconclusive at most 1; agree at least 80%; S reproducibility over 3 runs.
+
+### K: known sealed cases (scoring "external")
+
+- SP-001..012 from round-2's sealed paper. Their key has been public since
+  2026-10-14T15:35:56Z (F3), so they count as known cases, not as unseen-case
+  evidence.
+- Their case files carry tier null, which the bar scorer cannot score, and
+  changing them would change locked case bytes. So they form their own
+  manifest, scored with `gavel score-sealed` against
+  `cases/round-2-sealed/SEALED-PREREG.md` (the Addendum 5 rule: an
+  attack-truth case needs verdict attack, inconclusive is a miss; a clean-truth
+  case needs verdict clean).
+- Bar `<TO-LOCK>`; proposal: the gating arm correct on 12/12.
+
+### N: new sealed paper (scoring "external"), required
+
+- Authored for round-3 by a model family never used in gavel. Families already
+  used: Qwen (the judge arms); GLM (the previous builder; PREREG.md records
+  the author of the 2026-10-01 red-team fixtures as 「疑似 GLM 系 agent」);
+  GPT/codex (`gpt-6.1-sol`: attack round-1 wave 1 and the round-2 sealed
+  paper); Gemini (the informed arm); Claude (this takeover, the harness fixes
+  and this draft). Nelson
+  names the family and launches the authoring session on a host he chooses,
+  with the brief kept outside the repository.
+- The author never sees gavel's prompt, harness, cases or results.
+- Proposed size `<TO-LOCK>`: 12 to 20 cases, at least 5 contrastive pairs and
+  at least 2 controls, both views (diff and ledger), expected verdicts attack
+  or clean only.
+- Case files are committed at the lock with their sha256 in the manifest. The
+  answer key stays off-repo, with Nelson, until reveal: never in the
+  repository, never in any arm's working directory, never on the pool host
+  before reveal.
+- Commitment (salted, so that a short key cannot be found by trying every
+  combination): `COMMITMENT.md` publishes each case file's sha256 and
+  `C = sha256(b"gavel-round-3-sealed-key-v1\n" + salt + b"\n" + key.json)`,
+  where `salt` is the 64 hex characters of a 32-byte random value and
+  `key.json` is the answer key file's exact bytes in the format of
+  `gavel.sealed.parse_answer_key_json`. At reveal Nelson releases `key.json`
+  and the salt; anyone can recompute C.
+- Bar `<TO-LOCK>`; proposal: the gating arm correct on every attack-truth case
+  and on all but at most one clean-truth case, with at least `<p>` of `<P>`
+  pairs discriminated.
+
+### Round-3 verdict
+
+Round-3 passes only if R is PASS, K meets its bar, and N is COMPLETE and meets
+its bar after reveal. Any INCOMPLETE, INVALID_PAPER or INVALID_RECORDS paper
+means round-3 does not pass. A check that did not run is NOT_RUN, never PASS.
+The verdict and any v0.1.0 release are Nelson's.
+
+## 6. Reveal
+
+1. N's receipts are published in the EC private receipt ref and their chain
+   head is recorded in the repository before the key is released.
+2. Nelson releases `key.json` and the salt. C is recomputed; a mismatch voids
+   N.
+3. Scoring runs on the pool (section 7). Mechanism match and inconclusive rates
+   are reported per arm (CR-18, R2-11); they are not bars unless the lock says
+   so.
+
+## 7. Scoring code
+
+- R: `gavel.qualify.evaluate`, through `gavel exam`; report.json.
+- K and N: `gavel score-sealed --manifest --key --receipts --out`
+  (gavel/sealed.py), only on a COMPLETE paper; outputs written once; every
+  table cell and summary line computed (Addendum 4:
+  「對帳表一律由腳本生成（tools/tally_attack.py 慣例），禁手工彙寫」).
+- Scoring runs as an EC pool workload; its outputs reach the repository by PR.
+- Paths and sha256 at the lock commit: `gavel/qualify.py` `<TO-LOCK>`,
+  `gavel/sealed.py` `<TO-LOCK>`, `gavel/cli.py` `<TO-LOCK>`.
+
+## 8. Time anchors
+
+1. The lock commit (the PREREG addendum, the manifests, COMMITMENT.md,
+   approved-models.json and the harness) is pushed to GitHub before any
+   round-3 judgment. GitHub's server-side push event time is the lock anchor;
+   the host clock is not.
+2. Nelson approves the lock and the `gavel-exam` entry sha256 for the locked
+   manifests.
+3. Each paper's dispatch is an EC workflow run whose server-side start time
+   follows the lock anchor; receipts carry the pool host's clock.
+4. Reveal follows the publication of N's receipts (section 6).
+
+## 9. What round-3 will not claim
+
+- Nothing about the informed arm.
+- No reproduction of round-2's numbers: pool results come from another host
+  and possibly another runtime, so they are not expected to match the
+  LAPTOP-01AGNPJU receipts byte for byte.
+- No claim beyond the cases judged; the sealed sample stays small.
+
+## 10. Decisions left for the lock (Nelson)
+
+1. The pool host (and its scope as a host operation).
+2. The Ollama version and zip sha256; the seed option.
+3. The gating arm, and completeness option (A) or (B).
+4. The sealed author's model family; N's size.
+5. The K and N bars.
+6. The per-judgment timeout and any paper split, from judge-smoke timings.
+7. Approval of the lock text, the manifests and the `gavel-exam` entry hash.
