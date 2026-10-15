@@ -16,6 +16,12 @@
   judge-smoke), existing Chinese text is not rewritten: a false or stale
   statement is struck through with `~~...~~` and followed by an English
   correction note.
+- Venue: this file was written under D2(A) (EC pool only). Later on
+  2026-10-15 Nelson authorized gavel to run on LAPTOP-01AGNPJU (EC POLICY
+  `gavel-pju-execution`, docs/DECISIONS.md), which supersedes the venue part
+  of D2(A) for gavel. §1 below is revised for it (2026-10-15, branch
+  `docs/pju-venue`); the other mentions of the pool in this file (the J4 note
+  above, §4, §6 and spec-1 candidate 3) date from before it.
 
 ## §1 Judge identity: correction
 
@@ -26,9 +32,17 @@ and 「語意：**模型檔 sha256 屬於引擎版本的一部分**；換模型�
 Facts:
 
 - LAPTOP-01AGNPJU is a work machine. EC POLICY work-machine-local forbids
-  engine load there, and every result produced there since 2026-09-22 is
-  「未驗收」. Nelson chose on 2026-10-15 (D2(A)) that tests and the judge run
-  only on the EC pool, the judge on a pool host he names.
+  engine load on work machines, and results produced there since 2026-09-22
+  are 「未驗收」 unless Nelson accepts them. Nelson first chose on 2026-10-15
+  (D2(A)) that tests and the judge run only on the EC pool, the judge on a
+  pool host he names. Later the same day (09:49:47Z) he authorized gavel to
+  run on LAPTOP-01AGNPJU, recorded as the standing EC POLICY row
+  `gavel-pju-execution` (T-542): gavel's tests, verification and judge runs
+  through the committed harness, with the host's existing Ollama and the
+  approved digests, until he revokes it. That supersedes the venue part of
+  D2(A) for gavel. Results from there are labelled "human-authorized local
+  PJU, NOT EC pool"; the round-0, round-1, M4 wave-1 and round-2 results stay
+  「未驗收」.
 - The digest gavel pins and checks is the Ollama manifest digest that
   `/api/tags` reports (approved-models.json `manifest_digest`), not a model
   file (GGUF) sha256.
@@ -36,9 +50,12 @@ Facts:
   recorded (CR-16), and round-2's main run and its re-attempts ran on
   different Ollama versions (0.35.0, then 0.40.4 after an automatic upgrade).
 
-Proposed §1 text, in substance:
+**Superseded proposal.** The proposal below was made under D2(A). It removed
+the LAPTOP-01AGNPJU pin and made a Nelson-named EC pool host part of the
+judge's identity. EC POLICY `gavel-pju-execution` superseded it on
+2026-10-15; it is kept here for the record and is not proposed any more.
 
-> The judge's identity is: the model tags and their Ollama manifest digests
+> ~~The judge's identity is: the model tags and their Ollama manifest digests
 > as listed in approved-models.json; the Ollama runtime version, pinned per
 > exam round; the generation options (temperature 0, num_ctx, seed if set);
 > the prompt version with the sha256 of its instruction header, the anchor
@@ -47,13 +64,27 @@ Proposed §1 text, in substance:
 > digest and runtime version read before and after the judgment, and the
 > host. A different digest is a different engine (換模型＝換引擎). A different
 > host or runtime version is recorded and needs a new round to qualify. The
-> LAPTOP-01AGNPJU pin is removed.
+> LAPTOP-01AGNPJU pin is removed.~~
 
-Implemented on this branch: receipt v3 records host, transport and Ollama
-version, the pin before and after each call, options and generation counts,
-and the name and sha256 of the approved-models file that approved the pin
-(also in results.json); judge_case checks approved models on every judgment
-and refuses a changed digest or version.
+**Proposed §1 text**, in substance, replacing it:
+
+> The judge's identity is: the model tags and their Ollama manifest digests
+> as listed in approved-models.json; the Ollama runtime version, pinned per
+> exam round; the generation options (temperature 0, num_ctx, seed if set);
+> and the prompt version with the sha256 of its instruction header, the
+> anchor version and the verdict schema version. The pinned host stays
+> LAPTOP-01AGNPJU, where gavel runs under EC POLICY `gavel-pju-execution`.
+> Every receipt records the host, the Ollama version and the model digests,
+> with the digest and runtime version read before and after the judgment. A
+> different digest is a different engine (換模型＝換引擎). A different host or
+> runtime version is recorded and needs a new round to qualify.
+
+Already implemented for receipt v3 (PR #2, branch `fix/exam-validity`,
+merged in `d97dbcd`): receipt v3 records host, transport and Ollama version,
+the pin before and after each call, options and generation counts, and the
+name and sha256 of the approved-models file that approved the pin (also in
+results.json); judge_case checks approved models on every judgment and
+refuses a changed digest or version.
 
 ## §4 Receipts and replay: correction
 
