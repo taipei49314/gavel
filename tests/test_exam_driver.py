@@ -371,6 +371,17 @@ def test_missing_case_file_refused_before_any_judgment(paper_env):
     assert t.calls == []
 
 
+def test_unrenderable_case_refused_before_any_judgment(tmp_path):
+    broken = marked_case("A-1", tier="A")
+    broken["evidence"]["diff"] = None
+    manifest_path = write_paper(tmp_path / "paper", {**PAPER_CASES, "A-1": broken})
+    t = FakeTransport(responder=responder())
+    with pytest.raises(PaperError, match="cannot be rendered"):
+        run_paper(manifest_path, tmp_path / "out", base_url="http://x", timeout_s=5,
+                  approved_path=write_approved(tmp_path), transport=t, host=HOST)
+    assert t.calls == []
+
+
 def test_invalid_manifest_refused(tmp_path):
     path = write_paper(tmp_path / "paper", PAPER_CASES, bars={"a_mim": 1})
     with pytest.raises(PaperError, match="invalid paper manifest"):

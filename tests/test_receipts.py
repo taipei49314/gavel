@@ -14,7 +14,8 @@ import gavel
 import pytest
 from fakes import (fake_judgment, legacy_receipt, make_diff_case, verdict,
                    write_lines)
-from gavel.prompt import MECHANISM_CLASSES
+from gavel.anchor import render_case_v1, sha256_text
+from gavel.prompt import MECHANISM_CLASSES, render_prompt
 from gavel.receipts import (GENESIS, RECEIPT_VERSION, ReceiptLog,
                             append_receipt, build_receipt, receipt_digest,
                             seal_receipt, verify_content, verify_file)
@@ -263,6 +264,45 @@ def test_v3_prompt_must_be_pinned_header_plus_anchor(tmp_path):
     write_chain(path, [b])
     verify_file(path)  # self-consistent hashes pass the structural check
     with pytest.raises(ValueError, match="pinned instruction header"):
+        verify_file(path, MECHANISM_CLASSES, content=True)
+
+
+def _with_anchor(b, anchor_text):
+    b["anchor_text"] = anchor_text
+    b["anchor_sha256"] = sha256_text(anchor_text)
+    b["prompt_text"] = render_prompt(anchor_text)
+    b["prompt_sha256"] = sha256_text(b["prompt_text"])
+    return b
+
+
+def test_v3_anchor_must_be_well_formed(tmp_path):
+    # CR-04: a self-consistent receipt whose anchor text was edited (here the
+    # diff block's END marker no longer repeats its stamp) fails content
+    # verification.
+    path = tmp_path / "receipts.jsonl"
+    b = body()
+    end = b["anchor_text"].index('<<<GAVEL:END id="diff" sha256="') + len(
+        '<<<GAVEL:END id="diff" sha256="')
+    forged = b["anchor_text"][:end] + "0" * 64 + b["anchor_text"][end + 64:]
+    write_chain(path, [_with_anchor(b, forged)])
+    verify_file(path)
+    with pytest.raises(ValueError, match="not a well-formed anchor"):
+        verify_file(path, MECHANISM_CLASSES, content=True)
+
+
+def test_v3_anchor_version_must_be_current(tmp_path):
+    path = tmp_path / "receipts.jsonl"
+    b = body()
+    b["anchor_version"] = 1
+    write_chain(path, [b])
+    with pytest.raises(ValueError, match="anchor version 1"):
+        verify_file(path, MECHANISM_CLASSES, content=True)
+
+
+def test_v3_v1_anchor_text_refused(tmp_path):
+    path = tmp_path / "receipts.jsonl"
+    write_chain(path, [_with_anchor(body(), render_case_v1(make_diff_case()))])
+    with pytest.raises(ValueError, match="not a well-formed anchor"):
         verify_file(path, MECHANISM_CLASSES, content=True)
 
 

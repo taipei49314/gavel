@@ -41,6 +41,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from . import __version__
+from .anchor import ANCHOR_VERSION, parse_anchor
 from .judge import (OLLAMA, SCHEMA_VERSION, extract_json, extract_json_v2,
                     validate_verdict)
 from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
@@ -342,6 +343,14 @@ def _verify_content_v3(rec: dict, mechanism_classes) -> None:
     if rec["prompt_text"] != render_prompt(rec["anchor_text"]):
         raise ValueError(f"{label}: prompt_text is not the pinned instruction header "
                          f"plus the anchor text")
+    if rec.get("anchor_version") != ANCHOR_VERSION:
+        raise ValueError(f"{label}: anchor version {rec.get('anchor_version')!r} cannot be "
+                         f"checked by this build (it knows v{ANCHOR_VERSION})")
+    try:
+        parse_anchor(rec["anchor_text"])  # stamps, own END markers, escaping (CR-04)
+    except ValueError as exc:
+        raise ValueError(f"{label}: anchor_text is not a well-formed anchor "
+                         f"v{ANCHOR_VERSION}: {exc}") from exc
     if rec.get("schema_version") != SCHEMA_VERSION:
         raise ValueError(f"{label}: verdict schema {rec.get('schema_version')!r} is not "
                          f"v{SCHEMA_VERSION}")
@@ -382,8 +391,9 @@ def verify_content(rec: dict, mechanism_classes=None) -> None:
     stored verdict. This never calls a model — replay is separate.
 
     v1: no embedded content; nothing to check here. v2: round-2 rules.
-    v3: hashes, prompt == pinned header + anchor, schema version, guard
-    consistency, strict re-parse of the raw output.
+    v3: hashes, prompt == pinned header + anchor, a well-formed anchor of the
+    current version (parse_anchor), schema version, guard consistency,
+    strict re-parse of the raw output.
     """
     classes = mechanism_classes if mechanism_classes is not None else MECHANISM_CLASSES
     version = _version_of(rec)

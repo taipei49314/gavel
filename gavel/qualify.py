@@ -462,8 +462,9 @@ def load_paper(manifest_path) -> dict:
     """Load a locked paper: the manifest plus every case file, hash-checked.
 
     Raises PaperError when the manifest is invalid, a case file is missing
-    or unreadable, its sha256 differs from the manifest, or its case_id,
-    tier or role differ from the manifest entry.
+    or unreadable, its sha256 differs from the manifest, its case_id, tier
+    or role differ from the manifest entry, or it cannot be rendered into an
+    anchor (so no paper stops part-way on a malformed case).
     Returns {"manifest", "manifest_sha256" (of the file's bytes), "cases"}.
     """
     path = Path(manifest_path)
@@ -500,6 +501,10 @@ def load_paper(manifest_path) -> dict:
             raise PaperError(f"{cid}: case file tier/role ({case.get('tier')!r}/"
                              f"{case.get('role', 'exam')!r}) differ from the manifest "
                              f"({entry['tier']!r}/{entry['role']!r})")
+        try:
+            render_case(case)  # a case that cannot be rendered stops the paper here
+        except (ValueError, TypeError, KeyError) as exc:
+            raise PaperError(f"{cid}: case cannot be rendered: {exc}") from exc
         cases[cid] = case
     return {"manifest": manifest, "manifest_sha256": hashlib.sha256(raw).hexdigest(),
             "cases": cases}

@@ -224,15 +224,16 @@ def fake_judgment(case=None, v="clean", *, raw=None, stored=_SAME, unaudited=Non
 
 def legacy_receipt(version=2, case=None, arm="primary", raw=None, stored=_SAME,
                    unaudited=None, run=1, pin=None):
-    """A v1/v2 receipt exactly as round-0..2 wrote them (make_receipt + run)."""
-    from gavel.anchor import render_case, sha256_text
+    """A v1/v2 receipt exactly as round-0..2 wrote them (make_receipt + run),
+    with the anchor v1 text those rounds used."""
+    from gavel.anchor import render_case_v1, sha256_text
     from gavel.prompt import render_prompt
 
     def h(obj):
         return hashlib.sha256(json.dumps(obj, sort_keys=True).encode()).hexdigest()
 
     case = case or make_diff_case()
-    anchor = render_case(case)
+    anchor = render_case_v1(case)
     prompt = render_prompt(anchor)
     pin = dict(pin or PIN)
     if unaudited:
