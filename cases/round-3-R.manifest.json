@@ -276,5 +276,6 @@
   },
   "runtime": {
     "ollama_version": "0.40.4"
-  }
+  },
+  "load_condition": "fresh"
 }

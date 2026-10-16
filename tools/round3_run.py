@@ -11,8 +11,9 @@ on that host, without its pool-host checks, and enforces:
   ancestor of HEAD and already on origin, and every change since it is under
   results/round-3/ (run records only);
 - the paper is one of the locked manifests in PAPERS; every arm uses the
-  local transport "ollama", the manifest pins the Ollama version and fixes the
-  options (gavel exam's preflight then checks the live version and digests);
+  local transport "ollama", the manifest pins the Ollama version, fixes the
+  options and sets load_condition "fresh" (gavel exam's preflight then checks
+  the live version and digests);
 - one run per paper: a paper that has a receipts file under
   results/round-3/<paper>/ is never run again. A run that ended before its
   first receipt (the preflight refused, or the daemon was unavailable) judged
@@ -21,14 +22,17 @@ on that host, without its pool-host checks, and enforces:
   pushed; after it, the exam's outputs and the end record (RUN.json,
   SUMMARY.md) are committed and pushed. GitHub's push event times bound the
   run from both sides; the host clock is not an anchor;
-- load conditions: every loaded model is unloaded before the start record,
-  so the paper's one arm loads its model into an otherwise empty GPU. The
-  pre-lock smoke run showed that the fast arm's output for the same prompt
-  can change with what else was loaded when its model was loaded, although
-  /api/ps reported the same placement (results/round-3/prelock-smoke/). The
-  models listed by /api/ps before the unload and at the end, and the Ollama
-  server log's model-load lines written during the exam, are kept with the
-  run;
+- load conditions: every loaded model is unloaded before the start record.
+  The pre-lock smoke run showed that the fast arm's output for a case can
+  depend on the case judged before it on the same loaded model, through the
+  reuse of a cached prompt prefix (results/round-3/prelock-smoke/). Nelson
+  adopted decision 4a(i) on 2026-10-16T20:08:01Z: every judgment runs on a
+  freshly loaded model with an empty prompt cache. The manifests set
+  load_condition "fresh", so gavel exam unloads every model and checks that
+  /api/ps lists none before each judgment, sends the judgment with
+  keep_alive 0, and records both in each receipt. The models listed by
+  /api/ps before the unload and at the end, and the Ollama server log's
+  model-load lines written during the exam, are kept with the run;
 - after the exam: `gavel verify --content --results`, and the committed
   approved-models.json is the file that gated the exam.
 
@@ -55,6 +59,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HOST = "LAPTOP-01AGNPJU"
 BASE_URL = "http://127.0.0.1:11434"
 OLLAMA_VERSION = "0.40.4"
+LOAD_CONDITION = "fresh"
 RESULTS = "results/round-3"
 SERVER_LOG = Path(os.environ.get("LOCALAPPDATA", "")) / "Ollama" / "server.log"
 LOAD_LINE_MARKERS = ("load_tensors:", "common_params_fit", "llama_kv_cache:", "load_backend:",
@@ -134,6 +139,8 @@ def check_manifest(path: Path) -> dict:
         raise Refused(f"the manifest does not pin Ollama {OLLAMA_VERSION}")
     if not manifest.get("options"):
         raise Refused("the manifest does not fix the generation options")
+    if manifest.get("load_condition") != LOAD_CONDITION:
+        raise Refused(f"the manifest does not set load_condition {LOAD_CONDITION!r}")
     return manifest
 
 
@@ -257,6 +264,7 @@ def main(argv=None) -> int:
              "lock_commit": harness["lock_commit"], "host": host,
              "host_clock_utc": utc_now(), "out": rel_run,
              "timeout_s": JUDGMENT_TIMEOUT_S, "ollama_version": OLLAMA_VERSION,
+             "load_condition": manifest.get("load_condition"),
              "loaded_before_unload": loaded_before,
              "label": "human-authorized local PJU, NOT EC pool"}
     try:

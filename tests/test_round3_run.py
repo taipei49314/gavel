@@ -1,5 +1,6 @@
 """tools/round3_run.py (round-3 PREREG draft, sections 2, 4 and 8): the PJU
-runner refuses a non-local arm, an unpinned runtime or missing options; runs
+runner refuses a non-local arm, an unpinned runtime, missing options or a
+load condition other than "fresh" (decision 4a(i)); runs
 a paper only into a fresh run directory and never again once receipts exist;
 and runs only the lock commit's harness (clean tree, lock commit on a remote
 branch, later changes only under results/round-3/, not on main)."""
@@ -30,7 +31,8 @@ def _manifest(tmp_path, **changes):
     manifest = {"arms": {"primary": {"model": "qwen3.5:35b-a3b", "transport": "ollama",
                                      "runs": {"default": 1}}},
                 "runtime": {"ollama_version": round3_run.OLLAMA_VERSION},
-                "options": {"temperature": 0, "num_ctx": 16384}}
+                "options": {"temperature": 0, "num_ctx": 16384},
+                "load_condition": "fresh"}
     manifest.update(changes)
     path = tmp_path / "paper.manifest.json"
     path.write_text(json.dumps(manifest), encoding="utf-8")
@@ -50,6 +52,7 @@ def test_committed_papers_pass_the_manifest_checks():
     ({"runtime": {"ollama_version": "0.35.0"}}, "does not pin"),
     ({"runtime": None}, "does not pin"),
     ({"options": {}}, "options"),
+    ({"load_condition": None}, "load_condition 'fresh'"),
 ])
 def test_manifest_checks_refuse(tmp_path, changes, message):
     with pytest.raises(round3_run.Refused, match=message):

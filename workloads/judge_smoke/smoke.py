@@ -29,6 +29,12 @@ in every run; the reload's seconds are recorded apart from the judgment's.
 --co-load MODEL loads another approved model first and leaves it loaded, so
 the arm's model shares memory with it, as when two arms run one after the
 other; /api/ps records where each model was placed (size_vram).
+
+--load fresh judges every run of every case under the exam's load condition
+"fresh" (gavel.judge.unload_all, keep_alive 0 on the call; round-3 decision
+4a(i)), so no judgment can reuse another's prompt cache. It excludes
+--cold-first and --co-load. Each judgment's load seconds are the daemon's
+load_duration.
 """
 
 from __future__ import annotations
@@ -45,7 +51,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from gavel.judge import DEFAULT_OPTIONS, strict_loads  # noqa: E402
+from gavel.judge import DEFAULT_OPTIONS, LOAD_CONDITIONS, strict_loads  # noqa: E402
 from gavel.prompt import MECHANISM_CLASSES  # noqa: E402
 from gavel.qualify import ARMS, judge_case  # noqa: E402
 from gavel.receipts import ReceiptLog, build_receipt, verify_file  # noqa: E402
@@ -103,7 +109,10 @@ def main(argv=None) -> int:
     parser.add_argument("--cold-first", action="store_true")
     parser.add_argument("--co-load", choices=sorted({spec["model"] for spec in ARMS.values()
                                                      if spec["transport"] == "ollama"}))
+    parser.add_argument("--load", choices=LOAD_CONDITIONS)
     args = parser.parse_args(argv)
+    if args.load and (args.cold_first or args.co_load):
+        parser.error("--load excludes --cold-first and --co-load")
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=False)
     model = ARMS[args.arm]["model"]
@@ -119,11 +128,14 @@ def main(argv=None) -> int:
             load_seconds = reload_cold(args.base_url, model, args.timeout) if cold else None
             started = time.monotonic()
             result = judge_case(case, model, args.base_url, args.timeout,
-                                pinned_runtime={"ollama_version": args.ollama_version})
+                                pinned_runtime={"ollama_version": args.ollama_version},
+                                load_condition=args.load)
             seconds = round(time.monotonic() - started, 3)
             receipt = log.append(build_receipt(case_id=case["case_id"], arm=args.arm, run=run,
                                                attempt=1, judgment=result))
             generation = result.get("generation") or {}
+            if args.load and isinstance(generation.get("load_duration"), int):
+                load_seconds = round(generation["load_duration"] / 1e9, 3)
             judgments.append({
                 "case_id": case["case_id"], "run": run, "seconds": seconds,
                 "cold": cold, "load_seconds": load_seconds,
@@ -135,6 +147,7 @@ def main(argv=None) -> int:
                 "eval_count": generation.get("eval_count"),
                 "done_reason": generation.get("done_reason"),
                 "num_ctx": (result.get("options") or {}).get("num_ctx"),
+                "execution": result.get("execution"),
                 "loaded": ps(args.base_url)})
     verify_file(out / "receipts.jsonl", MECHANISM_CLASSES, content=True,
                 expect_head=log.head, expect_count=log.count)
@@ -160,6 +173,7 @@ def main(argv=None) -> int:
                 if isinstance(j["num_ctx"], int) and isinstance(j["prompt_eval_count"], int)]
     summary = {
         "arm": args.arm, "cold_first": args.cold_first, "co_load": args.co_load,
+        "load_condition": args.load,
         "model": model, "options": DEFAULT_OPTIONS, "judgments": len(judgments),
         "valid": len(valid), "unaudited": [j for j in judgments if j["unaudited"]],
         "seconds": {"min": min(j["seconds"] for j in judgments),

@@ -43,11 +43,12 @@ from pathlib import Path, PurePosixPath
 
 from . import __version__
 from .anchor import ANCHOR_VERSION, render_case, render_case_v1, sha256_text
-from .judge import (CLOUD_TRANSPORTS, OLLAMA, OPTION_KEYS, SCHEMA_VERSION,
-                    TRANSPORT_ERRORS, UnauditedError, agy_generate,
-                    check_approved, extract_json, generate, get_pin,
-                    get_runtime_version, live_pin, resolve_options,
-                    strict_loads, validate_verdict)
+from .judge import (CLOUD_TRANSPORTS, LOAD_CONDITIONS, OLLAMA, OPTION_KEYS,
+                    SCHEMA_VERSION, TRANSPORT_ERRORS, UnauditedError,
+                    agy_generate, check_approved, extract_json, generate,
+                    get_pin, get_runtime_version, live_pin, loaded_models,
+                    resolve_options, strict_loads, unload_all,
+                    validate_verdict)
 from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
 from .receipts import RECEIPT_VERSION, ReceiptLog, build_receipt
 
@@ -69,7 +70,7 @@ PAPER_OUTPUTS = ("receipts.jsonl", "results.json", "report.json")
 
 _MANIFEST_REQUIRED = ("manifest_version", "paper_id", "cases", "arms", "gating_arm",
                       "attempt_cap", "scoring")
-_MANIFEST_OPTIONAL = ("bars", "options", "runtime", "note")
+_MANIFEST_OPTIONAL = ("bars", "options", "runtime", "load_condition", "note")
 _CASE_KEYS = frozenset({"case_id", "path", "sha256", "tier", "role"})
 _ARM_REQUIRED = ("model", "transport", "runs")
 _ARM_OPTIONAL = ("role", "note")
@@ -112,7 +113,7 @@ def _mark_unaudited(result: dict, reason: str, exc: UnauditedError | None = None
 def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
                transport=None, approved_models=None, generate_fn=None, *,
                transport_name: str = OLLAMA, options: dict | None = None,
-               pinned_runtime: dict | None = None) -> dict:
+               pinned_runtime: dict | None = None, load_condition: str | None = None) -> dict:
     """One judgment: the single judgment path for exam and scan.
 
     Raises only when the case cannot be rendered (render_case's ValueError;
@@ -129,11 +130,19 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
 
     Order (CR-02/F4): live pin -> approved-models check (approved_models
     None means the repo-root approved-models.json) -> Ollama version (and the
-    manifest's pinned version, if any) -> generate -> for Ollama, the digest
+    manifest's pinned version, if any) -> for Ollama under load_condition
+    "fresh", every loaded model is unloaded and /api/ps must list none ->
+    generate (with keep_alive 0 under "fresh") -> for Ollama, the digest
     and version are read again and must be unchanged -> strict parse ->
     schema validation. transport is the HTTP callable for Ollama (tests
     inject a fake); transport_name selects the transport ("ollama" or a
     cloud transport such as "agy").
+
+    load_condition None judges on whatever the daemon has loaded, as in
+    round-2. "fresh" records in execution the condition, keep_alive 0, the
+    models loaded before the unload (loaded_before_unload) and the empty
+    /api/ps listing read just before the call (loaded_before_call). Cloud
+    transports load nothing locally and ignore it.
     """
     anchor_block = render_case(case)
     prompt = render_prompt(anchor_block)
@@ -167,6 +176,7 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
         result["approved_models"] = check_approved(pin, approved_models,
                                                    transport=transport_name)
         version = None
+        call_kw = {}
         if is_local:
             result["options"] = resolve_options(options)
             version = get_runtime_version(base_url, transport=transport)
@@ -174,8 +184,19 @@ def judge_case(case: dict, model: str, base_url: str, timeout_s: float,
             pinned = (pinned_runtime or {}).get("ollama_version")
             if pinned is not None and version != pinned:
                 raise UnauditedError(f"ollama version {version} is not the pinned {pinned}")
+            if load_condition is not None:
+                if load_condition not in LOAD_CONDITIONS:
+                    raise UnauditedError(f"unknown load condition: {load_condition!r}")
+                execution = result["execution"]
+                execution.update(load_condition=load_condition, keep_alive=0)
+                execution["loaded_before_unload"] = unload_all(base_url, transport=transport)
+                execution["loaded_before_call"] = loaded_models(base_url, transport=transport)
+                if execution["loaded_before_call"]:
+                    raise UnauditedError(f"models loaded before a fresh-load judgment: "
+                                         f"{execution['loaded_before_call']}")
+                call_kw["keep_alive"] = 0
         out = gen(model, prompt, base_url, timeout_s, transport=transport,
-                  options=result["options"] if is_local else None)
+                  options=result["options"] if is_local else None, **call_kw)
         if not isinstance(out, dict) or not isinstance(out.get("raw"), str):
             raise UnauditedError("transport returned no text")
         result["raw"] = out["raw"]
@@ -273,6 +294,9 @@ def validate_manifest(manifest) -> list[str]:
                    invalid.
       options      optional generation options (temperature, num_ctx, seed)
       runtime      optional {"ollama_version": "x.y.z"} pinned runtime
+      load_condition  optional "fresh": every local judgment runs on a
+                   freshly loaded model with an empty prompt cache
+                   (judge_case)
       note         optional free text
     """
     if not isinstance(manifest, dict):
@@ -369,6 +393,9 @@ def validate_manifest(manifest) -> list[str]:
         if not isinstance(runtime, dict) or set(runtime) - set(_RUNTIME_KEYS) \
                 or not all(isinstance(v, str) and v for v in runtime.values()):
             problems.append(f"runtime may only hold non-empty strings for {list(_RUNTIME_KEYS)}")
+
+    if "load_condition" in manifest and manifest["load_condition"] not in LOAD_CONDITIONS:
+        problems.append(f"load_condition must be one of {list(LOAD_CONDITIONS)}")
 
     scoring = manifest["scoring"]
     if scoring not in SCORING_MODES:
@@ -545,12 +572,15 @@ def check_receipts_against_paper(paper: dict, receipts: list[dict]) -> list[str]
       the sha256 of render_case(case), and case_sha256 is the manifest's;
     - v1/v2 (round-0..2, anchor v1): anchor_sha256 is the sha256 of
       render_case_v1(case);
-    - every receipt names a case of the paper.
+    - every receipt names a case of the paper;
+    - when the manifest sets load_condition, every local v3 receipt records
+      that condition in execution (cloud receipts load nothing locally).
 
     Returns an empty list when every receipt matches.
     """
     cases = paper["cases"]
     case_sha = {entry["case_id"]: entry["sha256"] for entry in paper["manifest"]["cases"]}
+    load_condition = paper["manifest"].get("load_condition")
     problems = []
     for index, rec in enumerate(receipts, 1):
         cid = rec.get("case_id")
@@ -567,6 +597,12 @@ def check_receipts_against_paper(paper: dict, receipts: list[dict]) -> list[str]
                 continue
             if rec.get("case_sha256") != case_sha[cid]:
                 problems.append(f"{label}: case_sha256 is not the manifest's")
+            transport = rec.get("transport") if isinstance(rec.get("transport"), dict) else {}
+            execution = rec.get("execution") if isinstance(rec.get("execution"), dict) else {}
+            if load_condition is not None and transport.get("name") == OLLAMA \
+                    and execution.get("load_condition") != load_condition:
+                problems.append(f"{label}: not judged under the paper's load condition "
+                                f"{load_condition!r}")
             renderer = render_case
         elif version in (1, 2):
             renderer = render_case_v1
@@ -1032,7 +1068,8 @@ def run_paper(manifest_path, out_dir, *, base_url: str = DEFAULT_BASE_URL,
                         approved_models=approved_path,
                         generate_fn=generate_fns.get(spec["transport"]),
                         transport_name=spec["transport"],
-                        options=manifest.get("options"), pinned_runtime=pinned_runtime)
+                        options=manifest.get("options"), pinned_runtime=pinned_runtime,
+                        load_condition=manifest.get("load_condition"))
                     receipt = log.append(build_receipt(
                         case_id=entry["case_id"], arm=arm, run=run, attempt=attempt,
                         judgment=judgment, paper_id=manifest["paper_id"],

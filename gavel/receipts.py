@@ -25,7 +25,8 @@ Receipt v3 (takeover audit 2026-10-15: CR-06, CR-07, R2-12, GOV-12):
   the guards it was judged under: a full context, a length stop or a
   reported truncation; for Ollama, no post-judgment pin, a digest change or
   no positive prompt_eval_count; for any transport, no approved_models
-  record.
+  record; under load condition "fresh", a model listed by /api/ps just
+  before the call, or a call without keep_alive 0.
 - Every line is read with judge.strict_loads (no duplicate keys, no
   NaN/Infinity).
 
@@ -52,8 +53,8 @@ from pathlib import Path
 
 from . import __version__
 from .anchor import ANCHOR_VERSION, parse_anchor
-from .judge import (OLLAMA, SCHEMA_VERSION, extract_json, extract_json_v2,
-                    strict_loads, validate_verdict)
+from .judge import (LOAD_FRESH, OLLAMA, SCHEMA_VERSION, extract_json,
+                    extract_json_v2, strict_loads, validate_verdict)
 from .prompt import MECHANISM_CLASSES, PROMPT_VERSION, render_prompt
 
 RECEIPT_VERSION = 3
@@ -369,6 +370,7 @@ def _verify_content_v3(rec: dict, mechanism_classes) -> None:
     options = rec.get("options") if isinstance(rec.get("options"), dict) else {}
     generation = rec.get("generation") if isinstance(rec.get("generation"), dict) else {}
     transport = rec.get("transport") if isinstance(rec.get("transport"), dict) else {}
+    execution = rec.get("execution") if isinstance(rec.get("execution"), dict) else {}
     pin, pin_after = rec.get("pin") or {}, rec.get("pin_after")
     if rec["unaudited_reason"]:
         if rec["verdict"] is not None:
@@ -395,6 +397,14 @@ def _verify_content_v3(rec: dict, mechanism_classes) -> None:
             raise ValueError(f"{label}: local verdict without the post-judgment pin")
         if pin_after.get("manifest_digest") != pin.get("manifest_digest"):
             raise ValueError(f"{label}: valid verdict recorded across a digest change")
+    if "load_condition" in execution:
+        if execution["load_condition"] != LOAD_FRESH or transport.get("name") != OLLAMA:
+            raise ValueError(f"{label}: valid verdict under an unknown load condition "
+                             f"{execution['load_condition']!r} for transport "
+                             f"{transport.get('name')!r}")
+        if execution.get("loaded_before_call") != [] or execution.get("keep_alive") != 0:
+            raise ValueError(f"{label}: valid verdict under load condition 'fresh' without an "
+                             f"empty model list before the call and keep_alive 0")
     if not isinstance(rec["raw_response"], str):
         raise ValueError(f"{label}: verdict without raw output")
     try:
