@@ -99,6 +99,34 @@ adding or removing a model needs his separate OK.
   would blind the truncation guard); if it does, the lock needs a remedy (for
   example a check that does not rely on the daemon's count) before any paper
   runs.
+- **Done on 2026-10-15** (`results/round-3/prelock-smoke/README.md`; label
+  "human-authorized local PJU, NOT EC pool"; results await Nelson's
+  acceptance). Four sessions, each judging the three smoke cases three times:
+  primary and fast with each case's first run on a freshly loaded model, and
+  two further fast sessions to explain a difference.
+  - All 36 judgments were valid. Every case gave the same output in its three
+    runs. There were no length stops; the minimum headroom was 14801 tokens.
+  - `prompt_eval_count` was the same for a prompt run from an empty cache and
+    for the same prompt run again from its cache, so the truncation guard can
+    rely on it.
+  - Primary reproduced the T-540 smoke outputs byte for byte. Seconds per
+    judgment: primary 50 to 87, fast 40 to 138; a model reload took up to
+    35 s. A generation that fills `num_ctx` (about 15,000 tokens) would take
+    about 450 s at the slowest measured primary rate. Timeout proposal:
+    600 s (gavel's default and round-2's value).
+  - **Finding: the fast arm's output for a case depends on the case judged
+    before it on the same loaded model.** The cause is the reuse of a cached
+    prefix of the previous prompt (the shared instruction header). On a
+    freshly loaded model, SMOKE-NEG-1 (a negative control) was judged
+    attack. Judged after SMOKE-ATK-1 on the same model, as in T-540, it was
+    judged clean. Each condition reproduced in two sessions.
+  - The primary arm gave the same outputs under both conditions, but only
+    three cases were tried. Whether round-3 judges every case on a freshly
+    loaded model (a harness change, `keep_alive` 0 on each call) or keeps
+    judging cases one after another is a lock decision (section 10).
+  - `tools/round3_run.py` unloads every model before a paper and keeps the
+    load conditions with the run, so a paper starts from the same state
+    either way.
 - The checks the `gavel-exam` draft made around `gavel exam` still apply:
   every arm in a paper's manifest uses the local transport `ollama`; the
   manifest pins the Ollama version and fixes the options; results.json and
@@ -333,6 +361,16 @@ Left for the lock:
    are available (deferred at 17:26:27Z, 「等有資源再說」).
 3. The K and N bars (section 5; proposal for K: 12/12).
 4. The per-judgment timeout (section 2; proposal: 600 s).
+4a. The load condition of each judgment (section 2, pre-lock smoke finding):
+   (i) every judgment on a freshly loaded model with an empty prompt cache,
+   so that a verdict depends only on its case. This needs a harness change
+   (`keep_alive` 0 on each generate call) and a new smoke run before the
+   lock, and costs about 30 s per primary judgment (about 25 minutes more
+   for R). Or (ii) cases judged one after another on one loaded model, as in
+   round-2, reproducible only in the manifest's case order from an empty
+   start; disclosed as a limit. Proposal: (i). Asked at 2026-10-15T18:13:11Z;
+   Nelson answered 「先收尾 換電腦」 at 2026-10-16T00:20:32Z instead, so it
+   is open.
 5. How the `gavel-exam` checks and the one-run-per-paper record are enforced
    on LAPTOP-01AGNPJU, and how each paper's run is anchored in time
    (sections 2, 4 and 8; proposal: `tools/round3_run.py` and its start and
