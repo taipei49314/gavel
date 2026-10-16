@@ -2,8 +2,10 @@
 runner refuses a non-local arm, an unpinned runtime, missing options or a
 load condition other than "fresh" (decision 4a(i)); runs
 a paper only into a fresh run directory and never again once receipts exist;
-and runs only the lock commit's harness (clean tree, lock commit on a remote
-branch, later changes only under results/round-3/, not on main)."""
+runs nothing until PREREG.md at the lock commit holds the stage-1 addendum
+naming the paper's manifest sha256; and runs only the lock commit's harness
+(clean tree, lock commit on a remote branch, later changes only under
+results/round-3/, not on main)."""
 
 import importlib.util
 import json
@@ -76,7 +78,9 @@ def test_next_run_refuses_a_paper_with_receipts(tmp_path):
 
 
 def test_main_refuses_while_the_papers_are_not_locked(capsys):
-    assert round3_run.JUDGMENT_TIMEOUT_S is None
+    # This checkout's PREREG.md has no stage-1 addendum yet: refused before
+    # the host check, any fetch or any request to the Ollama daemon.
+    assert round3_run.JUDGMENT_TIMEOUT_S == 600.0
     assert round3_run.main(["R", "--lock-commit", "HEAD"]) == 2
     assert "not locked" in capsys.readouterr().err
 
@@ -150,6 +154,32 @@ def test_harness_refuses_a_lock_commit_that_is_not_an_ancestor(repo):
     _commit(work, "README.md", "other\n", "unrelated")
     with pytest.raises(round3_run.Refused, match="not an ancestor"):
         round3_run.check_harness(lock, root=work)
+
+
+def _lock_repo(repo, addendum):
+    work, _ = repo
+    _commit(work, "cases/R.manifest.json", '{"paper_id": "R"}\n', "manifest")
+    sha = round3_run.sha256_file(work / "cases" / "R.manifest.json")
+    lock = _commit(work, "PREREG.md", "# PREREG\n\n" + addendum.format(sha=sha), "lock")
+    return work, lock, sha
+
+
+def test_lock_accepts_an_addendum_naming_the_manifest(repo):
+    work, lock, _ = _lock_repo(
+        repo, round3_run.LOCK_HEADING + ", 2026-10-20)\n\n- R manifest sha256 `{sha}`\n")
+    round3_run.check_lock(lock, "cases/R.manifest.json", root=work)
+
+
+def test_lock_refuses_a_prereg_without_the_addendum(repo):
+    work, lock, _ = _lock_repo(repo, "## Addendum 5\n\n- R manifest sha256 `{sha}`\n")
+    with pytest.raises(round3_run.Refused, match="not locked"):
+        round3_run.check_lock(lock, "cases/R.manifest.json", root=work)
+
+
+def test_lock_refuses_an_addendum_that_does_not_name_the_manifest(repo):
+    work, lock, sha = _lock_repo(repo, round3_run.LOCK_HEADING + ", 2026-10-20)\n")
+    with pytest.raises(round3_run.Refused, match=f"does not name cases/R.manifest.json .*{sha}"):
+        round3_run.check_lock(lock, "cases/R.manifest.json", root=work)
 
 
 def test_harness_refuses_main(repo):

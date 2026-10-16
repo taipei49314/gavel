@@ -1,11 +1,16 @@
-"""DRAFT, NOT FOR APPROVAL until the round-3 lock: run one round-3 paper on
-LAPTOP-01AGNPJU.
+"""Run one round-3 paper on LAPTOP-01AGNPJU.
+
+Stage-1 lock candidate: this script runs nothing until PREREG.md at the lock
+commit holds the round-3 stage-1 addendum, which Nelson approves and which is
+appended only after his approval (round-3 PREREG draft, section 10, item 7).
 
 Round-3 runs on LAPTOP-01AGNPJU under EC POLICY `gavel-pju-execution`
 (docs/proposals/round-3-PREREG-DRAFT.md, section 2). This script takes the
 place of the EC pool workload draft `gavel-exam` (workloads/gavel_exam/run.py)
 on that host, without its pool-host checks, and enforces:
 
+- the lock: PREREG.md at the lock commit holds the round-3 stage-1 addendum
+  (LOCK_HEADING) and names the sha256 of the paper's manifest;
 - the host is LAPTOP-01AGNPJU;
 - the harness is the lock commit's: the lock commit (--lock-commit) is an
   ancestor of HEAD and already on origin, and every change since it is under
@@ -63,15 +68,16 @@ LOAD_CONDITION = "fresh"
 RESULTS = "results/round-3"
 SERVER_LOG = Path(os.environ.get("LOCALAPPDATA", "")) / "Ollama" / "server.log"
 LOAD_LINE_MARKERS = ("load_tensors:", "common_params_fit", "llama_kv_cache:", "load_backend:",
-                     "offload")
-# DRAFT: the locked manifests, as repository paths, fixed at the round-3 lock.
+                     "offload", "starting llama-server")
+LOCK_HEADING = "## Addendum 6 (round-3 stage-1 lock"
+# The stage-1 papers, as repository paths; the addendum names each manifest's sha256.
 PAPERS = {
     "R": "cases/round-3-R.manifest.json",
     "R-fast": "cases/round-3-R-fast.manifest.json",
     "K": "cases/round-3-K.manifest.json",
     "K-fast": "cases/round-3-K-fast.manifest.json",
 }
-JUDGMENT_TIMEOUT_S = None  # DRAFT: fixed at the lock from the pre-lock smoke timings
+JUDGMENT_TIMEOUT_S = 600.0  # section 2 of the round-3 PREREG draft (adopted 2026-10-16)
 EXAM_EXIT = {0: "PASS", 1: "FAIL", 2: "INVALID_PAPER, INVALID_RECORDS, INCOMPLETE or refused",
              3: "COMPLETE"}
 
@@ -95,6 +101,20 @@ def git(*args: str, root: Path = ROOT) -> str:
         raise Refused(f"git {' '.join(args)} failed: "
                       f"{done.stderr.decode('utf-8', 'replace').strip()}")
     return done.stdout.decode("utf-8").strip()
+
+
+def check_lock(lock_commit: str, manifest_rel: str, root: Path = ROOT) -> None:
+    """PREREG.md at the lock commit must hold the stage-1 addendum and name
+    the sha256 of the paper's manifest (check_harness then requires that
+    the manifest did not change after the lock commit)."""
+    prereg = git("show", f"{lock_commit}:PREREG.md", root=root)
+    if LOCK_HEADING not in prereg:
+        raise Refused("PREREG.md at the lock commit has no round-3 stage-1 addendum: "
+                      "the papers are not locked")
+    manifest_sha = sha256_file(root / manifest_rel)
+    if manifest_sha not in prereg:
+        raise Refused(f"the stage-1 addendum does not name {manifest_rel} "
+                      f"(sha256 {manifest_sha})")
 
 
 def check_host() -> str:
@@ -244,8 +264,7 @@ def main(argv=None) -> int:
     manifest_rel = PAPERS[args.paper]
     paper_dir = ROOT / RESULTS / args.paper
     try:
-        if JUDGMENT_TIMEOUT_S is None:
-            raise Refused("DRAFT: the round-3 papers are not locked")
+        check_lock(args.lock_commit, manifest_rel)
         host = check_host()
         git("fetch", "-q", "origin")
         harness = check_harness(args.lock_commit)
