@@ -275,3 +275,22 @@ What was done on these answers:
 - Completeness (B) and the push authorization are written into the round-3 PREREG draft. N stays required by the draft for a round-3 pass; it is deferred, not dropped.
 
 **2026-10-16T00:20:32Z** 「先收尾 換電腦」: Wrap up first; I am changing computers. It came in place of an answer to the question asked at 2026-10-15T18:13:11Z. That question asked whether round-3 judges every case on a freshly loaded model, or keeps judging the cases one after another on one loaded model (round-3 PREREG draft, section 10, item 4a). That decision stays open. The agent stopped experimenting, recorded the pre-lock smoke results, and pushed the preparation branch under the round-3 push authorization of 17:23:48Z, without merging it.
+
+## 2026-10-16 (round-3 lock items)
+
+Nelson's messages in the session that took gavel over again with 「接手gavel」 at 2026-10-16T19:37:05Z (2026-10-17 03:37 +0800), quoted verbatim with their UTC times.
+
+**2026-10-16T20:08:01Z** 「全部照建議」: All as recommended. It answered the assistant's takeover report, which listed the items left for the round-3 lock (round-3 PREREG draft, section 10) and said what the assistant would do if 4a were (i): change the harness so that every judgment is sent with `keep_alive` 0, run the smoke cases again on LAPTOP-01AGNPJU, and push the results to PR #4. The agent reads 「全部」 as adopting every proposal that section 10 of the draft makes:
+
+- 4a, the load condition: (i). Every judgment runs on a freshly loaded model with an empty prompt cache, so that a verdict depends only on its case. This needs the harness change and a new smoke run before the lock, as the draft says.
+- 1, runtime and seed: Ollama 0.40.4 pinned in every manifest; no seed.
+- 3, the K bar: the gating arm correct on 12/12.
+- 4, the per-judgment timeout: 600 s.
+- 5, enforcement and time anchors on LAPTOP-01AGNPJU: `tools/round3_run.py`, with its start and end pushes.
+- 6, locking in two stages: stage 1 locks everything except N's cases, and R and K run after it; stage 2 locks N's cases, manifests and COMMITMENT.md when N exists. The takeover report named this item without restating the draft's proposal; the agent takes 「全部」 to include it. Nelson can overrule it when he approves the stage-1 lock text, which states it.
+
+Not settled by this answer, because the draft makes no proposal for them or they need content that does not exist yet:
+
+- 7, the approval of the lock text, the manifests, the harness commit and the runner script's sha256: it needs the final stage-1 text.
+- N's bar (the `<p>` of `<P>` pairs clause has no proposed value), and N's author family and size (deferred at 2026-10-15T17:26:27Z, 「等有資源再說」).
+- The acceptance of the pre-lock smoke results, and whether a round-3 pass on LAPTOP-01AGNPJU unfreezes v0.1.0.
