@@ -1,0 +1,5 @@
+label: human-authorized local PJU, NOT EC pool
+authority: EC POLICY gavel-pju-execution (T-542)
+start 2026-10-16T20:41:25Z host=LAPTOP-01AGNPJU sha=32c32983522fb3cd0257e5322ffe67e90cb3418b
+working tree: only docs/proposals/round-3-PREREG-DRAFT.md (modified) and docs/proposals/round-3-stage-1-addendum.md (new) differed from HEAD; no code
+pytest exit=0 2026-10-16T20:41:34Z
