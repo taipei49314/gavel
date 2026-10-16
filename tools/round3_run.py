@@ -21,6 +21,14 @@ on that host, without its pool-host checks, and enforces:
   pushed; after it, the exam's outputs and the end record (RUN.json,
   SUMMARY.md) are committed and pushed. GitHub's push event times bound the
   run from both sides; the host clock is not an anchor;
+- load conditions: every loaded model is unloaded before the start record,
+  so the paper's one arm loads its model into an otherwise empty GPU. The
+  pre-lock smoke run showed that the fast arm's output for the same prompt
+  can change with what else was loaded when its model was loaded, although
+  /api/ps reported the same placement (results/round-3/prelock-smoke/). The
+  models listed by /api/ps before the unload and at the end, and the Ollama
+  server log's model-load lines written during the exam, are kept with the
+  run;
 - after the exam: `gavel verify --content --results`, and the committed
   approved-models.json is the file that gated the exam.
 
@@ -39,6 +47,7 @@ import socket
 import subprocess
 import sys
 import time
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -47,6 +56,9 @@ HOST = "LAPTOP-01AGNPJU"
 BASE_URL = "http://127.0.0.1:11434"
 OLLAMA_VERSION = "0.40.4"
 RESULTS = "results/round-3"
+SERVER_LOG = Path(os.environ.get("LOCALAPPDATA", "")) / "Ollama" / "server.log"
+LOAD_LINE_MARKERS = ("load_tensors:", "common_params_fit", "llama_kv_cache:", "load_backend:",
+                     "offload")
 # DRAFT: the locked manifests, as repository paths, fixed at the round-3 lock.
 PAPERS = {
     "R": "cases/round-3-R.manifest.json",
@@ -160,6 +172,48 @@ def approved_models_problems(exam_dir: Path, committed_sha256: str) -> list[str]
     return problems
 
 
+def ollama(path: str, payload: dict | None = None, timeout: float = 120) -> dict:
+    data = None if payload is None else json.dumps(payload).encode("utf-8")
+    request = urllib.request.Request(f"{BASE_URL}{path}", data=data,
+                                     headers={"Content-Type": "application/json"},
+                                     method="GET" if payload is None else "POST")
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def loaded_models() -> list[dict]:
+    return [{"name": m.get("name"), "digest": m.get("digest"), "size": m.get("size"),
+             "size_vram": m.get("size_vram"), "context_length": m.get("context_length")}
+            for m in ollama("/api/ps").get("models", [])]
+
+
+def unload_all(deadline_s: float = 120) -> list[dict]:
+    """Unload every loaded model (keep_alive 0) and wait until /api/ps lists
+    none. Returns what was loaded before. This is the daemon's own unload
+    request, not a configuration change."""
+    before = loaded_models()
+    for model in before:
+        ollama("/api/generate", {"model": model["name"], "keep_alive": 0})
+    deadline = time.monotonic() + deadline_s
+    while loaded_models():
+        if time.monotonic() > deadline:
+            raise Refused(f"models still loaded {deadline_s:.0f} s after the unload requests")
+        time.sleep(1)
+    return before
+
+
+def load_lines(log_path: Path, offset: int) -> str:
+    """The model-load lines the Ollama server log gained after offset."""
+    try:
+        with open(log_path, "rb") as fh:
+            fh.seek(offset)
+            text = fh.read().decode("utf-8", "replace")
+    except OSError as exc:
+        return f"server log unreadable: {type(exc).__name__}: {exc}\n"
+    return "".join(line + "\n" for line in text.splitlines()
+                   if any(marker in line for marker in LOAD_LINE_MARKERS))
+
+
 def write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
                     encoding="utf-8", newline="\n")
@@ -190,6 +244,7 @@ def main(argv=None) -> int:
         harness = check_harness(args.lock_commit)
         manifest = check_manifest(ROOT / manifest_rel)
         run = next_run(paper_dir)
+        loaded_before = unload_all()
     except (Refused, OSError, ValueError) as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2
@@ -202,6 +257,7 @@ def main(argv=None) -> int:
              "lock_commit": harness["lock_commit"], "host": host,
              "host_clock_utc": utc_now(), "out": rel_run,
              "timeout_s": JUDGMENT_TIMEOUT_S, "ollama_version": OLLAMA_VERSION,
+             "loaded_before_unload": loaded_before,
              "label": "human-authorized local PJU, NOT EC pool"}
     try:
         write_json(run_dir / "START.json", start)
@@ -217,6 +273,7 @@ def main(argv=None) -> int:
     env.update(PYTHONUTF8="1", PYTHONDONTWRITEBYTECODE="1",
                GAVEL_AGY=str(ROOT / "no-agy" / "agy.exe"))
     problems, record = [], dict(start, start_commit=start_commit)
+    log_offset = SERVER_LOG.stat().st_size if SERVER_LOG.is_file() else 0
     started = time.monotonic()
     exam = subprocess.run(
         [sys.executable, "-X", "utf8", "-B", "-m", "gavel", "exam",
@@ -225,6 +282,12 @@ def main(argv=None) -> int:
         cwd=ROOT, env=env, stdin=subprocess.DEVNULL, capture_output=True)
     (run_dir / "exam.stdout.txt").write_bytes(exam.stdout)
     (run_dir / "exam.stderr.txt").write_bytes(exam.stderr)
+    (run_dir / "ollama-load.txt").write_text(load_lines(SERVER_LOG, log_offset),
+                                             encoding="utf-8", newline="\n")
+    try:
+        record["loaded_at_end"] = loaded_models()
+    except (OSError, ValueError) as exc:
+        record["loaded_at_end"] = f"unreadable: {type(exc).__name__}: {exc}"
     record["exam_exit"] = exam.returncode
     record["exam_meaning"] = EXAM_EXIT.get(exam.returncode, "unexpected")
     if exam.returncode not in (0, 3):

@@ -154,3 +154,44 @@ def test_harness_refuses_main(repo):
     _git(work, "switch", "-q", "main")
     with pytest.raises(round3_run.Refused, match="not pushed to main"):
         round3_run.check_harness(lock, root=work)
+
+
+# --- load conditions ---------------------------------------------------------
+
+def test_unload_all_unloads_every_loaded_model_and_waits(monkeypatch):
+    loaded = [{"name": "qwen3.5:35b-a3b"}, {"name": "qwen3.5:9b"}]
+    requests = []
+
+    def fake_ollama(path, payload=None, timeout=120):
+        if path == "/api/ps":
+            return {"models": list(loaded)}
+        requests.append(payload)
+        loaded[:] = [m for m in loaded if m["name"] != payload["model"]]
+        return {"done": True}
+
+    monkeypatch.setattr(round3_run, "ollama", fake_ollama)
+    before = round3_run.unload_all()
+    assert [m["name"] for m in before] == ["qwen3.5:35b-a3b", "qwen3.5:9b"]
+    assert requests == [{"model": "qwen3.5:35b-a3b", "keep_alive": 0},
+                        {"model": "qwen3.5:9b", "keep_alive": 0}]
+    assert round3_run.loaded_models() == []
+
+
+def test_unload_all_refuses_when_a_model_stays_loaded(monkeypatch):
+    monkeypatch.setattr(round3_run, "ollama",
+                        lambda path, payload=None, timeout=120: {"models": [{"name": "m"}]})
+    monkeypatch.setattr(round3_run.time, "sleep", lambda s: None)
+    with pytest.raises(round3_run.Refused, match="still loaded"):
+        round3_run.unload_all(deadline_s=0)
+
+
+def test_load_lines_keep_the_model_load_lines_written_after_the_offset(tmp_path):
+    log = tmp_path / "server.log"
+    log.write_bytes(b"load_tensors: old\n")
+    offset = log.stat().st_size
+    with open(log, "ab") as fh:
+        fh.write(b"[GIN] 200 /api/generate\nload_tensors: offloaded 34/34 layers to GPU\n"
+                 b"llama_kv_cache: size = 272.00 MiB\nsrv update_slots: idle\n")
+    assert round3_run.load_lines(log, offset) == (
+        "load_tensors: offloaded 34/34 layers to GPU\nllama_kv_cache: size = 272.00 MiB\n")
+    assert "unreadable" in round3_run.load_lines(tmp_path / "missing.log", 0)
