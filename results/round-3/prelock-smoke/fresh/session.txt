@@ -1,0 +1,19 @@
+label: human-authorized local PJU, NOT EC pool
+authority: EC POLICY gavel-pju-execution (T-542); Nelson 2026-10-16T20:08:01Z 「全部照建議」 (decision 4a(i) and the new smoke run before the lock, docs/DECISIONS.md)
+session start 2026-10-16T20:17:25Z host=LAPTOP-01AGNPJU sha=3dd5329d8a7d29b442a3caa36b983534e9ed237f
+ollama version before: {"version":"0.40.4"}
+loaded before: {"models":[]}
+uv sync start 2026-10-16T20:17:25Z
+uv sync exit=0 2026-10-16T20:17:25Z
+3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]
+pytest start 2026-10-16T20:17:25Z
+pytest exit=0 2026-10-16T20:17:32Z
+server.log offset before smoke: 3232
+smoke primary start 2026-10-16T20:17:32Z
+smoke primary exit=0 2026-10-16T20:27:52Z
+smoke fast start 2026-10-16T20:27:52Z
+smoke fast exit=0 2026-10-16T20:39:49Z
+server.log load lines kept: 162; starting llama-server: 18
+loaded after: {"models":[]}
+ollama version after: {"version":"0.40.4"}
+session end 2026-10-16T20:39:49Z

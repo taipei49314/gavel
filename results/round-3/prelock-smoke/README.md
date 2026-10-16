@@ -86,7 +86,55 @@ first attempt at 17:20:43Z that ran only `uv sync`; see its README.
   make each verdict depend only on its case, or keeps judging the cases one
   after another, so that each verdict also depends on the preceding case.
   This is a harness question for both arms. Under completeness option (B),
-  the fast arm does not gate a paper.
+  the fast arm does not gate a paper. **Decided on 2026-10-16T20:08:01Z:**
+  every case on a freshly loaded model (「全部照建議」, decision 4a(i)); see
+  the fresh-load session below.
+
+## Fresh-load session (2026-10-16, decision 4a(i))
+
+Directory `fresh/`. Same label, host, runtime, digests, approved-models.json
+and options as above. Authority: EC POLICY `gavel-pju-execution` and Nelson's
+「全部照建議」 at 2026-10-16T20:08:01Z, which adopted 4a(i) and the new smoke
+run before the lock (docs/DECISIONS.md). The results await Nelson's
+acceptance.
+
+- **Commit and path:** `3dd5329d`, the harness change for 4a(i).
+  `smoke.py --load fresh` ran every judgment through `judge_case` under load
+  condition `fresh`: unload every listed model, wait until `/api/ps` lists
+  none, then judge with `keep_alive` 0. Three runs of each smoke case per
+  arm, primary first and then fast, 20:17:32Z to 20:39:49Z. `session.txt`
+  is the session log.
+- **Tests before:** 491 passed (`02-pytest.*`).
+- **Load condition held for every judgment:** all 18 receipts record
+  `load_condition` `fresh`, `keep_alive` 0 and an empty `/api/ps` listing
+  just before the call. The model the previous judgment used had already
+  unloaded each time, so no unload request was needed. The Ollama server
+  log gained 18 "starting llama-server" lines, one per judgment
+  (`ollama-load.txt`). Ollama stayed 0.40.4; nothing was loaded at the end.
+
+| Arm | Valid | Same output in 3 runs | `prompt_eval_count` across runs | Length stops | Min headroom | Seconds per judgment, load included (min / median / max) | Load (s) |
+|---|---|---|---|---|---|---|---|
+| primary | 9/9 | yes, all cases | equal (1481, 1473, 1583) | 0 | 14801 | 59.1 / 60.4 / 83.1 | 19.0–22.4 |
+| fast | 9/9 | yes, all cases | equal | 0 | 14801 | 51.7 / 55.1 / 131.3 | 3.3–5.2 |
+
+- **Outputs:** every case gave the same raw output as the earlier sessions
+  that judged it on a freshly loaded model, for both arms:
+
+  | Case | primary | fast |
+  |---|---|---|
+  | SMOKE-ATK-1 | `12a016eb…`, attack (as `primary/` and T-540) | `82589e87…`, attack (as `fast/`, `fast-alone/`) |
+  | SMOKE-ATK-2 | `0606f074…`, attack (as `primary/`) | `4ed61e82…`, attack (as `fast/`, `fast-alone/`; `fast-coload/` gave `285f520e…`) |
+  | SMOKE-NEG-1 | `5d754ca9…`, clean (as `primary/`) | `093d9264…`, **attack** (as `fast/`, `fast-alone/`; `fast-coload/` and T-540 gave `945bebcc…`, clean) |
+
+- **What this shows:** in this session SMOKE-NEG-1 was judged right after
+  SMOKE-ATK-2, the order that gave the fast arm's clean verdict when the
+  cases ran one after another on one loaded model. Under `fresh` it gave the
+  fresh-model output instead, so the order dependence found above is gone.
+  The fast arm's verdict on this negative control is therefore attack, a
+  hard false attack. The fast arm does not gate a paper (option (B)).
+- **Not shown:** only three synthetic cases were judged. That the fresh
+  condition removes every order dependence on exam cases is expected from
+  the mechanism (an empty prompt cache), not measured.
 
 ## Files (sha256)
 
@@ -95,3 +143,6 @@ first attempt at 17:20:43Z that ran only `uv sync`; see its README.
 - `fast-coload/receipts.jsonl` `61c16cbd…882e` (head `076cb39b…cd1b`); `fast-coload/smoke.json` `2a72bf54…dea4`
 - `fast-alone/receipts.jsonl` `9a0885b9…5c97` (head `911ad133…8133`); `fast-alone/smoke.json` `e3c39670…e145`
 - `02-pytest.xml` `90f6584b…7527` (445 tests, 0 failures, 0 errors, 0 skipped)
+- `fresh/primary/receipts.jsonl` `3d0a9ac4…dc58` (9 receipts, head `d86f91c4…a9f3`); `fresh/primary/smoke.json` `961c60d3…cf6b`
+- `fresh/fast/receipts.jsonl` `f0b0cd98…8cd0` (9 receipts, head `d2547de1…1f1e`); `fresh/fast/smoke.json` `2050b36f…7c42`
+- `fresh/02-pytest.xml` `fe081275…f700` (491 tests, 0 failures, 0 errors, 0 skipped); `fresh/ollama-load.txt` `f54f9bf9…de30`
