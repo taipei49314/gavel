@@ -33,7 +33,8 @@
 - Round-2 is not changed by anything here. Its status of record is INCOMPLETE
   on both papers (decision D1(a), adopted by Nelson on 2026-10-15), and every
   result produced on the work machine LAPTOP-01AGNPJU except the T-540
-  session results Nelson accepted at 09:41:31Z stays 「未驗收」; the standing
+  session results Nelson accepted at 09:41:31Z, and the pre-lock smoke
+  results he accepted at 2026-10-17T15:39:34Z, stays 「未驗收」; the standing
   authorization does not accept them retroactively. v0.1.0 stays frozen
   (Addendum 3: 「重考；PASS 前不發」; D1(a): until a round-3 run on the EC pool
   passes); whether a round-3 pass on LAPTOP-01AGNPJU unfreezes it is Nelson's
@@ -109,8 +110,8 @@ adding or removing a model needs his separate OK.
   example a check that does not rely on the daemon's count) before any paper
   runs.
 - **Done on 2026-10-15** (`results/round-3/prelock-smoke/README.md`; label
-  "human-authorized local PJU, NOT EC pool"; results await Nelson's
-  acceptance). Four sessions, each judging the three smoke cases three times:
+  "human-authorized local PJU, NOT EC pool"; Nelson accepted the results at
+  2026-10-17T15:39:34Z). Four sessions, each judging the three smoke cases three times:
   primary and fast with each case's first run on a freshly loaded model, and
   two further fast sessions to explain a difference.
   - All 36 judgments were valid. Every case gave the same output in its three
@@ -135,7 +136,7 @@ adding or removing a model needs his separate OK.
     condition"). `tools/round3_run.py` also unloads every model before a
     paper and keeps the load conditions with the run.
 - **Fresh-load smoke run on 2026-10-16** (`results/round-3/prelock-smoke/fresh/`,
-  at `3dd5329d`; same label; results await Nelson's acceptance). The three
+  at `3dd5329d`; same label; accepted at 2026-10-17T15:39:34Z). The three
   smoke cases, three runs each, on both arms, every judgment under load
   condition `fresh`.
   - All 18 judgments were valid, and each recorded `fresh`, `keep_alive` 0
@@ -395,9 +396,10 @@ Settled since the first draft:
   - 4a: (i), every judgment on a freshly loaded model with an empty prompt
     cache, so that a verdict depends only on its case (section 1, "Load
     condition"). The harness change is made and its smoke run is done
-    (section 2). It adds a model load of 19 to 22 s to each primary
-    judgment (fresh smoke run, section 2), about 15 minutes of load time
-    over R's 43 cells. The alternative it replaces, cases judged one after another
+    (section 2). Each primary judgment then includes a model load of 19 to
+    22 s (fresh smoke run, section 2), about 14 minutes of load over R's 43
+    cells; the measured time per judgment rose less, by about 6 s on average
+    against warm judgments of the same cases. The alternative it replaces, cases judged one after another
     on one loaded model as in round-2, would have been reproducible only in
     the manifest's case order from an empty start.
   - 5: `tools/round3_run.py` enforces the `gavel-exam` checks and the
@@ -432,7 +434,9 @@ Left for the lock:
   approved text is appended. At stage 2, approval of N's manifests and
   COMMITMENT.md.
 
-Not a lock decision, but open: the acceptance of the pre-lock smoke results
-(section 2); whether a round-3 pass on LAPTOP-01AGNPJU unfreezes v0.1.0
-(D1(a) names a round-3 run on the EC pool); any release (D5(a)); and whether
-Ollama's automatic updates are turned back on after round-3.
+Not lock decisions, settled on 2026-10-17T15:39:34Z (docs/DECISIONS.md): the
+pre-lock smoke results are accepted (「接受」); v0.1.0 is not released
+(「不發」); Ollama's automatic updates may be turned back on after round-3
+(「跑完後可打開」; read as after N too). Still open: whether a later round-3
+pass on LAPTOP-01AGNPJU unfreezes v0.1.0 (D1(a) names a round-3 run on the
+EC pool).

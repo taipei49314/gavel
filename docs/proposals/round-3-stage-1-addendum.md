@@ -2,8 +2,8 @@
 
 This file is the candidate text for round-3's stage-1 lock (round-3 PREREG
 draft, section 10, item 7). Nothing in it is in force. If Nelson approves it,
-the section below the line, with its `<APPROVAL>` placeholders filled from his
-words, is appended verbatim to `PREREG.md`, and that commit, pushed, is the
+the section below the line, with its `<APPROVAL>` placeholders (date, UTC
+time and his words) filled from his approval, is appended verbatim to `PREREG.md`, and that commit, pushed, is the
 lock commit. `tools/round3_run.py` refuses every paper until `PREREG.md` at
 the lock commit holds this heading and names the paper's manifest sha256.
 
@@ -14,15 +14,17 @@ Revision 2 (2026-10-17). Nelson approved revision 1 (commit `d3ec7c7`) at
 2026-10-17T15:39:34Z. The review run before locking it found a false
 statement in its disclosure, a freeze clause that contradicted its own
 stage-2 plan, an ambiguous use of "gaps", and checks the runner does not make
-(docs/DECISIONS.md, 2026-10-17). This revision corrects them and changes no
-hash, bar, option or paper. It is not approved yet; nothing is locked.
+(docs/DECISIONS.md, 2026-10-17). This revision corrects them, names the
+harness commit in the text (revision 1 left it as a placeholder), and changes
+no hash, bar, option or paper. A second read-only review of this revision
+tightened its wording. It is not approved yet; nothing is locked.
 
 ---
 
 ## Addendum 6 (round-3 stage-1 lock, <APPROVAL: date>)
 
 - **Approval.** Nelson approved this text, the manifests, the harness commit
-  `<APPROVAL: harness commit>` and the runner script named below at
+  `32c32983522fb3cd0257e5322ffe67e90cb3418b` and the runner script named below at
   `<APPROVAL: UTC time>` with 「<APPROVAL: his words>」 (docs/DECISIONS.md).
   This is stage 1 of a two-stage lock (adopted 2026-10-16T20:08:01Z): it
   locks papers R and K and their fast-arm observation papers, and the rules
@@ -32,9 +34,13 @@ hash, bar, option or paper. It is not approved yet; nothing is locked.
   Each rule answers a round-2 problem found by the takeover audit of
   2026-10-15 (round-3 PREREG draft, section 0). Completeness option (B) was
   chosen at 2026-10-15T17:23:48Z, during the first pre-lock smoke session and
-  before its results were reported, on round-2's grounds (round-2's gaps were
-  all fast-arm cells). The load condition `fresh` was chosen after the
-  pre-lock smoke runs on LAPTOP-01AGNPJU (results/round-3/prelock-smoke/).
+  before its results were reported, on round-2's grounds (the cells round-2
+  left without a valid verdict were all fast-arm cells). The load condition
+  `fresh` was chosen at 2026-10-16T20:08:01Z, after the 2026-10-15 smoke
+  sessions on LAPTOP-01AGNPJU showed that the fast arm's verdict on a case
+  could depend on the case judged before it; the 2026-10-16 fresh-load
+  session (results/round-3/prelock-smoke/fresh/) ran after that choice, to
+  check it.
   Round-2 is not changed: both its papers stay INCOMPLETE and unaccepted
   (D1(a)).
 - **Venue.** LAPTOP-01AGNPJU only, under EC POLICY `gavel-pju-execution`
@@ -65,13 +71,15 @@ hash, bar, option or paper. It is not approved yet; nothing is locked.
 - **Harness.** The files below, as at the harness commit. The lock commit
   only appends this addendum to `PREREG.md` and records the approval in
   `docs/DECISIONS.md`. From the lock commit until the stage-1 papers have
-  run, the run branch changes nothing outside `results/round-3/`, and the
-  runner refuses otherwise. Stage 2 (Addendum 7) may add N's case files, its
+  run, the run branch changes nothing outside `results/round-3/`. The runner
+  refuses a change it sees there (`git diff --name-only` since
+  `<lock commit>`, which shows a moved file only at its new path); the
+  operator check under "Papers" covers the rest. Stage 2 (Addendum 7) may add N's case files, its
   manifests and `COMMITMENT.md`, and the runner change needed to run N;
   Addendum 7 names their sha256 and needs Nelson's approval. The engine, the
   options and the other files in the table stay as they are here. The
   table's values are the sha256 of the committed blobs
-  (`git show <harness commit>:<path>`); a checkout that converts line endings
+  (`git show <commit>:<path>`); a checkout that converts line endings
   shows other bytes.
 
   | File | sha256 |
@@ -92,11 +100,19 @@ hash, bar, option or paper. It is not approved yet; nothing is locked.
 - **Papers.** Each paper runs once, through
   `python tools/round3_run.py <paper> --lock-commit <lock commit>`, after the
   lock commit is pushed. `<lock commit>` is the commit that appended this
-  addendum: its parent's `PREREG.md` has no Addendum 6. The runner checks
-  neither that nor the harness table, so before each paper the operator
-  checks both and commits the check under `results/round-3/` before the
-  paper starts. Each manifest's `note` still calls it a draft that is not
-  locked; the bytes named here are the ones this addendum locks.
+  addendum. Before each paper the operator checks the following and commits
+  the check as `results/round-3/lock-check/<paper>.txt` (outside any
+  `run-<k>` directory) before the paper starts: `PREREG.md` at the parent of
+  `<lock commit>` has no Addendum 6, and `<lock commit>` changes only
+  `PREREG.md` and `docs/DECISIONS.md`; `git diff --no-renames --name-only
+  <lock commit> HEAD` lists only paths under `results/round-3/`; and at HEAD
+  every file in the harness table, `approved-models.json` and each paper's
+  manifest has the sha256 named here, each manifest on its own row. The
+  runner checks none of this beyond its own diff since `<lock commit>`, and
+  it accepts a manifest's sha256 found anywhere in `PREREG.md`. Each
+  manifest's `note` still calls it a draft that is not locked; the bytes
+  named here are the ones this addendum locks. K is scored with
+  `gavel score-sealed` using the code of the stage-1 lock commit.
 
   | Paper | Manifest | sha256 | Arm | Cells | Scoring and bar |
   |---|---|---|---|---|---|
@@ -112,20 +128,24 @@ hash, bar, option or paper. It is not approved yet; nothing is locked.
   re-attempted; the first valid attempt counts. Attempts after a valid one,
   duplicates, gaps in attempt numbering and attempts over the cap make the
   paper INVALID_RECORDS; a cell without records, or without a valid attempt
-  within the cap, makes it INCOMPLETE. Every attempt is receipted. No
+  within the cap, makes it INCOMPLETE; INVALID_RECORDS takes precedence.
+  Every attempt is receipted. No
   operator re-runs: a paper whose run ended before its first receipt may run
   again into the next `run-<k>`; once a receipt exists, that chain is the
   paper's only record, and a paper that ends INCOMPLETE is not run again in
   round-3. If a run stops after its first receipt without its end record,
   whatever it wrote is committed and pushed to the run branch as it is; no
-  run's files are deleted or set aside.
+  run's files are deleted or set aside, and the paper is scored from the
+  receipts it has (at best INCOMPLETE).
 - **Run records and time anchors.** The lock anchor is GitHub's push event
   time for the lock commit; the host clock is not an anchor. For each paper
   the runner pushes a start record (`START.json`) before the exam and the
   outputs with `RUN.json` and `SUMMARY.md` after it, to a round-3 run branch,
   never to `main`; it refuses to start the exam unless the start record was
-  pushed. It also checks the host, this addendum, the harness, local arms
-  only, the pinned runtime, the options, the load condition, one run per
+  pushed. It also checks the host; that `PREREG.md` at `<lock commit>` holds
+  this heading and the manifest's sha256; that nothing outside
+  `results/round-3/` changed since that commit; local arms only, the pinned
+  runtime, the options, the load condition, one run per
   paper, the approved-models file that gated the exam, and
   `gavel verify --content --results`.
 - **N (stage 2; required for a round-3 pass).**

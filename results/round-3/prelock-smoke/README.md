@@ -2,7 +2,8 @@
 
 **Label: human-authorized local PJU, NOT EC pool.** This is not an exam. It
 used only the three synthetic smoke cases (`smoke/SMOKE-*.json`), never exam
-material. It qualifies no judge, and its results await Nelson's acceptance.
+material. It qualifies no judge. Nelson accepted its results at 2026-10-17T15:39:34Z
+(「接受」; docs/DECISIONS.md).
 
 - **Authority:** EC POLICY `gavel-pju-execution` (T-542), which covers smoke
   runs. Nelson's message at 2026-10-15T17:16:15Z: 「開始實驗 直接朝你規劃 你執行
@@ -30,11 +31,12 @@ material. It qualifies no judge, and its results await Nelson's acceptance.
 | `fast-coload/` | `4b92355f` | 17:47:51–17:57:21 | fast | all models unloaded, then `--co-load qwen3.5:35b-a3b`; the three cases run one after another on one loaded model | 459 passed |
 | `fast-alone/` | `4b92355f` | 17:58:40–18:11:05 | fast | all models unloaded, then `--cold-first` | 459 passed |
 
-The `--co-load` in `fast-coload/` did not hold: Ollama evicted
-`qwen3.5:35b-a3b` when `qwen3.5:9b` loaded, before the first judgment
-(`fast-coload/smoke.json`: every judgment's `loaded` lists only
-`qwen3.5:9b`; `fast-coload.session/session.txt`: 'loaded after' lists only
-the 9b; found in the 2026-10-17 review). The session's finding does not
+The `--co-load` in `fast-coload/` did not hold: by the end of the first
+judgment `/api/ps` listed only `qwen3.5:9b` (`fast-coload/smoke.json`:
+every judgment's `loaded` lists only the 9b; `fast-coload.session/session.txt`:
+'loaded after' lists only the 9b). Ollama presumably evicted
+`qwen3.5:35b-a3b` when the 9b loaded for that judgment; the session kept no
+server log to show it. Found in the 2026-10-17 review. The session's finding does not
 depend on it: its cases ran one after another on one loaded model.
 
 Each session ran three runs of each case. `session.txt` (and
@@ -102,8 +104,8 @@ first attempt at 17:20:43Z that ran only `uv sync`; see its README.
 Directory `fresh/`. Same label, host, runtime, digests, approved-models.json
 and options as above. Authority: EC POLICY `gavel-pju-execution` and Nelson's
 「全部照建議」 at 2026-10-16T20:08:01Z, which adopted 4a(i) and the new smoke
-run before the lock (docs/DECISIONS.md). The results await Nelson's
-acceptance.
+run before the lock (docs/DECISIONS.md). Nelson accepted the results at
+2026-10-17T15:39:34Z.
 
 - **Commit and path:** `3dd5329d`, the harness change for 4a(i).
   `smoke.py --load fresh` ran every judgment through `judge_case` under load
