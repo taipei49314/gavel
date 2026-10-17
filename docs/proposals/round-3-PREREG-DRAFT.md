@@ -10,7 +10,7 @@
   decided at the lock.
 - Revised on 2026-10-15 from 17:16Z (2026-10-16 +0800) on branch
   `round-3/prelock-smoke`, on Nelson's 「開始實驗 直接朝你規劃 你執行
-  遇到重大決策問我」 and his answers of 17:23:48Z and 17:26:27Z
+  遇到重大決策問我」 and his answers of 17:23:48Z and 17:26:52Z
   (docs/DECISIONS.md, "2026-10-15 (round-3 preparation)"): Ollama's automatic
   updates turned off; completeness option (B) with `primary` as the gating
   arm; pushes for round-3 authorized; N deferred until a new model family or
@@ -127,7 +127,7 @@ adding or removing a model needs his separate OK.
     before it on the same loaded model.** The cause is the reuse of a cached
     prefix of the previous prompt (the shared instruction header). On a
     freshly loaded model, SMOKE-NEG-1 (a negative control) was judged
-    attack. Judged after SMOKE-ATK-1 on the same model, as in T-540, it was
+    attack. Judged after SMOKE-ATK-2 on the same model, as in T-540, it was
     judged clean. Each condition reproduced in two sessions.
   - The primary arm gave the same outputs under both conditions, but only
     three cases were tried. Nelson adopted 4a(i) at 2026-10-16T20:08:01Z:
@@ -271,7 +271,7 @@ INCOMPLETE, and an INCOMPLETE paper is never scored (Addendum 4:
 
 - **Deferred.** Asked at 2026-10-15T17:23:48Z which family should author N, Nelson
   answered 「目前資源就這樣了」; asked how to proceed, he chose 「等有資源再說」
-  at 17:26:27Z: R, K and the lock packet are prepared now, and N waits until
+  at 17:26:52Z: R, K and the lock packet are prepared now, and N waits until
   a new model family or another computer is available. The two unused
   families found on LAPTOP-01AGNPJU (the grok CLI, xAI; the MiMo desktop app,
   Xiaomi) were not used, because authoring there conflicts with the key rule
@@ -395,8 +395,9 @@ Settled since the first draft:
   - 4a: (i), every judgment on a freshly loaded model with an empty prompt
     cache, so that a verdict depends only on its case (section 1, "Load
     condition"). The harness change is made and its smoke run is done
-    (section 2). It costs about 30 s per primary judgment, about 25 minutes
-    more for R. The alternative it replaces, cases judged one after another
+    (section 2). It adds a model load of 19 to 22 s to each primary
+    judgment (fresh smoke run, section 2), about 15 minutes of load time
+    over R's 43 cells. The alternative it replaces, cases judged one after another
     on one loaded model as in round-2, would have been reproducible only in
     the manifest's case order from an empty start.
   - 5: `tools/round3_run.py` enforces the `gavel-exam` checks and the
@@ -416,7 +417,7 @@ Settled since the first draft:
 Left for the lock:
 
 - 2, N: its author's model family, once a family and a computer are available
-  (deferred at 2026-10-15T17:26:27Z, 「等有資源再說」); at stage 1, N's size
+  (deferred at 2026-10-15T17:26:52Z, 「等有資源再說」); at stage 1, N's size
   rule and bar (section 5; proposals: 12 to 20 cases with at least 5 pairs
   and 2 controls; every attack-truth case and all but at most one
   clean-truth case correct).

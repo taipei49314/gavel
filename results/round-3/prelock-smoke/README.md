@@ -30,6 +30,13 @@ material. It qualifies no judge, and its results await Nelson's acceptance.
 | `fast-coload/` | `4b92355f` | 17:47:51–17:57:21 | fast | all models unloaded, then `--co-load qwen3.5:35b-a3b`; the three cases run one after another on one loaded model | 459 passed |
 | `fast-alone/` | `4b92355f` | 17:58:40–18:11:05 | fast | all models unloaded, then `--cold-first` | 459 passed |
 
+The `--co-load` in `fast-coload/` did not hold: Ollama evicted
+`qwen3.5:35b-a3b` when `qwen3.5:9b` loaded, before the first judgment
+(`fast-coload/smoke.json`: every judgment's `loaded` lists only
+`qwen3.5:9b`; `fast-coload.session/session.txt`: 'loaded after' lists only
+the 9b; found in the 2026-10-17 review). The session's finding does not
+depend on it: its cases ran one after another on one loaded model.
+
 Each session ran three runs of each case. `session.txt` (and
 `*.session/session.txt`) hold the session logs. `attempt-1-not-run/` is a
 first attempt at 17:20:43Z that ran only `uv sync`; see its README.
