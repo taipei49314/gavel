@@ -1,0 +1,6 @@
+label: human-authorized local PJU, NOT EC pool
+authority: EC POLICY gavel-pju-execution (T-542)
+start 2026-10-17T16:05:02Z host=LAPTOP-01AGNPJU sha=c615b87b9ff9822a1bdb7c67e598f18bfbcc4128
+working tree: no tracked change at start; the only untracked path was this output directory
+uv sync exit=0
+pytest exit=0 2026-10-17T16:05:23Z
