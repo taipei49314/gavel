@@ -1,0 +1,13 @@
+label: human-authorized local PJU, NOT EC pool
+authority: EC POLICY gavel-pju-execution (T-542); Nelson 2026-10-15T17:16:15Z 「開始實驗 直接朝你規劃 你執行 遇到重大決策問我」
+session start 2026-10-15T17:47:39Z host=LAPTOP-01AGNPJU sha=4b92355f8b0971925ad469d4465f7b26139575b0
+ollama version before: {"version":"0.40.4"}
+loaded before: {"models":[{"name":"qwen3.5:9b","model":"qwen3.5:9b","size":5796559583,"digest":"6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7","details":{"parent_model":"","format":"gguf","family":"qwen35","families":["qwen35"],"parameter_size":"9.7B","quantization_level":"Q4_K_M"},"expires_at":"2026-10-17T01:45:14.8352809+08:00","size_vram":5796559583,"context_length":16384,"runner":"llamacpp"}]}
+pytest start 2026-10-15T17:47:39Z
+pytest exit=0 2026-10-15T17:47:51Z
+unloaded all 2026-10-15T17:47:51Z: {"models":[]}
+smoke fast co-load start 2026-10-15T17:47:51Z
+smoke fast co-load exit=0 2026-10-15T17:57:21Z
+loaded after: {"models":[{"name":"qwen3.5:9b","model":"qwen3.5:9b","size":5796559583,"digest":"6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7","details":{"parent_model":"","format":"gguf","family":"qwen35","families":["qwen35"],"parameter_size":"9.7B","quantization_level":"Q4_K_M"},"expires_at":"2026-10-17T01:57:21.3726506+08:00","size_vram":5796559583,"context_length":16384,"runner":"llamacpp"}]}
+ollama version after: {"version":"0.40.4"}
+session end 2026-10-15T17:57:21Z

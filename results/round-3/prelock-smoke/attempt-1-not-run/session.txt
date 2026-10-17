@@ -1,0 +1,15 @@
+label: human-authorized local PJU, NOT EC pool
+authority: EC POLICY gavel-pju-execution (T-542); Nelson 2026-10-15T17:16:15Z 「開始實驗 直接朝你規劃 你執行 遇到重大決策問我」
+session start 2026-10-15T17:20:43Z host=LAPTOP-01AGNPJU sha=d7ea7acea211f4f7ab62e12eccf72dbd286bcfb2
+ollama version before: {"version":"0.40.4"}
+uv sync start 2026-10-15T17:20:43Z
+uv sync exit=0 2026-10-15T17:20:44Z
+3.12.14 (main, Sep  1 2026, 14:17:39) [MSC v.1944 64 bit (AMD64)]
+pytest start 2026-10-15T17:20:44Z
+pytest exit=0 2026-10-15T17:20:44Z
+smoke primary start 2026-10-15T17:20:45Z
+smoke primary exit=0 2026-10-15T17:20:45Z
+smoke fast start 2026-10-15T17:20:45Z
+smoke fast exit=0 2026-10-15T17:20:45Z
+ollama version after: {"version":"0.40.4"}
+session end 2026-10-15T17:20:45Z

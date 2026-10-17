@@ -88,11 +88,19 @@ class FakeTransport:
     version / version_after_generate: what /api/version reports before /
       after the first generate call.
     tags_error: exception raised by /api/tags.
+    loaded: model names /api/ps lists at the start. A generate call with a
+      prompt loads its model, and the model stays loaded unless the call
+      carries keep_alive 0; a call without a prompt and with keep_alive 0
+      is an unload request. An unloaded model stays listed for unload_lag
+      more /api/ps reads (the daemon unloads asynchronously); a model in
+      sticky never unloads.
+    ps_error: exception raised by /api/ps.
     """
 
     def __init__(self, response_by_model=None, models=None, *, responder=None,
                  extra=None, version="0.0.0-fake", version_after_generate=None,
-                 digest_after_generate=None, tags_error=None):
+                 digest_after_generate=None, tags_error=None, loaded=(),
+                 unload_lag=0, sticky=(), ps_error=None):
         self.response_by_model = response_by_model or {}
         self.models = models or [dict(m) for m in FAKE_MODELS]
         self.responder = responder
@@ -101,12 +109,39 @@ class FakeTransport:
         self.version_after_generate = version_after_generate
         self.digest_after_generate = digest_after_generate or {}
         self.tags_error = tags_error
+        self.loaded = list(loaded)
+        self.unloading = {}
+        self.unload_lag = unload_lag
+        self.sticky = set(sticky)
+        self.ps_error = ps_error
         self.generate_counts = {}
         self.generated = 0
         self.calls = []
 
     def generate_calls(self):
-        return [c for c in self.calls if "/api/generate" in c[1]]
+        """The generate calls that judged a prompt (unload requests excluded)."""
+        return [c for c in self.calls if "/api/generate" in c[1] and "prompt" in (c[2] or {})]
+
+    def unload_calls(self):
+        return [c for c in self.calls if "/api/generate" in c[1] and "prompt" not in (c[2] or {})]
+
+    def _unload(self, model):
+        if model in self.sticky or model not in self.loaded:
+            return
+        self.loaded.remove(model)
+        if self.unload_lag:
+            self.unloading[model] = self.unload_lag
+
+    def _ps(self):
+        if self.ps_error is not None:
+            raise self.ps_error
+        listed = list(self.loaded)
+        for model in list(self.unloading):
+            listed.append(model)
+            self.unloading[model] -= 1
+            if self.unloading[model] <= 0:
+                del self.unloading[model]
+        return {"models": [{"name": m, "model": m} for m in sorted(set(listed))]}
 
     def __call__(self, method, url, payload=None, timeout=30):
         self.calls.append((method, url, payload))
@@ -123,7 +158,15 @@ class FakeTransport:
             if self.generated and self.version_after_generate is not None:
                 return {"version": self.version_after_generate}
             return {"version": self.version}
+        if "/api/ps" in url:
+            return self._ps()
         model = payload["model"]
+        if "prompt" not in payload:
+            if payload.get("keep_alive") == 0:
+                self._unload(model)
+            return {"model": model, "response": "", "done": True, "done_reason": "unload"}
+        if model not in self.loaded:
+            self.loaded.append(model)
         index = self.generate_counts.get(model, 0)
         self.generate_counts[model] = index + 1
         self.generated += 1
@@ -133,6 +176,8 @@ class FakeTransport:
             item = self.response_by_model.get(model)
             if isinstance(item, list):
                 item = item[min(index, len(item) - 1)]
+        if payload.get("keep_alive") == 0:
+            self._unload(model)
         if item is None:
             raise ConnectionError("model not mounted")
         if isinstance(item, BaseException):

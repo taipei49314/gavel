@@ -1,0 +1,7 @@
+label: human-authorized local PJU, NOT EC pool
+authority: EC POLICY gavel-pju-execution (T-542)
+start 2026-10-17T16:05:02Z host=LAPTOP-01AGNPJU sha=c615b87b9ff9822a1bdb7c67e598f18bfbcc4128
+working tree: no tracked change at start; the only untracked path was this output directory
+uv sync exit=0
+pytest exit=0 2026-10-17T16:05:23Z
+note (added 2026-10-17, before review): line 4 was reworded after the run and before the commit; as the run wrote it, it read "working tree: clean at start (1 changed paths)", the one path being this output directory. Command: uv sync --locked; then .venv/Scripts/python.exe -X utf8 -B -m pytest -q -p no:cacheprovider --junitxml=results/round-3/stage-1-candidate-r2/pytest.xml (PYTHONDONTWRITEBYTECODE=1).

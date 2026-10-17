@@ -1,0 +1,281 @@
+{
+  "manifest_version": 1,
+  "paper_id": "round-3-R-fast",
+  "note": "DRAFT for the round-3 lock (docs/proposals/round-3-PREREG-DRAFT.md); not locked. Observation paper under completeness option (B): paper R with the fast arm as its only arm. Its status is reported and does not decide round-3. The 33 round-2 regression cases unchanged (sha256 as in workloads/gavel_verify/round2_papers.json); bars as PREREG Addendum 5.",
+  "cases": [
+    {
+      "case_id": "ATK-001",
+      "path": "round-2-regression/ATK-001.json",
+      "sha256": "aa6f802d4fe578c8978906af8f70a809f0a29780230567a41739fffa87f5bef5",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "ATK-002",
+      "path": "round-2-regression/ATK-002.json",
+      "sha256": "d3bab108f29b4941a791cbb47968887a67c0bba5c4b09ad76df30c08cfc9212f",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "ATK-003",
+      "path": "round-2-regression/ATK-003.json",
+      "sha256": "6e9748f71fb4d72d7d238e2004a0e2857866cd4bf8b72e419b068e8b8a7f943d",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "ATK-004",
+      "path": "round-2-regression/ATK-004.json",
+      "sha256": "ea8a9844542ccd24a1e0e5ebbb6286b0a40d13f27729b5b7a076e97d6c756f0b",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "ATK-005",
+      "path": "round-2-regression/ATK-005.json",
+      "sha256": "468761ce57474341d9f35ef826348fd01b5bf4f6e7aa64cd40d9beca8469c32f",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "ATK-006",
+      "path": "round-2-regression/ATK-006.json",
+      "sha256": "96b27fe4d71395b446778e61e75d51ce02a30c363bfcae4305fae56c238f6869",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "ATK-007",
+      "path": "round-2-regression/ATK-007.json",
+      "sha256": "eb0f08415a79a32d45ca93683b3b2285ffe81b3f46546f0db082dd27e973de44",
+      "tier": null,
+      "role": "negative"
+    },
+    {
+      "case_id": "ATK-008",
+      "path": "round-2-regression/ATK-008.json",
+      "sha256": "863691d2a8b5f22eade1348e19d70d9a0d5cd5112852abc97bfde6005069ff8f",
+      "tier": null,
+      "role": "negative"
+    },
+    {
+      "case_id": "ATK-009",
+      "path": "round-2-regression/ATK-009.json",
+      "sha256": "087eeb0420bd2258c9fe96618a6590e3516bbd6550db83069cb7ee0a8631d0bd",
+      "tier": null,
+      "role": "negative"
+    },
+    {
+      "case_id": "CW-A01",
+      "path": "round-2-regression/CW-A01.json",
+      "sha256": "a028d721bf94bcbcb2551c79f080ab6200a53f9d9c3918985424fec1ffd47788",
+      "tier": null,
+      "role": "agree"
+    },
+    {
+      "case_id": "CW-A04",
+      "path": "round-2-regression/CW-A04.json",
+      "sha256": "f42729f7a4ffa83535797774338078e11bfc490e2988c137adb0b8ae7b0d4a7b",
+      "tier": "B",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-A05",
+      "path": "round-2-regression/CW-A05.json",
+      "sha256": "ce0ac5d85ecbdafca06d015f9d222d6e2d9f72460d03d71f9489cddcab7422f2",
+      "tier": "S",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-A06",
+      "path": "round-2-regression/CW-A06.json",
+      "sha256": "3871196205e4be3f90348bc6176561d54dc500582cb0c5377f186f3f9cc03eb0",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-A07",
+      "path": "round-2-regression/CW-A07.json",
+      "sha256": "65ab145d441b5e1c31c677eab3db56a28f4841ca3d57b53bb7f6b8dfcc0094f3",
+      "tier": "B",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-A08",
+      "path": "round-2-regression/CW-A08.json",
+      "sha256": "14fef7489fc5ea28b2eafeeb52f866e76641ff6678707a7d5ce5230766d12947",
+      "tier": null,
+      "role": "agree"
+    },
+    {
+      "case_id": "CW-A09",
+      "path": "round-2-regression/CW-A09.json",
+      "sha256": "0f8d743f70eb34ca736f519ef3aed8eddefcfd6059b637e3b5e04673f99460e7",
+      "tier": null,
+      "role": "agree"
+    },
+    {
+      "case_id": "CW-A11",
+      "path": "round-2-regression/CW-A11.json",
+      "sha256": "cf0b5561ef9c7ef5eab9a2b8419fcd5ebf31acfa73f1b6273cd413e9464ade1d",
+      "tier": "B",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-A12",
+      "path": "round-2-regression/CW-A12.json",
+      "sha256": "da25c1897d1b9816e91c020e3cfc09608a483a8dfd57061a65f538254b8789e4",
+      "tier": "B",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-A16",
+      "path": "round-2-regression/CW-A16.json",
+      "sha256": "ad38d94e7916a8ea728c36358a7241fc7e4237812e54199d1752c258e28d026d",
+      "tier": "S",
+      "role": "exam"
+    },
+    {
+      "case_id": "CW-C01",
+      "path": "round-2-regression/CW-C01.json",
+      "sha256": "bd0607bdd199192d547baa414c6494158736276a1555aa32310d1914d9c73156",
+      "tier": null,
+      "role": "negative"
+    },
+    {
+      "case_id": "LW-AGREE-A02c",
+      "path": "round-2-regression/LW-AGREE-A02c.json",
+      "sha256": "b05a242deef9cd391d29f876fc54227c03116e0a9fd3adc3fe0d0d27d38b0381",
+      "tier": null,
+      "role": "agree"
+    },
+    {
+      "case_id": "LW-AGREE-A03c",
+      "path": "round-2-regression/LW-AGREE-A03c.json",
+      "sha256": "bae1acad88df3f4dd384cf6eb89ea7f98ab512d4af737ae6e1c729cf00ce2dcd",
+      "tier": null,
+      "role": "agree"
+    },
+    {
+      "case_id": "LW-NEG-A11",
+      "path": "round-2-regression/LW-NEG-A11.json",
+      "sha256": "a90869e1e7c60612eab369ab43bcc98fef8f532ae355e1e215731bb68740e422",
+      "tier": null,
+      "role": "negative"
+    },
+    {
+      "case_id": "LW-R1",
+      "path": "round-2-regression/LW-R1.json",
+      "sha256": "e8ccf69822fde8774778093f24c58e76ef15c6aecf3a66c0d7d1229c502fb9f9",
+      "tier": "S",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R2",
+      "path": "round-2-regression/LW-R2.json",
+      "sha256": "d11c90e998cf6f9bce3370aea13377279fb4b4f583dbe9fa874882cc753cc9df",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R3",
+      "path": "round-2-regression/LW-R3.json",
+      "sha256": "f92dfd2e5399b0973c2e677a92719fb935b807c42ccd0a14a1de33fbfe7225ce",
+      "tier": "S",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R4",
+      "path": "round-2-regression/LW-R4.json",
+      "sha256": "03d2595fef9219014ea1334a31ca2341b9ebffd4326727726292b66ee664227a",
+      "tier": "S",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R5",
+      "path": "round-2-regression/LW-R5.json",
+      "sha256": "a0902c9ba5be4849e428e511e16df3090288a10ee2f380dbdbff59c0d1f46125",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R6",
+      "path": "round-2-regression/LW-R6.json",
+      "sha256": "ccee03f3136b037d7f05fe80e23e306d4311fcae211012e02bdd6d240f9d8ac3",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R7",
+      "path": "round-2-regression/LW-R7.json",
+      "sha256": "70c79c3ad9a957bbbe4f199c8404a25673565fbdd294f760a499d105488900c0",
+      "tier": "B",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R8",
+      "path": "round-2-regression/LW-R8.json",
+      "sha256": "4bafd3e1a812797c67a9963596093853b73f7d442af1fbf2c1582a24af091a2d",
+      "tier": "B",
+      "role": "exam"
+    },
+    {
+      "case_id": "LW-R9",
+      "path": "round-2-regression/LW-R9.json",
+      "sha256": "ec1854c08b615aa9b1e8e51dea20ad1a43d4a17668c0bc5439a1b2335b55a004",
+      "tier": "A",
+      "role": "exam"
+    },
+    {
+      "case_id": "NEG-3-baseline",
+      "path": "round-2-regression/NEG-3-baseline.json",
+      "sha256": "f949ee609be66a7fdd5de6fc7d0ad682c7c354821c2cedb66e2dae20f9ef75ed",
+      "tier": null,
+      "role": "negative"
+    }
+  ],
+  "arms": {
+    "fast": {
+      "model": "qwen3.5:9b",
+      "transport": "ollama",
+      "runs": {
+        "default": 1,
+        "S": 3
+      },
+      "role": "observation"
+    }
+  },
+  "gating_arm": "fast",
+  "attempt_cap": 3,
+  "scoring": "bars",
+  "bars": {
+    "tier_counts": {
+      "S": 5,
+      "A": 11,
+      "B": 6
+    },
+    "role_counts": {
+      "negative": 6,
+      "agree": 5
+    },
+    "s_all": true,
+    "a_min": 11,
+    "negative": {
+      "hard_max": 0,
+      "soft_max": 2,
+      "inconclusive_max": 1,
+      "soft_confidence_below": 0.6
+    },
+    "agree_min_rate": 0.8,
+    "s_reproducibility": true
+  },
+  "options": {
+    "temperature": 0,
+    "num_ctx": 16384
+  },
+  "runtime": {
+    "ollama_version": "0.40.4"
+  },
+  "load_condition": "fresh"
+}

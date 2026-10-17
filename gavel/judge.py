@@ -39,6 +39,15 @@ Exam-validity fixes (takeover audit 2026-10-15):
   runs it without a shell in an empty temporary directory, guards the
   command-line size, enforces its timeout without blocking on pipes, and
   decodes strictly; see the block comment above agy_generate.
+
+Load condition "fresh" (round-3 decision 4a(i), 2026-10-16): the pre-lock
+smoke run showed that a local arm's output for a case can depend on the case
+judged before it on the same loaded model, through the reuse of a cached
+prompt prefix. Under "fresh", unload_all() unloads every model the daemon
+lists and waits until /api/ps lists none, and the judgment's generate call
+carries keep_alive 0, so every judgment runs on a freshly loaded model with
+an empty prompt cache. A daemon that still lists a model when the wait ends,
+or whose /api/ps cannot be read, makes the judgment UNAUDITED.
 """
 
 import hashlib
@@ -48,6 +57,7 @@ import os
 import re
 import subprocess
 import tempfile
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -76,7 +86,17 @@ DEFAULT_OPTIONS = {"temperature": 0, "num_ctx": DEFAULT_NUM_CTX}
 OPTION_KEYS = ("temperature", "num_ctx", "seed")
 
 # Facts about one generate call that go into the receipt (CR-16).
-GENERATION_KEYS = ("prompt_eval_count", "eval_count", "done", "done_reason", "truncated")
+# load_duration (nanoseconds) is how long the daemon spent loading the model
+# for the call; it shows a fresh load.
+GENERATION_KEYS = ("prompt_eval_count", "eval_count", "done", "done_reason", "truncated",
+                   "load_duration")
+
+# How a local judgment's model is loaded (manifest "load_condition"). None
+# (no key) judges on whatever is loaded, as in round-2.
+LOAD_FRESH = "fresh"
+LOAD_CONDITIONS = (LOAD_FRESH,)
+FRESH_UNLOAD_WAIT_S = 120.0
+FRESH_UNLOAD_POLL_S = 0.5
 
 # Everything a transport call can raise that means "no trustworthy answer"
 # (CR-14). URLError and TimeoutError are OSError subclasses; they are listed
@@ -152,6 +172,57 @@ def get_runtime_version(base_url: str, transport=None) -> str:
     if not isinstance(version, str) or not version.strip():
         raise UnauditedError("daemon reported no version")
     return version
+
+
+def loaded_models(base_url: str, transport=None) -> list[str]:
+    """The names of the models the daemon has loaded (/api/ps), sorted.
+    Any daemon failure or malformed answer is UNAUDITED."""
+    do = transport or _request_json
+    try:
+        resp = do("GET", f"{base_url}/api/ps")
+    except TRANSPORT_ERRORS as exc:
+        raise UnauditedError(f"daemon unreachable while listing loaded models: "
+                             f"{_describe(exc)}") from exc
+    models = resp.get("models") if isinstance(resp, dict) else None
+    if not isinstance(models, list):
+        raise UnauditedError("malformed /api/ps response")
+    names = []
+    for entry in models:
+        name = entry.get("name") if isinstance(entry, dict) else None
+        if not isinstance(name, str) or not name:
+            raise UnauditedError("malformed /api/ps response: a model without a name")
+        names.append(name)
+    return sorted(names)
+
+
+def unload_all(base_url: str, transport=None, *, wait_s: float | None = None,
+               poll_s: float | None = None, sleep=time.sleep, clock=time.monotonic) -> list[str]:
+    """Unload every loaded model and wait until /api/ps lists none.
+
+    Sends the daemon's own unload request (generate with keep_alive 0 and no
+    prompt) for each listed model, then polls /api/ps every poll_s seconds
+    (FRESH_UNLOAD_POLL_S) for up to wait_s seconds (FRESH_UNLOAD_WAIT_S).
+    Returns what was loaded before. A model still listed when the wait ends,
+    or any daemon failure, is UNAUDITED.
+    """
+    do = transport or _request_json
+    wait_s = FRESH_UNLOAD_WAIT_S if wait_s is None else wait_s
+    poll_s = FRESH_UNLOAD_POLL_S if poll_s is None else poll_s
+    before = loaded_models(base_url, transport=transport)
+    for name in before:
+        try:
+            do("POST", f"{base_url}/api/generate", {"model": name, "keep_alive": 0})
+        except TRANSPORT_ERRORS as exc:
+            raise UnauditedError(f"unload request for {name} failed: {_describe(exc)}") from exc
+    deadline = clock() + wait_s
+    while True:
+        still = loaded_models(base_url, transport=transport)
+        if not still:
+            return before
+        if clock() >= deadline:
+            raise UnauditedError(f"models still loaded {wait_s:g} s after the unload "
+                                 f"requests: {still}")
+        sleep(poll_s)
 
 
 def live_pin(model: str, base_url: str, transport_name: str = OLLAMA,
@@ -274,11 +345,15 @@ def resolve_options(options: dict | None = None) -> dict:
 
 
 def generate(model: str, prompt: str, base_url: str, timeout_s: float, transport=None,
-             options: dict | None = None) -> dict:
+             options: dict | None = None, keep_alive: int | None = None) -> dict:
     """One non-streaming Ollama generate call.
 
+    keep_alive, when given, is sent with the call (0: the daemon unloads the
+    model once it has answered; load condition "fresh").
+
     Returns {"raw": text, "generation": {...}} where generation holds the
-    daemon's prompt_eval_count, eval_count, done and done_reason. Raises
+    daemon's prompt_eval_count, eval_count, done, done_reason and
+    load_duration. Raises
     UnauditedError (carrying any text received) when the daemon is
     unreachable or answers malformed JSON (CR-14), when the context was full,
     the output stopped at a length limit or the daemon reported no positive
@@ -293,6 +368,8 @@ def generate(model: str, prompt: str, base_url: str, timeout_s: float, transport
         "stream": False,
         "options": opts,
     }
+    if keep_alive is not None:
+        payload["keep_alive"] = keep_alive
     try:
         resp = do(
             "POST",
