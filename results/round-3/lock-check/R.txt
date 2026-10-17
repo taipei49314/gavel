@@ -1,0 +1,47 @@
+# Round-3 lock check before paper R
+
+Label: human-authorized local PJU, NOT EC pool (EC POLICY gavel-pju-execution, T-542).
+Operator check required by PREREG Addendum 6 ("Papers"). Host clock 2026-10-17T16:29:20Z.
+- host LAPTOP-01AGNPJU; branch round-3/run-stage-1; HEAD 6d36f5b9ffa9d9c0f36c1510d65145fef99e9686
+- lock commit 6d36f5b9ffa9d9c0f36c1510d65145fef99e9686; lock anchor (GitHub push event) 2026-10-17T16:28:19Z
+
+[ok] host is LAPTOP-01AGNPJU (LAPTOP-01AGNPJU)
+[ok] branch round-3/run-stage-1 is a run branch, not main
+[ok] paper R is a stage-1 paper
+[ok] working tree clean before this check (untracked files included)
+[ok] PREREG.md at the lock commit holds Addendum 6
+[ok] PREREG.md at the lock commit's parent has no Addendum 6
+[ok] the lock commit changes only PREREG.md and docs/DECISIONS.md (['PREREG.md', 'docs/DECISIONS.md'])
+[ok] the lock commit is an ancestor of HEAD
+[ok] the lock commit is on a remote branch
+[ok] git diff --no-renames --name-only <lock> HEAD lists only results/round-3/ paths (0 paths; outside: [])
+[ok] harness table has 12 rows (12)
+[ok] gavel/__init__.py: HEAD blob and working tree sha256 a0e789f620e6... (blob a0e789f620e6, tree a0e789f620e6)
+[ok] gavel/__main__.py: HEAD blob and working tree sha256 c6cd277050ea... (blob c6cd277050ea, tree c6cd277050ea)
+[ok] gavel/anchor.py: HEAD blob and working tree sha256 10ea8b9e870a... (blob 10ea8b9e870a, tree 10ea8b9e870a)
+[ok] gavel/cli.py: HEAD blob and working tree sha256 971d7d89495a... (blob 971d7d89495a, tree 971d7d89495a)
+[ok] gavel/judge.py: HEAD blob and working tree sha256 7f194de69ed6... (blob 7f194de69ed6, tree 7f194de69ed6)
+[ok] gavel/prompt.py: HEAD blob and working tree sha256 38ad4b3f55dc... (blob 38ad4b3f55dc, tree 38ad4b3f55dc)
+[ok] gavel/qualify.py: HEAD blob and working tree sha256 442fab524920... (blob 442fab524920, tree 442fab524920)
+[ok] gavel/receipts.py: HEAD blob and working tree sha256 a0be57813589... (blob a0be57813589, tree a0be57813589)
+[ok] gavel/sealed.py: HEAD blob and working tree sha256 ad5073af6add... (blob ad5073af6add, tree ad5073af6add)
+[ok] tools/round3_run.py: HEAD blob and working tree sha256 44084425de79... (blob 44084425de79, tree 44084425de79)
+[ok] pyproject.toml: HEAD blob and working tree sha256 b942d219351c... (blob b942d219351c, tree b942d219351c)
+[ok] uv.lock: HEAD blob and working tree sha256 7badaf75ca73... (blob 7badaf75ca73, tree 7badaf75ca73)
+[ok] approved-models.json sha256 ad380d4e90e6... (blob ad380d4e90e6, tree ad380d4e90e6)
+[ok] papers table has 4 rows (4)
+[ok] row R names cases/round-3-R.manifest.json
+[ok] row R: cases/round-3-R.manifest.json sha256 cf913af70fa5... on its own row (blob cf913af70fa5, tree cf913af70fa5)
+[ok] row K names cases/round-3-K.manifest.json
+[ok] row K: cases/round-3-K.manifest.json sha256 b6aff3a0648e... on its own row (blob b6aff3a0648e, tree b6aff3a0648e)
+[ok] row R-fast names cases/round-3-R-fast.manifest.json
+[ok] row R-fast: cases/round-3-R-fast.manifest.json sha256 90acb2d6260c... on its own row (blob 90acb2d6260c, tree 90acb2d6260c)
+[ok] row K-fast names cases/round-3-K-fast.manifest.json
+[ok] row K-fast: cases/round-3-K-fast.manifest.json sha256 5bd78863954f... on its own row (blob 5bd78863954f, tree 5bd78863954f)
+[ok] instruction header sha256 recomputed from gavel.prompt: ac22bc746831...
+[ok] the two arm digests are in approved-models.json (['3460ffeede54', '6488c96fa5fa'])
+[ok] Ollama /api/version is 0.40.4 (0.40.4)
+- /api/ps before the runner: []
+[ok] Ollama app setting auto_update_enabled is 0 (0)
+
+Result: ALL CHECKS PASSED
