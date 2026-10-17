@@ -321,3 +321,9 @@ Not changed: the runner catches only `OSError` and `ValueError` when it reads `/
 A second read-only review, of revision 2 (three Claude checkers and a GLM claims review), led to its final wording: the date on which `fresh` was chosen, the word "gaps" in the disclosure, the wider operator check, the precedence of INVALID_RECORDS, the commit at which K is scored, the runner checks as the run-records bullet states them, and the harness commit named in the text. It also brought the documents that still said the pre-lock smoke results awaited acceptance up to date.
 
 Because the approved text changed, revision 2 needs Nelson's approval before it is appended to `PREREG.md`. Nothing is locked, and PR #4 is not merged.
+
+**2026-10-17T16:26:50Z** 「核可第二版 可以代合 開跑」: Nelson chose the reply button labelled 「核可第二版」, whose message, written by the assistant, is 「核可第二版 可以代合 開跑」: approve revision 2, merge on my behalf, start the runs. It answered the question 「核可第二版鎖定文字嗎？」 that closed the assistant's report on the pre-lock review.
+
+- 「核可第二版」: approval of the stage-1 lock (round-3 PREREG draft, section 10, item 7) as revision 2 of `docs/proposals/round-3-stage-1-addendum.md` at `6022901`: its text, the four manifests, the harness commit `32c32983522fb3cd0257e5322ffe67e90cb3418b` and `tools/round3_run.py` (sha256 `44084425…f828`), all named in it. This commit appends that text to `PREREG.md` as Addendum 6, with the date, the UTC time and these words in its placeholders. It is the lock commit; its GitHub push event time is the lock anchor.
+- 「可以代合」: the merge of PR #4 on his behalf, now with revision 2 and this lock commit (the 15:39:34Z authorization covered PR #4 at revision 1).
+- 「開跑」: run papers R, K, R-fast and K-fast once each on LAPTOP-01AGNPJU, the venue the addendum fixes, through `tools/round3_run.py` on a round-3 run branch, never on `main`.
