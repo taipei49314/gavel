@@ -77,9 +77,23 @@ def test_next_run_refuses_a_paper_with_receipts(tmp_path):
         round3_run.next_run(tmp_path / "R")
 
 
-def test_main_refuses_while_the_papers_are_not_locked(capsys):
-    # This checkout's PREREG.md has no stage-1 addendum yet: refused before
-    # the host check, any fetch or any request to the Ollama daemon.
+def test_main_refuses_while_the_papers_are_not_locked(capsys, monkeypatch):
+    # PREREG.md at the lock commit has no stage-1 addendum: refused before
+    # the host check, any fetch or any request to the Ollama daemon. git is
+    # faked and every later step fails the test if reached, so the test never
+    # depends on this checkout's lock state: once the real lock commit exists,
+    # it cannot start a paper from inside pytest.
+    def fake_git(*args, root=None):
+        assert args[0] == "show", args
+        return "# PREREG\n\n## Addendum 5\n"
+
+    def must_not_run(*args, **kwargs):
+        raise AssertionError("main() went past the lock check")
+
+    monkeypatch.setattr(round3_run, "git", fake_git)
+    for name in ("check_host", "check_harness", "check_manifest", "next_run",
+                 "unload_all", "commit_and_push"):
+        monkeypatch.setattr(round3_run, name, must_not_run)
     assert round3_run.JUDGMENT_TIMEOUT_S == 600.0
     assert round3_run.main(["R", "--lock-commit", "HEAD"]) == 2
     assert "not locked" in capsys.readouterr().err
