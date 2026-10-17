@@ -1,0 +1,30 @@
+{
+  "approved_models_sha256": "ad380d4e90e67d4f7f2bc2565f0bb5d2a135a5ff6ae822a4d8014d3604c07aaa",
+  "exam_exit": 2,
+  "exam_meaning": "INVALID_PAPER, INVALID_RECORDS, INCOMPLETE or refused",
+  "host": "LAPTOP-01AGNPJU",
+  "host_clock_end_utc": "2026-10-17T18:06:42Z",
+  "host_clock_utc": "2026-10-17T16:29:40Z",
+  "label": "human-authorized local PJU, NOT EC pool",
+  "load_condition": "fresh",
+  "loaded_at_end": [],
+  "loaded_before_unload": [],
+  "lock_commit": "6d36f5b9ffa9d9c0f36c1510d65145fef99e9686",
+  "manifest": "cases/round-3-R.manifest.json",
+  "manifest_sha256": "cf913af70fa537e861d251fcaa9504b7b7e5d9f6cf398b8bb3a6f307609d5e45",
+  "ollama_version": "0.40.4",
+  "out": "results/round-3/R/run-1",
+  "paper": "R",
+  "paper_id": "round-3-R",
+  "problems": [
+    "exam ended INVALID_PAPER, INVALID_RECORDS, INCOMPLETE or refused (exit 2)"
+  ],
+  "run": 1,
+  "runner": "tools/round3_run.py",
+  "runner_sha256": "44084425de7988fa85a1c3ff30d912e001ea4669419d564d322aceb54585f828",
+  "seconds": 5820.0,
+  "start_commit": "ac01af7bd8255a53faf12f7505bf2aa1b768ff7b",
+  "status": "INCOMPLETE",
+  "timeout_s": 600.0,
+  "verify_exit": 0
+}
