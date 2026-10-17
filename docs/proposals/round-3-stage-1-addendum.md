@@ -8,7 +8,14 @@ lock commit. `tools/round3_run.py` refuses every paper until `PREREG.md` at
 the lock commit holds this heading and names the paper's manifest sha256.
 
 The rationale and history are in `docs/proposals/round-3-PREREG-DRAFT.md`; the
-decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 and 2026-10-16).
+decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 to 2026-10-17).
+
+Revision 2 (2026-10-17). Nelson approved revision 1 (commit `d3ec7c7`) at
+2026-10-17T15:39:34Z. The review run before locking it found a false
+statement in its disclosure, a freeze clause that contradicted its own
+stage-2 plan, an ambiguous use of "gaps", and checks the runner does not make
+(docs/DECISIONS.md, 2026-10-17). This revision corrects them and changes no
+hash, bar, option or paper. It is not approved yet; nothing is locked.
 
 ---
 
@@ -23,10 +30,13 @@ decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 and 2026-10-16).
   Addendum 7, under the rules fixed here.
 - **Disclosure.** This design was written after round-2's results were known.
   Each rule answers a round-2 problem found by the takeover audit of
-  2026-10-15 (round-3 PREREG draft, section 0). Completeness option (B) and
-  the load condition `fresh` were chosen after the pre-lock smoke runs on
-  LAPTOP-01AGNPJU (results/round-3/prelock-smoke/). Round-2 is not changed:
-  both its papers stay INCOMPLETE and unaccepted (D1(a)).
+  2026-10-15 (round-3 PREREG draft, section 0). Completeness option (B) was
+  chosen at 2026-10-15T17:23:48Z, during the first pre-lock smoke session and
+  before its results were reported, on round-2's grounds (round-2's gaps were
+  all fast-arm cells). The load condition `fresh` was chosen after the
+  pre-lock smoke runs on LAPTOP-01AGNPJU (results/round-3/prelock-smoke/).
+  Round-2 is not changed: both its papers stay INCOMPLETE and unaccepted
+  (D1(a)).
 - **Venue.** LAPTOP-01AGNPJU only, under EC POLICY `gavel-pju-execution`
   (T-542). Results are labelled "human-authorized local PJU, NOT EC pool".
 - **Engine** (SPEC §1: a different digest is a different engine):
@@ -54,8 +64,15 @@ decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 and 2026-10-16).
   - Per-judgment timeout: 600 s.
 - **Harness.** The files below, as at the harness commit. The lock commit
   only appends this addendum to `PREREG.md` and records the approval in
-  `docs/DECISIONS.md`; after it, nothing outside `results/round-3/` may
-  change, and the runner refuses otherwise.
+  `docs/DECISIONS.md`. From the lock commit until the stage-1 papers have
+  run, the run branch changes nothing outside `results/round-3/`, and the
+  runner refuses otherwise. Stage 2 (Addendum 7) may add N's case files, its
+  manifests and `COMMITMENT.md`, and the runner change needed to run N;
+  Addendum 7 names their sha256 and needs Nelson's approval. The engine, the
+  options and the other files in the table stay as they are here. The
+  table's values are the sha256 of the committed blobs
+  (`git show <harness commit>:<path>`); a checkout that converts line endings
+  shows other bytes.
 
   | File | sha256 |
   |---|---|
@@ -74,7 +91,12 @@ decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 and 2026-10-16).
 
 - **Papers.** Each paper runs once, through
   `python tools/round3_run.py <paper> --lock-commit <lock commit>`, after the
-  lock commit is pushed.
+  lock commit is pushed. `<lock commit>` is the commit that appended this
+  addendum: its parent's `PREREG.md` has no Addendum 6. The runner checks
+  neither that nor the harness table, so before each paper the operator
+  checks both and commits the check under `results/round-3/` before the
+  paper starts. Each manifest's `note` still calls it a draft that is not
+  locked; the bytes named here are the ones this addendum locks.
 
   | Paper | Manifest | sha256 | Arm | Cells | Scoring and bar |
   |---|---|---|---|---|---|
@@ -88,11 +110,15 @@ decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 and 2026-10-16).
 - **Attempt rule.** Only the harness re-attempts: an UNAUDITED cell is
   re-attempted at once, up to 3 attempts; a valid verdict is never
   re-attempted; the first valid attempt counts. Attempts after a valid one,
-  duplicates, gaps and attempts over the cap make the paper INVALID_RECORDS.
-  Every attempt is receipted. No operator re-runs: a paper whose run ended
-  before its first receipt may run again into the next `run-<k>`; once a
-  receipt exists, that chain is the paper's only record, and a paper that
-  ends INCOMPLETE is not run again in round-3.
+  duplicates, gaps in attempt numbering and attempts over the cap make the
+  paper INVALID_RECORDS; a cell without records, or without a valid attempt
+  within the cap, makes it INCOMPLETE. Every attempt is receipted. No
+  operator re-runs: a paper whose run ended before its first receipt may run
+  again into the next `run-<k>`; once a receipt exists, that chain is the
+  paper's only record, and a paper that ends INCOMPLETE is not run again in
+  round-3. If a run stops after its first receipt without its end record,
+  whatever it wrote is committed and pushed to the run branch as it is; no
+  run's files are deleted or set aside.
 - **Run records and time anchors.** The lock anchor is GitHub's push event
   time for the lock commit; the host clock is not an anchor. For each paper
   the runner pushes a start record (`START.json`) before the exam and the
@@ -124,7 +150,7 @@ decisions it rests on are in `docs/DECISIONS.md` (2026-10-15 and 2026-10-16).
 - **Reveal.** N's receipts are pushed, with their chain head recorded in the
   repository, before the key is released. Nelson then releases `key.json`
   and the salt; C is recomputed, and a mismatch voids N. Scoring runs on
-  LAPTOP-01AGNPJU with `gavel score-sealed` at the lock commit. Mechanism
+  LAPTOP-01AGNPJU with `gavel score-sealed` at the Addendum 7 lock commit. Mechanism
   match and inconclusive rates are reported per arm and are not bars.
 - **Verdict.** Round-3 passes only if R is PASS, K meets 12/12, and N is
   COMPLETE and meets its bar after reveal. Any INCOMPLETE, INVALID_PAPER or
