@@ -1,5 +1,7 @@
 # Round-3 stage-1 lock: candidate addendum (NOT LOCKED)
 
+> **[Note 2026-10-18]** Revision 2 of the stage-1 text was approved at 2026-10-17T16:26:50Z and appended to `PREREG.md` as Addendum 6 (lock commit `6d36f5b`). The locked text is `PREREG.md`, not this file. Round-3 does not pass ([results/round-3/REPORT.md](../../results/round-3/REPORT.md)); N was not authored. The text below is kept as it was.
+
 This file is the candidate text for round-3's stage-1 lock (round-3 PREREG
 draft, section 10, item 7). Nothing in it is in force. If Nelson approves it,
 the section below the line, with its `<APPROVAL>` placeholders (date, UTC

@@ -1,5 +1,5 @@
 {
-  "note": "GitHub push events (repository activity API), the time anchors of PREREG Addendum 6. Fetched with: gh api repos/taipei49314/gavel/activity?ref=<ref>&per_page=100; fields kept: timestamp, activity_type, ref, before, after, actor.",
+  "note": "GitHub push events (repository activity API), the time anchors of PREREG Addendum 6. Fetched with: gh api repos/taipei49314/gavel/activity?ref=<ref>&per_page=100. Fields kept: timestamp, activity_type, ref, before, after, actor. The API lists events newest first; here they are reordered oldest first. Events kept: every event on refs/heads/round-3/run-stage-1; on refs/heads/round-3/prelock-smoke and refs/heads/main, only events from 2026-10-17T16:00:00Z on (prelock-smoke: the last revisions and the lock commit; main: the merge of PR #4).",
   "fetched_utc": "2026-10-18T07:44:38Z",
   "refs": {
     "refs/heads/round-3/prelock-smoke": [

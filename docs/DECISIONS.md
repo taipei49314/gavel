@@ -330,25 +330,48 @@ Because the approved text changed, revision 2 needs Nelson's approval before it 
 
 ## 2026-10-18 (stage-1 papers K, R-fast and K-fast, and the round-3 verdict)
 
-Paper R ended INCOMPLETE on 2026-10-17 (end record `3b51483`, pushed 2026-10-17T18:06:44Z). The session that ran it stopped after the end record without reporting. A new session began with 「接手gavel」 at 2026-10-18T04:27:07Z, found R's result, and reported it with the locked consequence: round-3 cannot pass. Nelson's messages that followed, quoted verbatim with their UTC times. Each reply button's message was written by the assistant.
+Paper R ended INCOMPLETE on 2026-10-17 (end record `3b51483`, pushed 2026-10-17T18:06:44Z). The session that ran it stopped after the end record without reporting. A new session began with 「接手gavel」 at 2026-10-18T04:27:07Z (12:27 +0800). The messages below answer its reports. They are quoted verbatim with their UTC times; each reply button's message was written by the assistant.
 
-**2026-10-18T04:58:25Z** 「K、R-fast、K-fast 照鎖定各跑一次，順序 K→R-fast→K-fast；我晚上關掉其他程式後跟你說開跑」. Nelson chose the reply button labelled 「今晚跑三卷」, answering 「剩下三卷今晚照鎖定跑嗎？」.
+**2026-10-18T04:58:25Z** 「K、R-fast、K-fast 照鎖定各跑一次，順序 K→R-fast→K-fast；我晚上關掉其他程式後跟你說開跑」: run K, R-fast and K-fast once each as locked, in the order K, R-fast, K-fast; he would close other programs in the evening and say when to start. Nelson chose the reply button labelled 「今晚跑三卷」, answering 「剩下三卷今晚照鎖定跑嗎？」.
 
-- It confirms the 2026-10-17 「開跑」 for the remaining papers after R's result: K, R-fast and K-fast, each once as locked, in that order.
-- The papers start when Nelson says so. The order was fixed before K started, so K's result could not choose what ran next.
+- The agent reads it as confirming the 2026-10-17 「開跑」 for the papers left after R's result.
+- The order was fixed before K started, so K's result could not choose what ran next.
 
-**2026-10-18T04:59:38Z** 「1.你說要把在我電腦上的應用程式全部關掉嗎」 and **05:02:33Z** 「我只能關到這了 這樣夠用嗎」 (typed). These were questions about which applications to close. The assistant answered with the free system and GPU memory it read; they decide nothing.
+At 04:59:01Z Nelson interrupted the assistant's turn.
 
-**2026-10-18T05:03:48Z** 「開跑。其他 session 的測試我會先停掉；你照步驟先查、先做載入檢查，再跑 K→R-fast→K-fast」. Nelson chose the reply button labelled 「現在開跑」, answering 「什麼時候開跑？」.
+**2026-10-18T04:59:38Z** 「1.你說要把在我電腦上的應用程式全部關掉嗎」 (typed): do you mean I should close all applications on my computer?
 
-- Start now. Nelson stops other sessions' tests.
-- The assistant checks the host, runs a load check, then runs K, R-fast and K-fast.
-- The load check is not a PREREG step (`results/round-3/lock-check/loadcheck.py`). Before each paper it loads the paper's model once, with no judgment and no receipt, and compares the device placement with earlier loads. It was added because llama-server chooses placement from the device memory free at load time, and the engine pins do not fix it.
+**2026-10-18T05:02:33Z** 「我只能關到這了 這樣夠用嗎」 (typed): this is as far as I can close them; is it enough?
 
-**2026-10-18T07:42:51Z** 「照鎖定規則，round-3 不通過」. Nelson chose the reply button labelled 「裁定不通過」, answering 「照鎖定規則裁定 round-3 不通過嗎？」.
+The assistant answered both with the free system and GPU memory it read. They decide nothing.
+
+**2026-10-18T05:03:48Z** 「開跑。其他 session 的測試我會先停掉；你照步驟先查、先做載入檢查，再跑 K→R-fast→K-fast」: start; he would stop other sessions' tests first; the assistant should follow the steps, checking first and doing the load check, then running K, R-fast and K-fast. Nelson chose the reply button labelled 「現在開跑」, answering 「什麼時候開跑？」.
+
+- The agent reads 「先查、先做載入檢查」 as two things: first check the host's free memory and running test processes, then run the load check before each paper.
+  - Free memory was read before each paper (in each `<paper>-load.txt`).
+  - Test processes were looked for at about 05:04Z, before K, and at about 05:30Z, before R-fast. They were not looked for before K-fast.
+- The load check is not a PREREG step (`results/round-3/lock-check/loadcheck.py`). It loads the paper's model once, makes no judgment and writes no receipt, and compares the device placement with an earlier load. It was added because llama-server chooses placement from the device memory that is free at load time, and the engine pins do not fix it.
+- Nelson said he would stop other sessions' tests. At about 05:30Z, between K and R-fast, two EC unittest processes were running, and the assistant went on without asking (`results/round-3/REPORT.md`, "Conduct of the runs").
+
+**2026-10-18T06:27:45Z** 「進度」 (typed): a progress question during R-fast. It decides nothing.
+
+**2026-10-18T07:42:51Z** 「照鎖定規則，round-3 不通過」: by the locked rules, round-3 does not pass. Nelson chose the reply button labelled 「裁定不通過」, answering 「照鎖定規則裁定 round-3 不通過嗎？」.
 
 - Round-3 does not pass, by PREREG Addendum 6 ("Verdict"): R is INCOMPLETE.
-- The record is `results/round-3/REPORT.md`.
-- It does not accept any paper's results, and it decides nothing about N, a later round, Ollama updates or v0.1.0. All of these wait on Nelson.
+- It accepts no paper's results. Without an accepted result there is no accepted pass either, so the verdict stands whether or not the results are accepted.
+
+The assistant wrote the record afterwards: `results/round-3/REPORT.md` and `TABLES.md`, the latter generated by `tools/round3_report.py`.
+
+The results of the four stage-1 papers are labelled "human-authorized local PJU, NOT EC pool" and are 「未驗收」.
+
+Still waiting on Nelson:
+
+- acceptance of the results;
+- N;
+- a later round;
+- Ollama automatic updates;
+- what replaces v0.1.0's freeze condition;
+- whether the assistant's operator pushes to the run branch, beyond start and end records, were covered by 「整個 round-3 授權」 (REPORT, "Conduct of the runs");
+- the push of this record and its merge.
 
 **Ollama.** On 2026-10-17 the agent read 「跑完後可打開」 as round-3 finished, N included. Round-3 is now decided and N was never authored, so that reading no longer settles when updates may come back on. `auto_update_enabled` stays 0 until Nelson says otherwise.
