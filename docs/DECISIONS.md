@@ -372,6 +372,8 @@ Still waiting on Nelson:
 - Ollama automatic updates;
 - what replaces v0.1.0's freeze condition;
 - whether the assistant's operator pushes to the run branch, beyond start and end records, were covered by 「整個 round-3 授權」 (REPORT, "Conduct of the runs");
-- the push of this record and its merge.
+- the merge of this record.
 
 **Ollama.** On 2026-10-17 the agent read 「跑完後可打開」 as round-3 finished, N included. Round-3 is now decided and N was never authored, so that reading no longer settles when updates may come back on. `auto_update_enabled` stays 0 until Nelson says otherwise.
+
+**2026-10-18T08:27:10Z** 「可以推 round-3/close 並開 PR，合併仍歸我」: you may push round-3/close and open a PR; the merge stays with me. Nelson chose the reply button labelled 「可以推並開 PR」, answering 「可以推 round-3/close 並開 PR 嗎？」. This is the named OK of AGENTS.md rule 9 for this branch and its PR. The assistant had first said this push fell under 「整個 round-3 授權」; it then withdrew that, because the authorization's text does not cover a closing record. It does not settle whether the earlier operator pushes to the run branch were covered.
