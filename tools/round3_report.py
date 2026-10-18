@@ -185,14 +185,19 @@ for p in PAPERS:
     run, rep, rec, d, man = data[p]
     s_cases = [c["case_id"] for c in man["cases"] if c.get("tier") == "S"]
     for cid in s_cases:
+        runs = sorted({r["run"] for r in rec if r["case_id"] == cid})
         per_run = {}
         for r in rec:
             if r["case_id"] == cid and valid(r) and r["run"] not in per_run:
                 per_run[r["run"]] = r
+        lost = [n for n in runs if n not in per_run]
+        if lost:
+            lines.append(f"| {p} | {cid} | {runs} | no: run(s) {lost} have no valid attempt | | |")
+            continue
         vs = {canon(r["verdict"]) for r in per_run.values()}
         raws = {sha_text(r.get("raw_response")) for r in per_run.values()}
         first = per_run[min(per_run)]["verdict"] if per_run else {}
-        lines.append(f"| {p} | {cid} | {sorted(per_run)} | {'yes' if len(vs) == 1 else 'no'} | "
+        lines.append(f"| {p} | {cid} | {runs} | {'yes' if len(vs) == 1 else 'no'} | "
                      f"{'yes' if len(raws) == 1 else 'no'} | {first.get('verdict')}, {first.get('mechanism_class') or ''} |")
 lines.append("")
 
@@ -268,7 +273,27 @@ for path, w in want:
     lines.append(f"| `{path}` | `{w}` | `{got}` | {'yes' if got == w else '**no**'} |")
 lines.append("")
 
-# 8. First valid verdict of each cell, as written.
+# 8. Branch and merge facts the record relies on.
+main_events = sorted(EVENTS["refs"]["refs/heads/main"], key=lambda e: e["timestamp"])
+merge = [e for e in main_events if e["activity_type"] == "pr_merge"]
+last_end = added_in(data[PAPERS[-1]][3] / "RUN.json")
+since = git("rev-list", "--reverse", f"{lock}..{last_end}").split()
+outside = []
+for c in since:
+    paths = git("diff-tree", "--no-commit-id", "--name-only", "-r", "--no-renames", c).split("\n")
+    outside += [f"{c[:7]}: {x}" for x in paths if x and not x.startswith("results/round-3/")]
+lines += ["## Branch and merge facts", "",
+          f"- Run-branch commits from the lock commit (`{lock[:7]}`, exclusive) to K-fast's end record "
+          f"(`{last_end[:7]}`): {len(since)}. Paths outside `results/round-3/` in any of them: "
+          f"{', '.join(outside) if outside else 'none'}."]
+for e in merge:
+    mt = git("rev-parse", f"{e['after']}^{{tree}}")
+    lt = git("rev-parse", f"{lock}^{{tree}}")
+    lines.append(f"- `main` merge at {e['timestamp']} (push-events.json): merge commit `{e['after'][:7]}` tree "
+                 f"`{mt}`; lock commit tree `{lt}`; equal: {'yes' if mt == lt else '**no**'}.")
+lines.append("")
+
+# 9. First valid verdict of each cell, as written.
 lines += ["## First valid verdict of each cell, as written (not scored)", ""]
 for p in PAPERS:
     run, rep, rec, d, man = data[p]

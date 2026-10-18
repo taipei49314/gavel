@@ -51,7 +51,7 @@ The status lines are the ones the harness wrote. Counts, lengths and hashes are 
   - Scored with `gavel score-sealed` (`K/run-1/scoring/`): correct on all 12 cases, which meets the 12/12 bar.
   - It ran with the lock commit's code. Commit `cf3e72c` added the scoring, and `lock-check/K.txt` shows that nothing outside `results/round-3/` had changed since the lock commit.
   - Mechanism match is reported; it is not a bar.
-  - K is evidence on known cases. Addendum 6 says K's answer key has been public since 2026-10-14T15:35:56Z. GitHub's push event for the commit that published it (`87ffac7`) is 15:35:55Z.
+  - K is evidence on known cases. Addendum 6 says K's answer key has been public since 2026-10-14T15:35:56Z. GitHub's push event for the commit that published it (`87ffac7`) is 15:35:55Z (push-events.json).
 - **R-fast (fast, observation only; never a round-3 condition): INCOMPLETE.** ATK-006/fast/1 gave three byte-identical responses, none of them parseable JSON.
 - **K-fast (fast, observation only): INCOMPLETE, not scored.**
   - Four cells reached the context limit on every attempt: SP-002, SP-004, SP-008 and SP-010.
@@ -116,10 +116,11 @@ These findings are disclosed here; nothing was changed.
 
 ## Conduct of the runs
 
-- **PR #4 was merged while R was running.** The assistant merged it at 2026-10-17T16:39:20Z (push-events.json). Merge commit `9922068` has the same tree as the lock commit, and the run branch was not touched.
+- **PR #4 was merged while R was running.** The assistant merged it at 2026-10-17T16:39:20Z (push-events.json). Merge commit `9922068` has the same tree as the lock commit (TABLES.md, "Branch and merge facts"), and the run branch was not touched.
 - **R's session stopped without reporting.** It stopped after R's end record, which was pushed at 2026-10-17T18:06:44Z. A new session began at 2026-10-18T04:27:07Z, and K's start record was pushed at 2026-10-18T05:08:42Z (TABLES.md, "Papers"). The three remaining papers ran after Nelson's go-ahead (DECISIONS, 2026-10-18).
 - **K, R-fast and K-fast ran in the daytime on Nelson's working laptop.**
   - First he closed some desktop applications. The 05:03:48Z message said he would stop other sessions' tests.
+  - The two observations below are the assistant's; no process listing was saved.
   - At about 05:04Z no pytest or unittest process was running.
   - At about 05:30Z, between K and R-fast, two python unittest processes running EC repository tests (`test_ec_linux*.py`) were running. This session had not started them.
   - The assistant went on to R-fast's checks at 05:30:48Z without pausing or asking. No process check was made before K-fast. Whether those processes were still running during R-fast or K-fast was not recorded.

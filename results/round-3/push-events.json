@@ -1,5 +1,5 @@
 {
-  "note": "GitHub push events (repository activity API), the time anchors of PREREG Addendum 6. Fetched with: gh api repos/taipei49314/gavel/activity?ref=<ref>&per_page=100. Fields kept: timestamp, activity_type, ref, before, after, actor. The API lists events newest first; here they are reordered oldest first. Events kept: every event on refs/heads/round-3/run-stage-1; on refs/heads/round-3/prelock-smoke and refs/heads/main, only events from 2026-10-17T16:00:00Z on (prelock-smoke: the last revisions and the lock commit; main: the merge of PR #4).",
+  "note": "GitHub push events (repository activity API), the time anchors of PREREG Addendum 6. Fetched with: gh api repos/taipei49314/gavel/activity?ref=<ref>&per_page=100. Fields kept: timestamp, activity_type, ref, before, after, actor. The API lists events newest first; here they are reordered oldest first. Events kept: every event on refs/heads/round-3/run-stage-1; on refs/heads/round-3/prelock-smoke, only events from 2026-10-17T16:00:00Z on (the last revisions and the lock commit); on refs/heads/main, the push of 87ffac7 (2026-10-14, which published paper K's answer key; added 2026-10-18 after a GLM review asked for its source) and the merge of PR #4.",
   "fetched_utc": "2026-10-18T07:44:38Z",
   "refs": {
     "refs/heads/round-3/prelock-smoke": [
@@ -143,6 +143,14 @@
       }
     ],
     "refs/heads/main": [
+      {
+        "timestamp": "2026-10-14T15:35:55Z",
+        "activity_type": "push",
+        "ref": "refs/heads/main",
+        "before": "c18fcceba825caa0871db37db1b8e2a4a53d071b",
+        "after": "87ffac71b42ec2644f1181db6eeaf99def35ef9e",
+        "actor": "taipei49314"
+      },
       {
         "timestamp": "2026-10-17T16:39:20Z",
         "activity_type": "pr_merge",

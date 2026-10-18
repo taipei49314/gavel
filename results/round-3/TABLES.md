@@ -135,6 +135,11 @@ Fixed text: `<paper>.txt` is the PREREG Addendum 6 ("Papers") check; `<paper>-lo
 | `cases/round-3-R-fast.manifest.json` | `90acb2d6260cb53379b0c4d4d95345e9208d20eb2b029d39cbeecabe9692bb18` | `90acb2d6260cb53379b0c4d4d95345e9208d20eb2b029d39cbeecabe9692bb18` | yes |
 | `cases/round-3-K-fast.manifest.json` | `5bd78863954ff8faabb54ffd439211812b4592af8cfd18674b6a421c31e59f7a` | `5bd78863954ff8faabb54ffd439211812b4592af8cfd18674b6a421c31e59f7a` | yes |
 
+## Branch and merge facts
+
+- Run-branch commits from the lock commit (`6d36f5b`, exclusive) to K-fast's end record (`6e39498`): 17. Paths outside `results/round-3/` in any of them: none.
+- `main` merge at 2026-10-17T16:39:20Z (push-events.json): merge commit `9922068` tree `a2ee3eb7fc5834e7033bca89742697cc2388965b`; lock commit tree `a2ee3eb7fc5834e7033bca89742697cc2388965b`; equal: yes.
+
 ## First valid verdict of each cell, as written (not scored)
 
 ### R
