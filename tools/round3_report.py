@@ -11,8 +11,10 @@ Inputs:
 - the paper manifests in cases/ (case tiers);
 - the operator checks in results/round-3/lock-check/;
 - the GitHub push events saved in results/round-3/push-events.json;
-- git, for the commits that added each record and for the blobs at the
-  commit R's lock check names (to print its values at full length);
+- git, for the commits that added each record, the blobs at the commit R's
+  lock check names (to print its values at full length), the paths each
+  run-branch commit since the lock touches, and the trees of the lock commit
+  and the PR #4 merge;
 - PREREG.md at the lock commit (Addendum 6's sha256 tables).
 
 It imports nothing from gavel and scores nothing; it compares no ground
@@ -184,15 +186,18 @@ lines += ["## S-tier cases: the three runs compared (not a bar)", "",
 for p in PAPERS:
     run, rep, rec, d, man = data[p]
     s_cases = [c["case_id"] for c in man["cases"] if c.get("tier") == "S"]
+    arm_spec = next(iter(man["arms"].values()))
+    expected = list(range(1, int(arm_spec.get("runs", {}).get("S", 1)) + 1))
     for cid in s_cases:
         runs = sorted({r["run"] for r in rec if r["case_id"] == cid})
         per_run = {}
         for r in rec:
             if r["case_id"] == cid and valid(r) and r["run"] not in per_run:
                 per_run[r["run"]] = r
-        lost = [n for n in runs if n not in per_run]
-        if lost:
-            lines.append(f"| {p} | {cid} | {runs} | no: run(s) {lost} have no valid attempt | | |")
+        lost = [n for n in expected if n not in per_run]
+        if lost or runs != expected:
+            lines.append(f"| {p} | {cid} | {runs} (manifest: {expected}) | no: run(s) {lost} have no valid "
+                         f"attempt or no receipt | | |")
             continue
         vs = {canon(r["verdict"]) for r in per_run.values()}
         raws = {sha_text(r.get("raw_response")) for r in per_run.values()}
