@@ -1,0 +1,18 @@
+{
+  "host": "LAPTOP-01AGNPJU",
+  "host_clock_utc": "2026-10-18T06:42:39Z",
+  "label": "human-authorized local PJU, NOT EC pool",
+  "load_condition": "fresh",
+  "loaded_before_unload": [],
+  "lock_commit": "6d36f5b9ffa9d9c0f36c1510d65145fef99e9686",
+  "manifest": "cases/round-3-K-fast.manifest.json",
+  "manifest_sha256": "5bd78863954ff8faabb54ffd439211812b4592af8cfd18674b6a421c31e59f7a",
+  "ollama_version": "0.40.4",
+  "out": "results/round-3/K-fast/run-1",
+  "paper": "K-fast",
+  "paper_id": "round-3-K-fast",
+  "run": 1,
+  "runner": "tools/round3_run.py",
+  "runner_sha256": "44084425de7988fa85a1c3ff30d912e001ea4669419d564d322aceb54585f828",
+  "timeout_s": 600.0
+}
