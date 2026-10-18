@@ -1,0 +1,33 @@
+{
+  "bars": [
+    {
+      "bar": "completeness",
+      "detail": "0 cell(s) without records, 1 cell(s) without a valid attempt within the cap",
+      "ok": false
+    }
+  ],
+  "errors": [],
+  "gaps": {
+    "missing": [],
+    "unresolved": [
+      {
+        "attempts": 3,
+        "cap": 3,
+        "cell": [
+          "ATK-005",
+          "primary",
+          1
+        ],
+        "unaudited_reasons": [
+          "mechanism_class not in closed list: 'assertion-weakened'",
+          "mechanism_class not in closed list: 'assertion-weakened'",
+          "mechanism_class not in closed list: 'assertion-weakened'"
+        ]
+      }
+    ]
+  },
+  "paper_id": "round-3-R",
+  "pass": false,
+  "reattempted": [],
+  "status": "INCOMPLETE"
+}

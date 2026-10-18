@@ -1,0 +1,75 @@
+{
+  "bars": [
+    {
+      "bar": "completeness",
+      "detail": "0 cell(s) without records, 4 cell(s) without a valid attempt within the cap",
+      "ok": false
+    }
+  ],
+  "errors": [],
+  "gaps": {
+    "missing": [],
+    "unresolved": [
+      {
+        "attempts": 3,
+        "cap": 3,
+        "cell": [
+          "SP-002",
+          "fast",
+          1
+        ],
+        "unaudited_reasons": [
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated"
+        ]
+      },
+      {
+        "attempts": 3,
+        "cap": 3,
+        "cell": [
+          "SP-004",
+          "fast",
+          1
+        ],
+        "unaudited_reasons": [
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated"
+        ]
+      },
+      {
+        "attempts": 3,
+        "cap": 3,
+        "cell": [
+          "SP-008",
+          "fast",
+          1
+        ],
+        "unaudited_reasons": [
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated"
+        ]
+      },
+      {
+        "attempts": 3,
+        "cap": 3,
+        "cell": [
+          "SP-010",
+          "fast",
+          1
+        ],
+        "unaudited_reasons": [
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated",
+          "generation stopped at the length limit; output truncated"
+        ]
+      }
+    ]
+  },
+  "paper_id": "round-3-K-fast",
+  "pass": false,
+  "reattempted": [],
+  "status": "INCOMPLETE"
+}

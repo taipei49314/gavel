@@ -1,0 +1,47 @@
+# Round-3 lock check before paper R-fast
+
+Label: human-authorized local PJU, NOT EC pool (EC POLICY gavel-pju-execution, T-542).
+Operator check required by PREREG Addendum 6 ("Papers"). Host clock 2026-10-18T05:31:03Z.
+- host LAPTOP-01AGNPJU; branch round-3/run-stage-1; HEAD 6a74cdfb392a558a868352f03862a356dab9a546
+- lock commit 6d36f5b9ffa9d9c0f36c1510d65145fef99e9686; lock anchor (GitHub push event) 2026-10-17T16:28:19Z
+
+[ok] host is LAPTOP-01AGNPJU (LAPTOP-01AGNPJU)
+[ok] branch round-3/run-stage-1 is a run branch, not main
+[ok] paper R-fast is a stage-1 paper
+[ok] working tree clean before this check (untracked files included)
+[ok] PREREG.md at the lock commit holds Addendum 6
+[ok] PREREG.md at the lock commit's parent has no Addendum 6
+[ok] the lock commit changes only PREREG.md and docs/DECISIONS.md (['PREREG.md', 'docs/DECISIONS.md'])
+[ok] the lock commit is an ancestor of HEAD
+[ok] the lock commit is on a remote branch
+[ok] git diff --no-renames --name-only <lock> HEAD lists only results/round-3/ paths (30 paths; outside: [])
+[ok] harness table has 12 rows (12)
+[ok] gavel/__init__.py: HEAD blob and working tree sha256 a0e789f620e6260ad309cd6983e3b463db1d3c66da894bb67d5d95652d8ad329 (blob a0e789f620e6260ad309cd6983e3b463db1d3c66da894bb67d5d95652d8ad329, tree a0e789f620e6260ad309cd6983e3b463db1d3c66da894bb67d5d95652d8ad329)
+[ok] gavel/__main__.py: HEAD blob and working tree sha256 c6cd277050ead2d11c98b7cbab91ada7d19e495c95e4c86de1f9aaf2b2051d38 (blob c6cd277050ead2d11c98b7cbab91ada7d19e495c95e4c86de1f9aaf2b2051d38, tree c6cd277050ead2d11c98b7cbab91ada7d19e495c95e4c86de1f9aaf2b2051d38)
+[ok] gavel/anchor.py: HEAD blob and working tree sha256 10ea8b9e870ad824839cd62168a2678a54eb41f32c0892662ee16578d12fec7c (blob 10ea8b9e870ad824839cd62168a2678a54eb41f32c0892662ee16578d12fec7c, tree 10ea8b9e870ad824839cd62168a2678a54eb41f32c0892662ee16578d12fec7c)
+[ok] gavel/cli.py: HEAD blob and working tree sha256 971d7d89495a048799c40765342518c10e31a8d6e1b98283db1960f0c9e01aa5 (blob 971d7d89495a048799c40765342518c10e31a8d6e1b98283db1960f0c9e01aa5, tree 971d7d89495a048799c40765342518c10e31a8d6e1b98283db1960f0c9e01aa5)
+[ok] gavel/judge.py: HEAD blob and working tree sha256 7f194de69ed68a64a624c8f27cc50bdda51a0b5169fa1cd81947aff9b42e992d (blob 7f194de69ed68a64a624c8f27cc50bdda51a0b5169fa1cd81947aff9b42e992d, tree 7f194de69ed68a64a624c8f27cc50bdda51a0b5169fa1cd81947aff9b42e992d)
+[ok] gavel/prompt.py: HEAD blob and working tree sha256 38ad4b3f55dc7191f080c5560842729adf5f54ec132be9e043a1c93f1576e974 (blob 38ad4b3f55dc7191f080c5560842729adf5f54ec132be9e043a1c93f1576e974, tree 38ad4b3f55dc7191f080c5560842729adf5f54ec132be9e043a1c93f1576e974)
+[ok] gavel/qualify.py: HEAD blob and working tree sha256 442fab5249204702b2990fdc66c0d44cdf4d208df684d5b4bd2abeaef23e6b75 (blob 442fab5249204702b2990fdc66c0d44cdf4d208df684d5b4bd2abeaef23e6b75, tree 442fab5249204702b2990fdc66c0d44cdf4d208df684d5b4bd2abeaef23e6b75)
+[ok] gavel/receipts.py: HEAD blob and working tree sha256 a0be57813589455ca0f70ca18018e5a908773fb4b521b61898fb01a6b9610c0f (blob a0be57813589455ca0f70ca18018e5a908773fb4b521b61898fb01a6b9610c0f, tree a0be57813589455ca0f70ca18018e5a908773fb4b521b61898fb01a6b9610c0f)
+[ok] gavel/sealed.py: HEAD blob and working tree sha256 ad5073af6add791e2e2920fd0464af8042b487f7dbf8f34fe274b9b99dcff9f8 (blob ad5073af6add791e2e2920fd0464af8042b487f7dbf8f34fe274b9b99dcff9f8, tree ad5073af6add791e2e2920fd0464af8042b487f7dbf8f34fe274b9b99dcff9f8)
+[ok] tools/round3_run.py: HEAD blob and working tree sha256 44084425de7988fa85a1c3ff30d912e001ea4669419d564d322aceb54585f828 (blob 44084425de7988fa85a1c3ff30d912e001ea4669419d564d322aceb54585f828, tree 44084425de7988fa85a1c3ff30d912e001ea4669419d564d322aceb54585f828)
+[ok] pyproject.toml: HEAD blob and working tree sha256 b942d219351ce82972ac43a45652656a0b15f18818ea7d3baf64ea994cddc45b (blob b942d219351ce82972ac43a45652656a0b15f18818ea7d3baf64ea994cddc45b, tree b942d219351ce82972ac43a45652656a0b15f18818ea7d3baf64ea994cddc45b)
+[ok] uv.lock: HEAD blob and working tree sha256 7badaf75ca73ff2b90febd8d7585fd2f4ff773914045b3aac1238c33d5df86c6 (blob 7badaf75ca73ff2b90febd8d7585fd2f4ff773914045b3aac1238c33d5df86c6, tree 7badaf75ca73ff2b90febd8d7585fd2f4ff773914045b3aac1238c33d5df86c6)
+[ok] approved-models.json sha256 ad380d4e90e67d4f7f2bc2565f0bb5d2a135a5ff6ae822a4d8014d3604c07aaa (blob ad380d4e90e67d4f7f2bc2565f0bb5d2a135a5ff6ae822a4d8014d3604c07aaa, tree ad380d4e90e67d4f7f2bc2565f0bb5d2a135a5ff6ae822a4d8014d3604c07aaa)
+[ok] papers table has 4 rows (4)
+[ok] row R names cases/round-3-R.manifest.json
+[ok] row R: cases/round-3-R.manifest.json sha256 cf913af70fa537e861d251fcaa9504b7b7e5d9f6cf398b8bb3a6f307609d5e45 on its own row (blob cf913af70fa537e861d251fcaa9504b7b7e5d9f6cf398b8bb3a6f307609d5e45, tree cf913af70fa537e861d251fcaa9504b7b7e5d9f6cf398b8bb3a6f307609d5e45)
+[ok] row K names cases/round-3-K.manifest.json
+[ok] row K: cases/round-3-K.manifest.json sha256 b6aff3a0648ee5fc03ec7ee8a3be3d2cea03d01e6eea3236374ef0fcce888490 on its own row (blob b6aff3a0648ee5fc03ec7ee8a3be3d2cea03d01e6eea3236374ef0fcce888490, tree b6aff3a0648ee5fc03ec7ee8a3be3d2cea03d01e6eea3236374ef0fcce888490)
+[ok] row R-fast names cases/round-3-R-fast.manifest.json
+[ok] row R-fast: cases/round-3-R-fast.manifest.json sha256 90acb2d6260cb53379b0c4d4d95345e9208d20eb2b029d39cbeecabe9692bb18 on its own row (blob 90acb2d6260cb53379b0c4d4d95345e9208d20eb2b029d39cbeecabe9692bb18, tree 90acb2d6260cb53379b0c4d4d95345e9208d20eb2b029d39cbeecabe9692bb18)
+[ok] row K-fast names cases/round-3-K-fast.manifest.json
+[ok] row K-fast: cases/round-3-K-fast.manifest.json sha256 5bd78863954ff8faabb54ffd439211812b4592af8cfd18674b6a421c31e59f7a on its own row (blob 5bd78863954ff8faabb54ffd439211812b4592af8cfd18674b6a421c31e59f7a, tree 5bd78863954ff8faabb54ffd439211812b4592af8cfd18674b6a421c31e59f7a)
+[ok] instruction header sha256 recomputed from gavel.prompt: ac22bc746831a994d4b5f75cde5f678ea2f4bb16abe7114570d0a71fb87984e3
+[ok] the two arm digests are in approved-models.json (['3460ffeede5453ead027dbd2f821b12ad0aa3de54630971993babdb2165221f7', '6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7'])
+[ok] Ollama /api/version is 0.40.4 (0.40.4)
+- /api/ps before the runner: []
+[ok] Ollama app setting auto_update_enabled is 0 (0)
+
+Result: ALL CHECKS PASSED

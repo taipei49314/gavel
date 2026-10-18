@@ -1,0 +1,33 @@
+{
+  "bars": [
+    {
+      "bar": "completeness",
+      "detail": "0 cell(s) without records, 1 cell(s) without a valid attempt within the cap",
+      "ok": false
+    }
+  ],
+  "errors": [],
+  "gaps": {
+    "missing": [],
+    "unresolved": [
+      {
+        "attempts": 3,
+        "cap": 3,
+        "cell": [
+          "ATK-006",
+          "fast",
+          1
+        ],
+        "unaudited_reasons": [
+          "no parseable JSON verdict in response: Expecting ',' delimiter: line 6 column 186 (char 357)",
+          "no parseable JSON verdict in response: Expecting ',' delimiter: line 6 column 186 (char 357)",
+          "no parseable JSON verdict in response: Expecting ',' delimiter: line 6 column 186 (char 357)"
+        ]
+      }
+    ]
+  },
+  "paper_id": "round-3-R-fast",
+  "pass": false,
+  "reattempted": [],
+  "status": "INCOMPLETE"
+}

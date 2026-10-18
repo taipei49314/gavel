@@ -1,0 +1,4 @@
+status: INCOMPLETE (paper round-3-R)
+  [NO] completeness: 0 cell(s) without records, 1 cell(s) without a valid attempt within the cap
+  no valid attempt: ATK-005/primary/1 (3 attempt(s), cap 3): ["mechanism_class not in closed list: 'assertion-weakened'", "mechanism_class not in closed list: 'assertion-weakened'", "mechanism_class not in closed list: 'assertion-weakened'"]
+written to results/round-3/R/run-1: receipts.jsonl (45 receipts, head 1d986abff105edcacdf3757eebd9979727ec00fa1c8cb4e41ff6c6ae9589ac2f), results.json, report.json

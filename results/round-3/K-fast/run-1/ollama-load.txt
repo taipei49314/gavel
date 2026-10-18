@@ -1,0 +1,320 @@
+time=2026-10-18T14:42:42.697+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 60572 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T14:43:51.765+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 56524 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T14:48:16.080+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 63836 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T14:52:40.182+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 63114 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T14:57:03.950+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 54869 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T14:58:19.360+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 60212 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:02:41.483+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 57373 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:07:03.442+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 61744 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:11:20.078+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 49672 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:12:40.348+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 55763 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:13:33.576+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 55816 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:15:02.024+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 56124 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:18:40.438+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 50565 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:22:18.636+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 63843 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:25:57.044+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 52718 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:27:08.281+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 50483 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:30:43.538+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 57419 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:34:18.805+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 59300 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:38:05.153+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 53801 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T15:39:03.570+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --port 55206 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+common_params_fit_impl: will leave 5760 >= 1919 MiB of free device memory, no changes needed
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloaded 34/34 layers to GPU
+load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+llama_kv_cache: size =  272.00 MiB ( 16384 cells,   8 layers,  1/1 seqs), K (q8_0):  136.00 MiB, V (q8_0):  136.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256

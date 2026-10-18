@@ -1,0 +1,2025 @@
+time=2026-10-18T00:29:46.171+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 49998 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:31:26.403+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 63184 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:33:10.381+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 65065 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:34:37.153+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 63821 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:36:02.460+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 51484 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:38:37.639+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 60528 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:41:09.315+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 54328 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:43:35.370+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 62446 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:45:45.495+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 56882 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:47:38.404+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 62139 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:50:03.889+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 57453 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:51:55.917+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 61184 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:54:39.528+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 52768 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:56:37.960+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 60479 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:58:07.483+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 54623 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T00:59:37.117+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 49996 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:01:07.622+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 50984 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:02:34.783+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 61228 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:04:40.868+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 62442 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:06:01.114+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 59659 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:07:15.932+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 56438 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:08:47.337+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 63341 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:11:16.402+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 60790 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:13:07.041+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 53100 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:14:59.509+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 52242 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:16:49.225+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 56243 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:19:07.944+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 64135 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:21:31.638+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 64518 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:25:30.584+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 62721 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:27:16.288+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 57919 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:29:24.085+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 59103 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:31:41.140+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 56318 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:33:56.563+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 56225 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:36:27.418+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 55424 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:38:28.808+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 62389 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:40:29.072+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 61764 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:42:29.518+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 55814 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:45:59.334+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 64686 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:49:24.570+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 60700 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:52:46.695+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 60315 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:54:55.264+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 57228 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:57:08.733+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 59586 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T01:59:34.708+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 52512 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T02:02:35.450+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 53345 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256
+time=2026-10-18T02:04:15.769+08:00 level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --port 54508 --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+load_backend: loaded CPU backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\ggml-cpu-alderlake.dll
+load_backend: loaded CUDA backend from C:\Users\nelson\AppData\Local\Programs\Ollama\lib\ollama\cuda_v13\ggml-cuda.dll
+common_params_fit_impl: getting device memory data for initial parameters:
+common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by 12402 MiB
+common_params_fit_impl: context size set by user to 16384 -> no change
+common_params_fit_impl: getting device memory data with all MoE tensors moved to system memory:
+common_params_fit_impl: with only dense weights in device memory there is a total surplus of 7182 MiB
+common_params_fit_impl: id=0, target=9126 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer= 0, n_part= 0, overflow_type=4, mem=   318 MiB
+common_params_fit_impl: filling dense-only layers back-to-front:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=40, overflow_type=4, mem=  1919 MiB
+common_params_fit_impl: set ngl_per_device[0].n_layer=41
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers,   1919 MiB used,   9108 MiB free
+common_params_fit_impl: converting dense-only layers to full layers and filling them front-to-back with overflow to next device/system memory:
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part= 0, overflow_type=4, mem= 21147 MiB
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=4, mem=  8717 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part)=(41, 26), id_dense_start=0
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=25, overflow_type=4, mem=  9215 MiB
+common_params_fit_impl: set ngl_per_device_high[0].(n_layer, n_part)=(41, 25), id_dense_start_high=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_UP
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=2, mem=  8866 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+common_params_fit_impl: trying to fit one extra layer with overflow_type=LAYER_FRACTION_GATE
+common_params_fit_impl: memory for test allocation by device:
+common_params_fit_impl: id=0, n_layer=41, n_part=26, overflow_type=3, mem=  9020 MiB
+common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used,   2007 MiB free
+load_tensors: loading model tensors, this can take a while... (load_mode = none)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 40 repeating layers to GPU
+load_tensors: offloaded 41/42 layers to GPU
+load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+llama_kv_cache: size =  170.00 MiB ( 16384 cells,  10 layers,  1/1 seqs), K (q8_0):   85.00 MiB, V (q8_0):   85.00 MiB
+llama_kv_cache: n_rot_k = 256, n_embd_head_k_all = 256
+llama_kv_cache: n_rot_v = 64, n_embd_head_k_all = 256

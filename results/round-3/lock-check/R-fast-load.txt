@@ -1,0 +1,32 @@
+# Round-3 load check before paper R-fast
+
+Label: human-authorized local PJU, NOT EC pool (EC POLICY gavel-pju-execution, T-542).
+Not a PREREG step: an operator check added on 2026-10-18 after paper R, to record
+the device placement before the paper. No judgment, no receipt.
+- host LAPTOP-01AGNPJU; host clock 2026-10-18T05:30:48Z; paper R-fast; arm fast; model qwen3.5:9b; options {'temperature': 0, 'num_ctx': 16384}
+- before: available RAM 17413 MiB; nvidia-smi free,used,util 11123 MiB, 848 MiB, 34 %
+- /api/ps before the load: []
+- load call: done_reason 'load', load_duration None, 5.0 s
+- /api/ps after the load: [{"name": "qwen3.5:9b", "digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7", "size": 5796559583, "size_vram": 5796559583, "context_length": 16384}]
+- during: available RAM 16016 MiB; nvidia-smi free,used,util 4442 MiB, 7529 MiB, 4 %
+- /api/ps after the unload: []
+- server log: 1 llama-server start(s) since the load call
+[ok] placement lines equal the reference (fresh-load smoke, server.log 2026-10-17T04:37 +0800 (copied into this script))
+
+Reference placement:
+    common_params_fit_impl: will leave N >= 1919 MiB of free device memory, no changes needed
+    load_tensors: offloaded 34/34 layers to GPU
+    load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+    load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+    llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+
+This load (recorded lines):
+    level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-dec52a44569a2a25341c4e4d3fee25846eed4f6f0b936278e3a3c900bb99d37c --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 1024 -ub 1024 --context-shift --keep 4"
+    common_params_fit_impl: projected to use 5279 MiB of device memory vs. 11040 MiB of free device memory
+    common_params_fit_impl: will leave N >= 1919 MiB of free device memory, no changes needed
+    load_tensors: offloaded 34/34 layers to GPU
+    load_tensors:        CUDA0 model buffer size =  4717.38 MiB
+    load_tensors:    CUDA_Host model buffer size =   545.63 MiB
+    llama_kv_cache:      CUDA0 KV buffer size =   272.00 MiB
+
+Result: PLACEMENT MATCHES

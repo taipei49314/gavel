@@ -1,0 +1,38 @@
+# Round-3 load check before paper K
+
+Label: human-authorized local PJU, NOT EC pool (EC POLICY gavel-pju-execution, T-542).
+Not a PREREG step: an operator check added on 2026-10-18 after paper R, to record
+the device placement before the paper. No judgment, no receipt.
+- host LAPTOP-01AGNPJU; host clock 2026-10-18T05:07:50Z; paper K; arm primary; model qwen3.5:35b-a3b; options {'temperature': 0, 'num_ctx': 16384}
+- before: available RAM 12206 MiB; nvidia-smi free,used,util 11073 MiB, 898 MiB, 21 %
+- /api/ps before the load: []
+- load call: done_reason 'load', load_duration None, 22.5 s
+- /api/ps after the load: [{"name": "qwen3.5:35b-a3b", "digest": "3460ffeede5453ead027dbd2f821b12ad0aa3de54630971993babdb2165221f7", "size": 23376072536, "size_vram": 9719271914, "context_length": 16384}]
+- during: available RAM 2226 MiB; nvidia-smi free,used,util 704 MiB, 11267 MiB, 8 %
+- /api/ps after the unload: []
+- server log: 1 llama-server start(s) since the load call
+[ok] llama-server command (port removed) equals R run 1's first load
+[ok] placement lines equal the reference (results/round-3/R/run-1/ollama-load.txt, first load)
+
+Reference placement:
+    common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by N MiB
+    common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+    common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used
+    load_tensors: offloaded 41/42 layers to GPU
+    load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+    load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+    llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+
+This load (recorded lines):
+    level=INFO source=llama_server.go:457 msg="starting llama-server" cmd="C:\\Users\\nelson\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe --model C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --host 127.0.0.1 --no-webui --offline -c 16384 -np 1 --log-verbosity 4 --no-log-prefix --no-log-timestamps --no-jinja --chat-template chatml --mmproj C:\\Users\\nelson\\.ollama\\models\\blobs\\sha256-900dde62fb7ebe8a5a25e35d5b7633f403f226a310965fed51d50f5238ba145a --load-mode none --cache-type-k q8_0 --cache-type-v q8_0 --flash-attn on -b 512 -ub 512 --context-shift --keep 4"
+    common_params_fit_impl: projected to use 21528 MiB of device memory vs. 11028 MiB of free device memory
+    common_params_fit_impl: cannot meet free memory target of 1901 MiB, need to reduce device memory by N MiB
+    common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, UP), id_dense_start=0
+    common_params_fit_impl: set ngl_per_device[0].(n_layer, n_part, overflow_type)=(41, 26, GATE), id_dense_start=0
+    common_params_fit_impl:   - CUDA0 (NVIDIA GeForce RTX 5070 Laptop GPU): 41 layers (26 overflowing),   9020 MiB used
+    load_tensors: offloaded 41/42 layers to GPU
+    load_tensors:        CUDA0 model buffer size =  8488.20 MiB
+    load_tensors:    CUDA_Host model buffer size = 12955.79 MiB
+    llama_kv_cache:      CUDA0 KV buffer size =   170.00 MiB
+
+Result: PLACEMENT MATCHES

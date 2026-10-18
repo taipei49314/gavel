@@ -1,0 +1,164 @@
+{
+  "note": "GitHub push events (repository activity API), the time anchors of PREREG Addendum 6. Fetched with: gh api repos/taipei49314/gavel/activity?ref=<ref>&per_page=100. Fields kept: timestamp, activity_type, ref, before, after, actor. The API lists events newest first; here they are reordered oldest first. Events kept: every event on refs/heads/round-3/run-stage-1; on refs/heads/round-3/prelock-smoke, only events from 2026-10-17T16:00:00Z on (the last revisions and the lock commit); on refs/heads/main, the push of 87ffac7 (2026-10-14, which published paper K's answer key; added 2026-10-18 after a GLM review asked for its source) and the merge of PR #4.",
+  "fetched_utc": "2026-10-18T07:44:38Z",
+  "refs": {
+    "refs/heads/round-3/prelock-smoke": [
+      {
+        "timestamp": "2026-10-17T16:05:36Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/prelock-smoke",
+        "before": "d3ec7c76a65125581d56742ef7fc1691c28e0914",
+        "after": "ee737e84886e835f79da462f34693486f4601e5e",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-17T16:23:00Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/prelock-smoke",
+        "before": "ee737e84886e835f79da462f34693486f4601e5e",
+        "after": "7d31972aa5ae3a1a009786e7eb3bfd733c74c119",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-17T16:25:53Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/prelock-smoke",
+        "before": "7d31972aa5ae3a1a009786e7eb3bfd733c74c119",
+        "after": "6022901211d0606b8d08717058bdd6b6fe3b9b71",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-17T16:28:19Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/prelock-smoke",
+        "before": "6022901211d0606b8d08717058bdd6b6fe3b9b71",
+        "after": "6d36f5b9ffa9d9c0f36c1510d65145fef99e9686",
+        "actor": "taipei49314"
+      }
+    ],
+    "refs/heads/round-3/run-stage-1": [
+      {
+        "timestamp": "2026-10-17T16:29:42Z",
+        "activity_type": "branch_creation",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "0000000000000000000000000000000000000000",
+        "after": "ac01af7bd8255a53faf12f7505bf2aa1b768ff7b",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-17T18:06:44Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "ac01af7bd8255a53faf12f7505bf2aa1b768ff7b",
+        "after": "3b51483a80f612e16b05d2be56581a37a5223805",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:07:44Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "3b51483a80f612e16b05d2be56581a37a5223805",
+        "after": "18e52e1048240c7d7278cae15874940dd040033b",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:08:34Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "18e52e1048240c7d7278cae15874940dd040033b",
+        "after": "a3a99c1b9c6322bec54142eea09d2a58f2719ef7",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:08:42Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "a3a99c1b9c6322bec54142eea09d2a58f2719ef7",
+        "after": "af14dc3bfeeab7dd4fbf9ecc0b4812721ffaef31",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:29:39Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "af14dc3bfeeab7dd4fbf9ecc0b4812721ffaef31",
+        "after": "b084937fcef5d8faf46d664570665e392bb644e1",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:30:32Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "b084937fcef5d8faf46d664570665e392bb644e1",
+        "after": "cf3e72cace54af64fad63c0b25d257ef5d88faff",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:31:06Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "cf3e72cace54af64fad63c0b25d257ef5d88faff",
+        "after": "c18429e10798d38271c65222863b38489a23dd43",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T05:31:14Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "c18429e10798d38271c65222863b38489a23dd43",
+        "after": "6e719b3a6a2aad2fae8fcd4b0bb03d0691357a14",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T06:41:48Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "6e719b3a6a2aad2fae8fcd4b0bb03d0691357a14",
+        "after": "b3a1e0392df5bd4ed46fcc0cbcd8ecb6f71d9234",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T06:42:28Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "b3a1e0392df5bd4ed46fcc0cbcd8ecb6f71d9234",
+        "after": "96bce14b8867ed2632fa545f6fd00e75b03bac8d",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T06:42:41Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "96bce14b8867ed2632fa545f6fd00e75b03bac8d",
+        "after": "f61a7f4495303768fd95f67d29fb3a7efba3fe95",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-18T07:40:17Z",
+        "activity_type": "push",
+        "ref": "refs/heads/round-3/run-stage-1",
+        "before": "f61a7f4495303768fd95f67d29fb3a7efba3fe95",
+        "after": "6e3949832d900be6aa7d70dcb837965ab0748b76",
+        "actor": "taipei49314"
+      }
+    ],
+    "refs/heads/main": [
+      {
+        "timestamp": "2026-10-14T15:35:55Z",
+        "activity_type": "push",
+        "ref": "refs/heads/main",
+        "before": "c18fcceba825caa0871db37db1b8e2a4a53d071b",
+        "after": "87ffac71b42ec2644f1181db6eeaf99def35ef9e",
+        "actor": "taipei49314"
+      },
+      {
+        "timestamp": "2026-10-17T16:39:20Z",
+        "activity_type": "pr_merge",
+        "ref": "refs/heads/main",
+        "before": "9ed2428fafe138fb815aa8399205a9bb86398a48",
+        "after": "99220685573497cffc0400fee591ce11019d9461",
+        "actor": "taipei49314"
+      }
+    ]
+  }
+}

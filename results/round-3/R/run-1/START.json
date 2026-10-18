@@ -1,0 +1,18 @@
+{
+  "host": "LAPTOP-01AGNPJU",
+  "host_clock_utc": "2026-10-17T16:29:40Z",
+  "label": "human-authorized local PJU, NOT EC pool",
+  "load_condition": "fresh",
+  "loaded_before_unload": [],
+  "lock_commit": "6d36f5b9ffa9d9c0f36c1510d65145fef99e9686",
+  "manifest": "cases/round-3-R.manifest.json",
+  "manifest_sha256": "cf913af70fa537e861d251fcaa9504b7b7e5d9f6cf398b8bb3a6f307609d5e45",
+  "ollama_version": "0.40.4",
+  "out": "results/round-3/R/run-1",
+  "paper": "R",
+  "paper_id": "round-3-R",
+  "run": 1,
+  "runner": "tools/round3_run.py",
+  "runner_sha256": "44084425de7988fa85a1c3ff30d912e001ea4669419d564d322aceb54585f828",
+  "timeout_s": 600.0
+}

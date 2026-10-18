@@ -1,5 +1,7 @@
 # Round-3 PREREG: DRAFT (nothing here is locked)
 
+> **[Note 2026-10-18]** Revision 2 of the stage-1 text was approved at 2026-10-17T16:26:50Z and appended to `PREREG.md` as Addendum 6 (lock commit `6d36f5b`). The locked text is `PREREG.md`, not this file. Round-3 does not pass ([results/round-3/REPORT.md](../../results/round-3/REPORT.md)); N was not authored. The text below is kept as it was.
+
 - Status: **DRAFT**, written 2026-10-15 by the takeover agent on branch
   `fix/exam-validity`, and revised the same day on branch `docs/pju-venue`
   for the venue Nelson set: LAPTOP-01AGNPJU under EC POLICY

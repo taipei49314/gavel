@@ -1,0 +1,7 @@
+status: INCOMPLETE (paper round-3-K-fast)
+  [NO] completeness: 0 cell(s) without records, 4 cell(s) without a valid attempt within the cap
+  no valid attempt: SP-002/fast/1 (3 attempt(s), cap 3): ['generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated']
+  no valid attempt: SP-004/fast/1 (3 attempt(s), cap 3): ['generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated']
+  no valid attempt: SP-008/fast/1 (3 attempt(s), cap 3): ['generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated']
+  no valid attempt: SP-010/fast/1 (3 attempt(s), cap 3): ['generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated', 'generation stopped at the length limit; output truncated']
+written to results/round-3/K-fast/run-1: receipts.jsonl (20 receipts, head 157a5aec48e427590f538a7f7634675de004fb1fed7d77b912c2952bcc86f39a), results.json, report.json
