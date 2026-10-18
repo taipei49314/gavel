@@ -327,3 +327,28 @@ Because the approved text changed, revision 2 needs Nelson's approval before it 
 - 「核可第二版」: approval of the stage-1 lock (round-3 PREREG draft, section 10, item 7) as revision 2 of `docs/proposals/round-3-stage-1-addendum.md` at `6022901`: its text, the four manifests, the harness commit `32c32983522fb3cd0257e5322ffe67e90cb3418b` and `tools/round3_run.py` (sha256 `44084425…f828`), all named in it. This commit appends that text to `PREREG.md` as Addendum 6, with the date, the UTC time and these words in its placeholders. It is the lock commit; its GitHub push event time is the lock anchor.
 - 「可以代合」: the merge of PR #4 on his behalf, now with revision 2 and this lock commit (the 15:39:34Z authorization covered PR #4 at revision 1).
 - 「開跑」: run papers R, K, R-fast and K-fast once each on LAPTOP-01AGNPJU, the venue the addendum fixes, through `tools/round3_run.py` on a round-3 run branch, never on `main`.
+
+## 2026-10-18 (stage-1 papers K, R-fast and K-fast, and the round-3 verdict)
+
+Paper R ended INCOMPLETE on 2026-10-17 (end record `3b51483`, pushed 2026-10-17T18:06:44Z). The session that ran it stopped after the end record without reporting. A new session began with 「接手gavel」 at 2026-10-18T04:27:07Z, found R's result, and reported it with the locked consequence: round-3 cannot pass. Nelson's messages that followed, quoted verbatim with their UTC times. Each reply button's message was written by the assistant.
+
+**2026-10-18T04:58:25Z** 「K、R-fast、K-fast 照鎖定各跑一次，順序 K→R-fast→K-fast；我晚上關掉其他程式後跟你說開跑」. Nelson chose the reply button labelled 「今晚跑三卷」, answering 「剩下三卷今晚照鎖定跑嗎？」.
+
+- It confirms the 2026-10-17 「開跑」 for the remaining papers after R's result: K, R-fast and K-fast, each once as locked, in that order.
+- The papers start when Nelson says so. The order was fixed before K started, so K's result could not choose what ran next.
+
+**2026-10-18T04:59:38Z** 「1.你說要把在我電腦上的應用程式全部關掉嗎」 and **05:02:33Z** 「我只能關到這了 這樣夠用嗎」 (typed). These were questions about which applications to close. The assistant answered with the free system and GPU memory it read; they decide nothing.
+
+**2026-10-18T05:03:48Z** 「開跑。其他 session 的測試我會先停掉；你照步驟先查、先做載入檢查，再跑 K→R-fast→K-fast」. Nelson chose the reply button labelled 「現在開跑」, answering 「什麼時候開跑？」.
+
+- Start now. Nelson stops other sessions' tests.
+- The assistant checks the host, runs a load check, then runs K, R-fast and K-fast.
+- The load check is not a PREREG step (`results/round-3/lock-check/loadcheck.py`). Before each paper it loads the paper's model once, with no judgment and no receipt, and compares the device placement with earlier loads. It was added because llama-server chooses placement from the device memory free at load time, and the engine pins do not fix it.
+
+**2026-10-18T07:42:51Z** 「照鎖定規則，round-3 不通過」. Nelson chose the reply button labelled 「裁定不通過」, answering 「照鎖定規則裁定 round-3 不通過嗎？」.
+
+- Round-3 does not pass, by PREREG Addendum 6 ("Verdict"): R is INCOMPLETE.
+- The record is `results/round-3/REPORT.md`.
+- It does not accept any paper's results, and it decides nothing about N, a later round, Ollama updates or v0.1.0. All of these wait on Nelson.
+
+**Ollama.** On 2026-10-17 the agent read 「跑完後可打開」 as round-3 finished, N included. Round-3 is now decided and N was never authored, so that reading no longer settles when updates may come back on. `auto_update_enabled` stays 0 until Nelson says otherwise.

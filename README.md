@@ -28,14 +28,14 @@ gavel 對家族工具（checkwash／ledgerwash／pinwash）的殘餘風險面做
 
 ## 狀態
 
-**Status (2026-10-15)**
+**Status (2026-10-18)**
 
-- **No judge is qualified.** Round-0 recorded FAIL. Round-1 and round-2 were run on work machine LAPTOP-01AGNPJU, and neither is a qualification of record.
+- **No judge is qualified.** Round-0 recorded FAIL. Round-1 and round-2 were run on work machine LAPTOP-01AGNPJU, and neither is a qualification of record. Round-3 does not pass (below).
 - **Round-2 is closed as INCOMPLETE** under its locked contract (PREREG Addendum 4 completeness gate). The first pass is the status of record; later re-attempts are disclosed and not counted. See the ERRATUM in [results/round-2/REPORT.md](results/round-2/REPORT.md).
-- **All exam results are 「未驗收」** (not accepted) under EC POLICY work-machine-local: round-0, round-1, attack round-1 and round-2. So are the earlier test runs made on the work machine. Two exceptions: the T-540 verification session (tests, `verify --content`, round-2 table regeneration and a judge smoke), whose results Nelson accepted on 2026-10-15, and the round-3 pre-lock smoke runs ([results/round-3/prelock-smoke/](results/round-3/prelock-smoke/README.md)), accepted on 2026-10-17. Neither qualifies a judge.
+- **All exam results are 「未驗收」** (not accepted) under EC POLICY work-machine-local: round-0, round-1, attack round-1 and round-2. So are the earlier test runs made on the work machine. So are round-3's four stage-1 papers (R, K, R-fast, K-fast; acceptance pending). Two exceptions: the T-540 verification session (tests, `verify --content`, round-2 table regeneration and a judge smoke), whose results Nelson accepted on 2026-10-15, and the round-3 pre-lock smoke runs ([results/round-3/prelock-smoke/](results/round-3/prelock-smoke/README.md)), accepted on 2026-10-17. Neither qualifies a judge.
 - **Venue.** gavel runs on LAPTOP-01AGNPJU under Nelson's standing authorization, EC POLICY `gavel-pju-execution` (2026-10-15; gavel only, this host only, until he revokes it), within the limits in [AGENTS.md](AGENTS.md). Results from there are labelled "human-authorized local PJU, NOT EC pool".
-- **Next step: round-3** on LAPTOP-01AGNPJU under EC POLICY `gavel-pju-execution`, in two stages. Stage 1 runs papers R and K once Nelson approves the stage-1 lock text ([docs/proposals/round-3-stage-1-addendum.md](docs/proposals/round-3-stage-1-addendum.md); draft: [docs/proposals/round-3-PREREG-DRAFT.md](docs/proposals/round-3-PREREG-DRAFT.md)). Stage 2 locks and runs a new sealed paper, N, once a new model family or another computer is available (N's answer key must not be on LAPTOP-01AGNPJU before reveal). Round-3 passes only with N.
-- **v0.1.0 stays frozen** until round-3 passes and Nelson decides.
+- **Round-3 does not pass** (Nelson, 2026-10-18, by the locked rules). Stage 1 ran on LAPTOP-01AGNPJU under EC POLICY `gavel-pju-execution`: paper R, the gating arm's regression paper, ended INCOMPLETE (one cell with no valid verdict: an off-list mechanism class, the same output in all three attempts), and under PREREG Addendum 6 any INCOMPLETE paper means round-3 does not pass. Paper K was COMPLETE and met its 12/12 bar on known cases; the fast arm's observation papers R-fast and K-fast were INCOMPLETE. N was not authored. See [results/round-3/REPORT.md](results/round-3/REPORT.md).
+- **v0.1.0 stays frozen.** Its unfreeze condition was a round-3 pass (D1(a)), which did not happen; what replaces it is Nelson's decision.
 - Decisions of record: [docs/DECISIONS.md](docs/DECISIONS.md). Where the paragraph below differs from this block, this block is current.
 
 已上架（github.com/taipei49314/gavel，main）。spec 0；~~裁判已通過 round-1 資格考（results/round-1/REPORT.md）~~；**[Correction 2026-10-15]** Round-1 was run on work machine LAPTOP-01AGNPJU and is 未驗收; it is not a qualification of record (see Status above).
