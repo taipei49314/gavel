@@ -1,0 +1,1 @@
+OK: 45 receipts valid (content+structural; tail checked against the expected head/count)
