@@ -1,0 +1,4 @@
+status: COMPLETE (paper round-3-K)
+  [ok] completeness: 12 cells, each resolved to its first valid attempt; 0 needed more than one attempt
+  note: scoring is external (e.g. a sealed paper scored after reveal); COMPLETE is not PASS
+written to results/round-3/K/run-1: receipts.jsonl (12 receipts, head 0c40554a9275fef5fb010f1576b300646622e71fc812e4364cc0f121cf6aa48a), results.json, report.json
