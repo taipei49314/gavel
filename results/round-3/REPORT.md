@@ -156,3 +156,14 @@ These findings are disclosed here; nothing was changed.
 - What replaces v0.1.0's freeze condition.
 - Whether the operator pushes above were covered by the round-3 push authorization.
 - Merging this record into `main`.
+
+## Status correction — 2026-10-22
+
+The final item under "Waiting on Nelson", merging this record into `main`,
+is complete. [PR #5](https://github.com/taipei49314/gavel/pull/5) merged at
+2026-10-18T08:48:31Z as `66fe9201ed6efc20ce7bd526cd305603161b0f55`.
+
+This corrects only the merge status. The four stage-1 papers' results remain
+「未驗收」; round-3 does not pass, no judge is qualified, and v0.1.0 remains
+frozen. The other items under "Waiting on Nelson" remain unresolved. No tests,
+model judgments, rescoring or report regeneration were run for this correction.
