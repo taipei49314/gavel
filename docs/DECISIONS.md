@@ -395,5 +395,10 @@ This records the completed merge only. It accepts no paper's results, changes
 no qualification verdict or release condition, and resolves none of the other
 decisions in that list. REPORT receives an append-only dated correction.
 
-The new documentation PR's merge remains subject to AGENTS.md rule 9; the
-old PR #5 delegation is not reused for a different PR.
+**2026-10-21T16:29:29Z (reply readback time)** 「授權代合 gavel #6」.
+Nelson selected this reply to the question naming
+[PR #6](https://github.com/taipei49314/gavel/pull/6). The UI supplies no separate
+per-message timestamp, so this UTC is the observed reply readback time rather
+than an invented sending time. It delegates the merge of this documentation PR
+under AGENTS.md rule 9. It accepts no results and authorizes no new exam, tag or
+release. PR #5's old delegation is not reused.
