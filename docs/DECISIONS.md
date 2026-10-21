@@ -379,3 +379,21 @@ Still waiting on Nelson:
 **2026-10-18T08:27:10Z** 「可以推 round-3/close 並開 PR，合併仍歸我」: you may push round-3/close and open a PR; the merge stays with me. Nelson chose the reply button labelled 「可以推並開 PR」, answering 「可以推 round-3/close 並開 PR 嗎？」. This is the named OK of AGENTS.md rule 9 for this branch and its PR. The assistant had first said this push fell under 「整個 round-3 授權」; it then withdrew that, because the authorization's text does not cover a closing record. It does not settle whether the earlier operator pushes to the run branch were covered.
 
 **2026-10-18T08:28:31Z** 「合併歸你」 (typed): the merge is yours. It names this PR (#5, `round-3/close`), opened a minute earlier, for the assistant to merge on Nelson's behalf (AGENTS.md rule 9, D5(a)). Before merging, the assistant runs a GLM review and checks its findings. The merge is a merge commit, not a squash, so the run-branch commit ids the records cite stay valid. It accepts no result and decides nothing else.
+
+## 2026-10-22 (closeout record reconciliation)
+
+**2026-10-21T16:18:07Z** 「好，照建議收尾：LW-004、LW-005 補紀錄後結案，其他已完成的更新摘要、清掉過時待辦，尚未驗收或失敗的先保留，CheckWash 不動。」
+
+This approves the bounded documentation reconciliation proposed in the same
+conversation, including gavel's obsolete pending-merge summary. It authorizes
+this documentation batch and PR, not result acceptance or a new exam.
+
+The "merge of this record" item in the 2026-10-18 waiting list was resolved:
+[PR #5](https://github.com/taipei49314/gavel/pull/5) merged at
+2026-10-18T08:48:31Z as `66fe9201ed6efc20ce7bd526cd305603161b0f55`.
+This records the completed merge only. It accepts no paper's results, changes
+no qualification verdict or release condition, and resolves none of the other
+decisions in that list. REPORT receives an append-only dated correction.
+
+The new documentation PR's merge remains subject to AGENTS.md rule 9; the
+old PR #5 delegation is not reused for a different PR.
